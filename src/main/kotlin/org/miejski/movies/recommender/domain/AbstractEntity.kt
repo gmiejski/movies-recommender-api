@@ -4,4 +4,4 @@ import org.neo4j.ogm.annotation.GraphId
 import org.neo4j.ogm.annotation.NodeEntity
 
 @NodeEntity
-open class AbstractNode(@GraphId var id: Long? = null)
+open class AbstractEntity(@GraphId var id: Long? = null)
