@@ -6,18 +6,18 @@ import org.miejski.movies.recommender.domain.Person
 import org.neo4j.ogm.annotation.*
 
 @RelationshipEntity(type = "Rated")
-class Rating {
+class Rating(
 
     @GraphId
-    @JvmField var id: Long? = null
+    var id: Long? = null,
 
     @StartNode
     @JsonIgnore
-    @JvmField var person: Person? = null
+    var person: Person? = null,
 
     @EndNode
-    @JvmField var movie: Movie? = null
+    var movie: Movie? = null,
 
     @Property
-    @JvmField var rating: String = ""
-}
+    var rating: String = ""
+)

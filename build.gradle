@@ -1,6 +1,12 @@
 group 'org.miejski.recommender'
 version '1.0-SNAPSHOT'
 
+ext {
+    spock = '1.0-groovy-2.4'
+    neo4j = '2.3.2'
+}
+
+
 buildscript {
     ext.kotlin_version = "1.0.0"
     ext.spring_boot_version = '1.3.2.RELEASE'
@@ -18,6 +24,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'kotlin'
 apply plugin: 'spring-boot'
+apply plugin: 'groovy'
 
 repositories {
     mavenCentral()
@@ -27,6 +34,15 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile("org.springframework.boot:spring-boot-starter-web")
     compile 'org.springframework.data:spring-data-neo4j:4.0.0.RELEASE'
+    compile 'com.google.guava:guava:19.0'
 
-    testCompile("junit:junit")
+    testCompile group: 'org.spockframework', name: 'spock-core', version: spock
+    testCompile group: 'org.spockframework', name: 'spock-spring', version: spock
+
+    testCompile "org.neo4j:neo4j-kernel:$neo4j"
+    testCompile "org.neo4j.app:neo4j-server:$neo4j"
+    testCompile 'org.neo4j:neo4j-ogm:1.1.6'
+    testCompile "org.neo4j.test:neo4j-harness:$neo4j"
+
+
 }

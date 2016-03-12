@@ -1,7 +1,9 @@
 package org.miejski.movies.recommender.domain
 
-class Movie(id: Long? = null) : AbstractEntity(id) {
+class Movie(
 
-    @JvmField var movie_id: String = ""
+    id: Long? = null,
 
-}
+    var movie_id: String = ""
+
+) : AbstractEntity(id)
