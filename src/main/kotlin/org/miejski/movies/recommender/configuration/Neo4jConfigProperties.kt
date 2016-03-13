@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @ConfigurationProperties(prefix = "neo4j")
-class Neo4jConfigurationProperties {
+class Neo4jConfigProperties {
     lateinit var host: String
     lateinit var port: String
     lateinit var user: String

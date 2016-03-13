@@ -11,17 +11,6 @@ class QueryResultMapper {
         }
         return a.toList() as List<T>
     }
-
-    fun bbb(t: String) {
-        val ll = listOf(1,2,3).toTypedArray()
-        aaa(*ll)
-    }
-
-    fun aaa(vararg ts: Any): String {
-
-
-        return ""
-    }
 }
 
 fun <T> Result.castTo(castedClass: Class<T>) : List<T> {
