@@ -7,7 +7,7 @@ class Person(
 
     id: Long? = null,
 
-    var user_id: String = "",
+    var user_id: Long = -1,
 
     @Relationship(type = "Rated", direction = Relationship.OUTGOING)
     var ratedMovies: List<Rating> = emptyList()

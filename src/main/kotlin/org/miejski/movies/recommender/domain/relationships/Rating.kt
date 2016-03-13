@@ -19,5 +19,5 @@ class Rating(
     var movie: Movie? = null,
 
     @Property
-    var rating: String = ""
+    var rating: Double? = null
 )
