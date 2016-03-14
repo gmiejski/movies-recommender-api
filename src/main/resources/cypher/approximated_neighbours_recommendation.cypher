@@ -1,5 +1,5 @@
-MATCH (a:Person {user_id: 34})-[r:Rated]->(m:Movie)<-[r2:Rated]-(b:Person)
-WHERE abs(r.rating - r2.rating) <= 1
+MATCH (a:Person)-[r:Rated]->(m:Movie)<-[r2:Rated]-(b:Person)
+WHERE a.user_id = {userId} AND abs(r.rating - r2.rating) <= 1
 WITH b AS neighbour, COUNT(b.user_id) AS sharedRatings, a
 ORDER BY sharedRatings DESC
 LIMIT 30

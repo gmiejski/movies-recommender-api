@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 class RecommendationsController @Autowired constructor(val recommendationsService: RecommendationsService) {
 
     @RequestMapping(value = "recommendations/user/{userId}")
-    fun getRecommendedMovies(@PathVariable("userId") userId: String): List<CypherResult> {
+    fun getRecommendedMovies(@PathVariable("userId") userId: Long): List<MovieRecommendation> {
         return recommendationsService.findRecommendedMovies(userId)
     }
 }
