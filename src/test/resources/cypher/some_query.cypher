@@ -1,0 +1,3 @@
+MATCH(n:Person)
+RETURN n
+LIMIT 10
