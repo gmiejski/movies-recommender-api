@@ -11,22 +11,20 @@ class UsersServiceTest extends Neo4jSpecification {
     @Autowired
     UsersRepository usersRepository
 
-    def "should return something from "() {
+    def "should save and load graph node from repository"() {
         given:
-        create(new Person(10L, 10L, []))
+        usersRepository.save(new Person(null, 10L, []))
+        def savedPerson2 = usersRepository.save(new Person(null, 10L, []))
 
         when:
-        def person = usersRepository.findOne(10L)
+        def loadedPerson = usersRepository.findOne(savedPerson2.id)
 
         then:
         print(usersRepository.findAll().size())
-        usersRepository.findAll().size() == 1
-        person != null
-        person.user_id == 10
-    }
-
-    @Transactional
-    def create(Person person) {
-        usersRepository.save(person)
+        usersRepository.findAll().size() == 2
+        with(loadedPerson) {
+            id == savedPerson2.id
+            user_id == savedPerson2.user_id
+        }
     }
 }
