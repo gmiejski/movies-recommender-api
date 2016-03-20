@@ -1,1 +1,7 @@
 aaa: integration
+
+neo4j:
+  host: http://localhost
+  port: 7879
+  user: ""
+  password: ""

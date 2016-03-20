@@ -2,25 +2,31 @@ package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.domain.Person
 import org.miejski.movies.recommender.infrastructure.Neo4jSpecification
-import org.neo4j.ogm.session.Session
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 
+@Transactional
 class UsersServiceTest extends Neo4jSpecification {
 
     @Autowired
-    UsersRepository repository
-    @Autowired
-    Session session
+    UsersRepository usersRepository
 
     def "should return something from "() {
         given:
-        repository.save(new Person(10L, 10L, []))
+        create(new Person(10L, 10L, []))
 
         when:
-        def person = repository.findOne(10L)
+        def person = usersRepository.findOne(10L)
 
         then:
+        print(usersRepository.findAll().size())
+        usersRepository.findAll().size() == 1
         person != null
         person.user_id == 10
+    }
+
+    @Transactional
+    def create(Person person) {
+        usersRepository.save(person)
     }
 }
