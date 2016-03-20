@@ -3,9 +3,7 @@ package org.miejski.movies.recommender.users
 import org.miejski.movies.recommender.domain.Person
 import org.miejski.movies.recommender.infrastructure.Neo4jSpecification
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 
-@Transactional
 class UsersServiceTest extends Neo4jSpecification {
 
     @Autowired
