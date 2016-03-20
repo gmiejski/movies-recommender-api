@@ -1,2 +1,3 @@
 rootProject.name = 'movies-recommender-api'
+include 'movies-recommender-service'
 
