@@ -1,6 +1,6 @@
 package org.miejski.movies.recommender.recommendations
 
-import org.miejski.movies.recommender.helper.CypherLoader
+import org.miejski.movies.recommender.queries.Neo4jQueriesHolder
 import org.springframework.data.neo4j.template.Neo4jOperations
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -12,7 +12,7 @@ class RecommendationsServiceTest extends Specification {
 
     void setup() {
         neo4jOperations = Mock(Neo4jOperations)
-        recommendationsService = new RecommendationsService(neo4jOperations, new CypherLoader())
+        recommendationsService = new RecommendationsService(neo4jOperations, new Neo4jQueriesHolder([:]))
     }
 
     @Unroll

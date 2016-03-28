@@ -1,0 +1,50 @@
+group 'org.miejski.recommender'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'scala'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    gatling = '2.1.7'
+}
+
+dependencies {
+    compile "io.gatling:gatling-http:$gatling"
+    compile "io.gatling:gatling-app:$gatling"
+    compile "io.gatling.highcharts:gatling-charts-highcharts:$gatling"
+
+    compile "io.gatling:jsonpath_2.10:0.6.6"
+    compile "org.apache.httpcomponents:httpclient:4.5.2"
+    compile 'com.stackmob:newman_2.10:1.3.5'
+    compile "org.json4s:json4s-native_2.10:3.2.11"
+    compile "org.json4s:json4s-ext_2.10:3.2.11"
+
+}
+
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
+
+task loadTest(type: JavaExec) {
+    dependsOn testClasses
+    description = "load test with Gatling"
+    group = "Load Test"
+    classpath = sourceSets.test.runtimeClasspath
+    jvmArgs = [
+            // workaround for https://github.com/gatling/gatling/issues/2689
+            "-Dgatling.core.directory.binaries=${sourceSets.test.output.classesDir.toString()}",
+    ]
+    main = "io.gatling.app.Gatling"
+    args = [
+            "--simulation", "someCLass",
+            "--results-folder", "${buildDir}/gatling-results",
+            "--binaries-folder", sourceSets.test.output.classesDir.toString(), // ignored because of above bug
+            "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
+    ]
+}
+

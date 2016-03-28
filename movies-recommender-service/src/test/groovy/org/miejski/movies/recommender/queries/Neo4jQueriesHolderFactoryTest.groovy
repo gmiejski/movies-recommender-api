@@ -1,15 +1,15 @@
-package org.miejski.movies.recommender.helper
+package org.miejski.movies.recommender.queries
 
 import spock.lang.Specification
 
-class CypherLoaderTest extends Specification {
+class Neo4jQueriesHolderFactoryTest extends Specification {
 
     def "should load cypher query"() {
         given:
         def cypherName = "some_query.cypher"
 
         when:
-        def cypher = new CypherLoader().loadCypherQuery(cypherName)
+        def cypher = new Neo4jQueriesHolderFactory().loadCypherQuery(cypherName)
 
         then:
         cypher == "MATCH(n:Person) RETURN n LIMIT 10"

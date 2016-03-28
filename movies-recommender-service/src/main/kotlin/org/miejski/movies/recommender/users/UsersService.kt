@@ -10,5 +10,7 @@ class UsersService @Autowired constructor(val usersRepository: UsersRepository) 
         return usersRepository.findOne(userId)
     }
 
-    fun findAll() :List<Person> = usersRepository.findAll(10).toList()
+    fun findAll(): List<Person> = usersRepository.findAll().toList()
+
+    fun findAllIds(): List<Int> = usersRepository.getAllIds()
 }

@@ -19,4 +19,9 @@ class UsersController @Autowired constructor(val usersService: UsersService) {
         return usersService.findAll()
     }
 
+
+    @RequestMapping(value = "/users/ids")
+    fun getAllUsersIds(): List<Int> {
+        return usersService.findAllIds()
+    }
 }
