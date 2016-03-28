@@ -6,7 +6,7 @@ class UsersRepository(usersIds: Array[Int]) {
 
   def getNextId() = {
     def nextUserId = usersIds(Random.nextInt(usersIds.length))
-    print(nextUserId)
+    print(s"UsersRepository: $nextUserId")
     nextUserId
   }
 }
