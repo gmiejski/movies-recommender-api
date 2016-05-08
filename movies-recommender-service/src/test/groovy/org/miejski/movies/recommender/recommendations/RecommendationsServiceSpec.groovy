@@ -5,7 +5,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class RecommendationsServiceTest extends Specification {
+class RecommendationsServiceSpec extends Specification {
 
     RecommendationsService recommendationsService
     Neo4jOperations neo4jOperations

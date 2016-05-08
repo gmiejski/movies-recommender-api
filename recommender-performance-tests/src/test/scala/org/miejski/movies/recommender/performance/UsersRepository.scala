@@ -1,4 +1,4 @@
-package org.miejski.movie.recommender.performance
+package org.miejski.movies.recommender.performance
 
 import scala.util.Random
 

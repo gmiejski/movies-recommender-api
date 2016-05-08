@@ -1,4 +1,4 @@
-package org.miejski.movie.recommender.performance.myhttp
+package org.miejski.movies.recommender.performance.myhttp
 
 import org.apache.http.client.HttpClient
 import org.apache.http.client.config.RequestConfig
