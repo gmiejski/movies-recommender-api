@@ -2,6 +2,7 @@ package org.miejski.movies.recommender.performance
 
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
+import org.miejski.movies.recommender.performance.myhttp.HttpGetRequest
 
 import scala.collection.Iterator
 import scala.concurrent.duration._
