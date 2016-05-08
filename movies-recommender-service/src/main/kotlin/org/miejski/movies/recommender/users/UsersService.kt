@@ -16,6 +16,8 @@ class UsersService @Autowired constructor(val usersRepository: UsersRepository) 
     fun findAllIds(): List<Int> = usersRepository.getAllIds()
 
     fun rateMovie(userId: Long, movieRating: MovieRatingRequest) {
-        throw UnsupportedOperationException("not implemented")
+        if ( movieRating.movieId != null && movieRating.rating != null) {
+            usersRepository.addMovieRating(userId, movieRating.rating, movieRating.movieId)
+        }
     }
 }

@@ -33,4 +33,8 @@ class IntegrationSpec extends Specification {
         RestAssured.port = port
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
     }
+
+    void cleanup() {
+        neo4jRule.clearDatabase()
+    }
 }
