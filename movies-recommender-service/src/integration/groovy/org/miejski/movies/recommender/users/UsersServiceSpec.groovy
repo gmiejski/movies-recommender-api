@@ -1,10 +1,10 @@
 package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.domain.Person
-import org.miejski.movies.recommender.infrastructure.Neo4jSpecification
+import org.miejski.movies.recommender.infrastructure.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 
-class UsersServiceTest extends Neo4jSpecification {
+class UsersServiceSpec extends IntegrationSpec {
 
     @Autowired
     UsersRepository usersRepository

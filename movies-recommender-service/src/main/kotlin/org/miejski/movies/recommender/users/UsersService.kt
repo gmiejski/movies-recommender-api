@@ -1,6 +1,7 @@
 package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.domain.Person
+import org.miejski.movies.recommender.users.api.MovieRatingRequest
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
@@ -13,4 +14,8 @@ class UsersService @Autowired constructor(val usersRepository: UsersRepository) 
     fun findAll(): List<Person> = usersRepository.findAll().toList()
 
     fun findAllIds(): List<Int> = usersRepository.getAllIds()
+
+    fun rateMovie(userId: Long, movieRating: MovieRatingRequest) {
+        throw UnsupportedOperationException("not implemented")
+    }
 }

@@ -4,6 +4,7 @@ version '1.0-SNAPSHOT'
 ext {
     spock = '1.0-groovy-2.4'
     neo4j = '2.3.2'
+    jackson = '2.6.1'
 }
 
 

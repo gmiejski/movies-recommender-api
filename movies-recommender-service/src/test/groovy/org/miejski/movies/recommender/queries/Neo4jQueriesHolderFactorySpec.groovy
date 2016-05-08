@@ -2,7 +2,7 @@ package org.miejski.movies.recommender.queries
 
 import spock.lang.Specification
 
-class Neo4jQueriesHolderFactoryTest extends Specification {
+class Neo4jQueriesHolderFactorySpec extends Specification {
 
     def "should load cypher query"() {
         given:

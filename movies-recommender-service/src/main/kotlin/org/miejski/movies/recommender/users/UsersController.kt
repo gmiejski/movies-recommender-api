@@ -1,10 +1,9 @@
 package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.domain.Person
+import org.miejski.movies.recommender.users.api.MovieRatingRequest
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class UsersController @Autowired constructor(val usersService: UsersService) {
@@ -19,9 +18,15 @@ class UsersController @Autowired constructor(val usersService: UsersService) {
         return usersService.findAll()
     }
 
-
     @RequestMapping(value = "/users/ids")
     fun getAllUsersIds(): List<Int> {
         return usersService.findAllIds()
+    }
+
+    @RequestMapping(value = "/users/{userId}/ratings",
+        method = arrayOf(RequestMethod.POST),
+        consumes = arrayOf("application/json"))
+    fun rateMovie(@RequestBody movieRating: MovieRatingRequest, @PathVariable("userId") userId: Long) {
+        return usersService.rateMovie(userId, movieRating)
     }
 }

@@ -36,10 +36,16 @@ dependencies {
     compile 'com.google.guava:guava:19.0'
     compile 'org.neo4j:neo4j-ogm:1.1.6'
 
+    compile group: "com.fasterxml.jackson.core", name: 'jackson-databind', version: jackson
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jackson
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jackson
 
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: spock
     testCompile group: 'org.spockframework', name: 'spock-spring', version: spock
+    testCompile('com.jayway.restassured:rest-assured:2.6.0') {
+        exclude group: "org.codehaus.groovy", module: "groovy-all"
+    }
 
     testCompile "org.neo4j:neo4j-kernel:$neo4j"
     testCompile "org.neo4j.app:neo4j-server:$neo4j"
