@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-    gatling = '2.1.7'
+    gatling = '2.2.0'
 }
 
 dependencies {
@@ -31,6 +31,13 @@ dependencies {
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 task loadTest(type: JavaExec) {
+    print(args)
+    print("dupa")
+
+    if (project.hasProperty("simulation")) {
+        print(simulation)
+    }
+
     dependsOn testClasses
     description = "load test with Gatling"
     group = "Load Test"
@@ -41,7 +48,7 @@ task loadTest(type: JavaExec) {
     ]
     main = "io.gatling.app.Gatling"
     args = [
-            "--simulation", "someCLass",
+            "--simulation", simulation,
             "--results-folder", "${buildDir}/gatling-results",
             "--binaries-folder", sourceSets.test.output.classesDir.toString(), // ignored because of above bug
             "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
