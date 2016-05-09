@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 import scala.util.Try
 
-
 class HttpGetRequest[A](url: String = "http://localhost:8080")(implicit mf: Manifest[A]) {
   private implicit val formats = org.json4s.DefaultFormats
   private val DefaultTimeout = Duration(5, SECONDS).toMillis.toInt
@@ -20,21 +19,30 @@ class HttpGetRequest[A](url: String = "http://localhost:8080")(implicit mf: Mani
   val httpClient: HttpClient = HttpClients.createDefault()
   val parser: String => A = read[A]
 
-  def getUsersIds() = {
-    val httpGet = new HttpGet(s"$url/users/ids")
+  def getUsersIds = {
+    getIds(s"$url/users/ids")
+  }
+
+  def getMoviesIds = {
+    getIds(s"$url/movies/ids")
+  }
+
+  def getIds(path: String) = {
+    val httpGet = new HttpGet(path)
     httpGet.setConfig(requestConfigs)
     httpGet.addHeader(HttpHeaders.ACCEPT, "application/json")
 
     Try(httpClient.execute(httpGet)).flatMap {
       response =>
         response.getStatusLine.getStatusCode match {
-          case HttpStatus.SC_OK => Try(readIds(EntityUtils.toString(response.getEntity)))
+          case HttpStatus.SC_OK => Try(readIdsFromResponse(EntityUtils.toString(response.getEntity)))
           case _ => throw new Exception(s"invalid status code ${response.getStatusLine.getStatusCode} for ${httpGet.getURI} ")
         }
     }.get
   }
 
-  def readIds(response: String) = {
+
+  def readIdsFromResponse(response: String) = {
     response.replace("[", "").replace("]", "").split(",").map(_.toInt)
   }
 
