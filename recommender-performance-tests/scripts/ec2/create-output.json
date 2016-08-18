@@ -1,0 +1,87 @@
+{
+  "OwnerId": "436337061895",
+  "ReservationId": "r-117ff1ad",
+  "Instances": [
+    {
+      "ImageId": "ami-db59afb4",
+      "State": {
+        "Name": "pending",
+        "Code": 0
+      },
+      "NetworkInterfaces": [
+        {
+          "MacAddress": "06:7d:f9:0d:9f:d7",
+          "Description": "",
+          "Groups": [
+            {
+              "GroupName": "movies-recommender-service-sg",
+              "GroupId": "sg-1365ae7b"
+            }
+          ],
+          "PrivateDnsName": "ip-172-31-26-102.eu-central-1.compute.internal",
+          "Attachment": {
+            "AttachTime": "2016-08-14T23:05:58.000Z",
+            "DeviceIndex": 0,
+            "Status": "attaching",
+            "DeleteOnTermination": true,
+            "AttachmentId": "eni-attach-9cb4a85a"
+          },
+          "PrivateIpAddress": "172.31.26.102",
+          "Status": "in-use",
+          "SubnetId": "subnet-7dfed306",
+          "VpcId": "vpc-044c626d",
+          "PrivateIpAddresses": [
+            {
+              "PrivateDnsName": "ip-172-31-26-102.eu-central-1.compute.internal",
+              "Primary": true,
+              "PrivateIpAddress": "172.31.26.102"
+            }
+          ],
+          "SourceDestCheck": true,
+          "OwnerId": "436337061895",
+          "NetworkInterfaceId": "eni-f8d77084"
+        }
+      ],
+      "SourceDestCheck": true,
+      "Placement": {
+        "Tenancy": "default",
+        "GroupName": "",
+        "AvailabilityZone": "eu-central-1b"
+      },
+      "ProductCodes": [],
+      "Hypervisor": "xen",
+      "PrivateIpAddress": "172.31.26.102",
+      "InstanceId": "i-64266ed8",
+      "RootDeviceName": "/dev/xvda",
+      "KeyName": "movies-recommender-service",
+      "SecurityGroups": [
+        {
+          "GroupName": "movies-recommender-service-sg",
+          "GroupId": "sg-1365ae7b"
+        }
+      ],
+      "RootDeviceType": "ebs",
+      "SubnetId": "subnet-7dfed306",
+      "EbsOptimized": false,
+      "ClientToken": "",
+      "VirtualizationType": "hvm",
+      "Architecture": "x86_64",
+      "LaunchTime": "2016-08-14T23:05:58.000Z",
+      "PublicDnsName": "",
+      "InstanceType": "t2.micro",
+      "StateTransitionReason": "",
+      "PrivateDnsName": "ip-172-31-26-102.eu-central-1.compute.internal",
+      "Monitoring": {
+        "State": "disabled"
+      },
+      "BlockDeviceMappings": [],
+      "VpcId": "vpc-044c626d",
+      "StateReason": {
+        "Code": "pending",
+        "Message": "pending"
+      },
+      "AmiLaunchIndex": 0
+    }
+  ],
+  "Groups": []
+}
