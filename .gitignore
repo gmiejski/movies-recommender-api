@@ -71,6 +71,5 @@ crashlytics-build.properties
 
 neo4j-home
 
-recommender-performance-tests/scripts/runner/bin
-recommender-performance-tests/scripts/runner/include
-recommender-performance-tests/scripts/runner/lib
+deployment/scripts/runner/*
+**/.idea

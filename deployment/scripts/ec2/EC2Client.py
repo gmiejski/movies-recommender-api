@@ -2,6 +2,7 @@ import boto3
 import paramiko
 from ec2.EC2Instances import EC2Instances
 from ec2.EC2Waiter import EC2Waiter
+from scripts.ansible.AnsibleRunner import AnsibleRunner
 
 
 class EC2Client:
@@ -20,7 +21,7 @@ class EC2Client:
     def createInstances(self, count):
         response = self.ec2client.run_instances(
                 DryRun=False,
-                ImageId='ami-70c3321f',
+                ImageId='ami-541bea3b',
                 MinCount=count,
                 MaxCount=count,
                 KeyName='movies-recommender-service',
@@ -77,6 +78,5 @@ class EC2Client:
         ids = self.createInstances(count)
         EC2Waiter.waitForRunningState(ids)
         self.applicationInstances = self.getInstances(ids)
-
-        # TODO
-        pass
+        AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
+        # AnsibleRunner.runApplication(['52.58.209.190'], 'http://localhost')
