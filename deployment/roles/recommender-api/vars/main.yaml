@@ -1,3 +1,5 @@
-recommender-api:
-  home_folder: /home/ec2-user/magisterka/run
-  run_folder: /home/ec2-user/magisterka/run/
+recommender_api:
+  home_folder: /home/ec2-user/magisterka/run/movies-recommender-api
+  run_folder: /home/ec2-user/magisterka/run/movies-recommender-api/movies-recommender-service/build/libs
+
+neo4j_host: http://localhost
