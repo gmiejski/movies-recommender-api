@@ -22,9 +22,9 @@ class RatingsSimulation extends Simulation {
   val maxUsers = 12
   val waitInterval = 100 milliseconds
 
-  def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds())
+  def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds)
 
-  def moviesRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getMoviesIds())
+  def moviesRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getMoviesIds)
 
   def ratingsFeeder = Iterator.continually()
 

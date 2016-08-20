@@ -4,4 +4,4 @@ neo4j:
   host: http://localhost
   port: 7474
   user: neo4j
-  password: 1234
+  password: neo4j1234

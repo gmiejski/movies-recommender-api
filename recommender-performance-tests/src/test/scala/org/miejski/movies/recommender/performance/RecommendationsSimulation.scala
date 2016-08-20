@@ -22,7 +22,7 @@ class RecommendationsSimulation extends Simulation {
   val maxUsers = 30
   val waitInterval = 500 milliseconds
 
-  def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds())
+  def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds)
 
   val feeder = Iterator.continually(Map("userId" -> usersRepository.getNextId))
 

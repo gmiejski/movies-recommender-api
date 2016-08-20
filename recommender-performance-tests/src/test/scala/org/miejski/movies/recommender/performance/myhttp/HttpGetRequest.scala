@@ -57,7 +57,7 @@ class HttpGetRequest[A](url: String = "http://localhost:8080")(implicit mf: Mani
 object HttpGetRequest {
 
   def main(args: Array[String]) {
-    val usersIds = new HttpGetRequest[UsersIds]().getUsersIds()
+    val usersIds = new HttpGetRequest[UsersIds]().getUsersIds
     usersIds.foreach(println)
   }
 }

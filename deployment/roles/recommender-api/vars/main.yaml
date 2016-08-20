@@ -1,0 +1,3 @@
+recommender-api:
+  home_folder: /home/ec2-user/magisterka/run
+  run_folder: /home/ec2-user/magisterka/run/

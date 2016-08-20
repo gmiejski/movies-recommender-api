@@ -13,6 +13,7 @@ repositories {
 
 ext {
     gatling = '2.2.0'
+    simulation = ''
 }
 
 dependencies {
@@ -31,9 +32,6 @@ dependencies {
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 task loadTest(type: JavaExec) {
-    print(args)
-    print("dupa")
-
     if (project.hasProperty("simulation")) {
         print(simulation)
     }
