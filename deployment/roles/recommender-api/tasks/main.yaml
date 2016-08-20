@@ -1,0 +1,11 @@
+---
+
+- name: assert folder exists
+  file: path={{ recommender-api.home_folder }} state=directory
+- name: git checkout
+  git: repo=https://github.com/gmiejski/movies-recommender-api.git
+       dest=/home/ec2-user/magisterka/run
+- name: build application
+  shell: ./gradlew movies-recommender-service:build
+- name: run application
+  shell: java -jar -Dneo4j.host=http://52.58.209.190 movies-recommender-service-0.1.0.jar chdir={{ }}

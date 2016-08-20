@@ -7,4 +7,6 @@ ext {
     jackson = '2.6.1'
 }
 
-
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.5'
+}
