@@ -1,6 +1,19 @@
 group 'org.miejski.recommender'
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.lkishalmi.gradle:gradle-gatling-plugin:0.3.1"
+    }
+}
+
+apply plugin: "com.github.lkishalmi.gatling"
+
 ext {
     spock = '1.0-groovy-2.4'
     neo4j = '2.3.2'
@@ -8,5 +21,5 @@ ext {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.5'
+    gradleVersion = '2.14'
 }

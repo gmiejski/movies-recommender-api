@@ -13,7 +13,6 @@ repositories {
 
 ext {
     gatling = '2.2.0'
-    simulation = ''
 }
 
 dependencies {
@@ -32,24 +31,29 @@ dependencies {
 [compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 task loadTest(type: JavaExec) {
-    if (project.hasProperty("simulation")) {
-        print(simulation)
+    println name
+    if (project.hasProperty("simulation") && project.hasProperty("applicationUrl")) {
+        println "Simulation: $simulation"
+        println "Application url: $applicationUrl"
+        dependsOn testClasses
+        description = "load test with Gatling"
+        group = "Load Test"
+        classpath = sourceSets.test.runtimeClasspath
+        jvmArgs = [
+                // workaround for https://github.com/gatling/gatling/issues/2689
+                "-Dgatling.core.directory.binaries=${sourceSets.test.output.classesDir.toString()}",
+                "-DapplicationUrl=$applicationUrl"
+        ]
+        main = "io.gatling.app.Gatling"
+        args = [
+                "--simulation", simulation,
+                "--results-folder", "${buildDir}/gatling-results",
+                "--binaries-folder", sourceSets.test.output.classesDir.toString(), // ignored because of above bug
+                "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
+        ]
+    } else {
+        println "No simulation specified or no applicationUrl - quitting now!"
+//        System.exit(1)
     }
-
-    dependsOn testClasses
-    description = "load test with Gatling"
-    group = "Load Test"
-    classpath = sourceSets.test.runtimeClasspath
-    jvmArgs = [
-            // workaround for https://github.com/gatling/gatling/issues/2689
-            "-Dgatling.core.directory.binaries=${sourceSets.test.output.classesDir.toString()}",
-    ]
-    main = "io.gatling.app.Gatling"
-    args = [
-            "--simulation", simulation,
-            "--results-folder", "${buildDir}/gatling-results",
-            "--binaries-folder", sourceSets.test.output.classesDir.toString(), // ignored because of above bug
-            "--bodies-folder", sourceSets.test.resources.srcDirs.toList().first().toString() + "/gatling/bodies",
-    ]
 }
 

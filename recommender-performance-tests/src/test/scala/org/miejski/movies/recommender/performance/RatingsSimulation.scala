@@ -10,8 +10,10 @@ import scala.language.postfixOps
 
 class RatingsSimulation extends Simulation {
 
+  val applicationUrl = System.getProperty("applicationUrl")
+
   val httpConf = http
-    .baseURL("http://localhost:8080")
+    .baseURL(applicationUrl)
     .acceptHeader("application/json")
     .doNotTrackHeader("1")
     .acceptLanguageHeader("en-US,en;q=0.5")
@@ -22,9 +24,9 @@ class RatingsSimulation extends Simulation {
   val maxUsers = 12
   val waitInterval = 100 milliseconds
 
-  def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds)
+  def usersRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getUsersIds)
 
-  def moviesRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getMoviesIds)
+  def moviesRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getMoviesIds)
 
   def ratingsFeeder = Iterator.continually()
 
