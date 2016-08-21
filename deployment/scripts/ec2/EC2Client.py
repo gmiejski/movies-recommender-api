@@ -40,7 +40,6 @@ class EC2Client:
         )
         return EC2Instances.fromJson(response)
 
-
     def runNeoOnInstances(self, ips):
         for ip in ips:
             self.runNeoOnSingleInstance(ip)
@@ -49,7 +48,6 @@ class EC2Client:
         paramiko.util.log_to_file("ssh.log")
         client = paramiko.SSHClient()
         client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        # client.connect('52.58.209.190', username='ec2-user',key_filename='/Users/grzegorz.miejski/.ssh/movies-recommender-service.pem')
         client.connect(instanceIp, username='ec2-user',
                        key_filename='/Users/grzegorz.miejski/.ssh/movies-recommender-service.pem')
 
@@ -61,22 +59,18 @@ class EC2Client:
             print('... ' + err.strip('\n'))
         client.close()
 
-    def killInstances(self, ids=None):
-        instancesToKill = ids
-        if instancesToKill is None:
-            instancesToKill = self.neo4jInstances.ids()
+    def killAllInstances(self):
+        self.killInstances(self.neo4jInstances.ids())
+        self.killInstances(self.applicationInstances.ids())
+        self.neo4jInstances = []
+        self.applicationInstances = []
 
-        self.ec2client.terminate_instances(
-                InstanceIds=instancesToKill
-        )
-        EC2Waiter.waitForTerminatedState(instancesToKill)
-
-        if ids is None:
-            self.neo4jInstances = []
+    def killInstances(self, ids=[]):
+        self.ec2client.terminate_instances(InstanceIds=ids)
+        EC2Waiter.waitForTerminatedState(ids)
 
     def createApplicationInstances(self, count=1):
         ids = self.createInstances(count)
         EC2Waiter.waitForRunningState(ids)
         self.applicationInstances = self.getInstances(ids)
         AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
-        # AnsibleRunner.runApplication(['52.58.209.190'], 'http://localhost')

@@ -22,4 +22,4 @@ class AnsibleRunner:
 
     @staticmethod
     def prepare_extra_variables(neo4j_host):
-        return "\'neo4j_host=" + neo4j_host + "\'"
+        return "neo4j_host=" + neo4j_host
