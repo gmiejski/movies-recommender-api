@@ -4,9 +4,9 @@ import org.miejski.movies.recommender.domain.Movie
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.GraphRepository
 
-interface MovieRepository : GraphRepository<Movie> {
+open interface MovieRepository : GraphRepository<Movie> {
 
     @Query("MATCH (n:Movie) return n.movie_id")
-    fun getAllIds(): List<Int>;
+    fun getAllIds(): List<String>;
 
 }

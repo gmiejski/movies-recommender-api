@@ -4,6 +4,7 @@ import org.miejski.movies.recommender.domain.Movie
 import org.miejski.movies.recommender.domain.Person
 import org.miejski.movies.recommender.infrastructure.IntegrationSpec
 import org.miejski.movies.recommender.movies.MovieRepository
+import org.miejski.movies.recommender.users.api.MovieRatingRequest
 import org.springframework.beans.factory.annotation.Autowired
 
 class UsersServiceSpec extends IntegrationSpec {
@@ -13,6 +14,9 @@ class UsersServiceSpec extends IntegrationSpec {
 
     @Autowired
     MovieRepository movieRepository
+
+    @Autowired
+    UsersService usersService
 
     def "should save and load graph node from repository"() {
         given:
@@ -52,10 +56,10 @@ class UsersServiceSpec extends IntegrationSpec {
         given:
         def savedUser = usersRepository.save(new Person(null, 10L, []))
         def savedMovie = movieRepository.save(new Movie(null, 100))
-        usersRepository.addMovieRating(savedUser.user_id, 4.0, savedMovie.movie_id)
+        usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 4.0))
 
         when:
-        usersRepository.addMovieRating(savedUser.user_id, 5.0, savedMovie.movie_id)
+        usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 5.0))
 
         then:
         def foundUser = usersRepository.findOne(savedUser.id)

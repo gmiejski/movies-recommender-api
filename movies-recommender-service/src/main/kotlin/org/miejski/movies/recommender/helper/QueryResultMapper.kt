@@ -1,7 +1,7 @@
 package org.miejski.movies.recommender.helper
 
 import com.google.common.primitives.Primitives
-import org.neo4j.ogm.session.result.Result
+import org.neo4j.ogm.model.Result
 
 class QueryResultMapper {
     fun <T> convert(type: Class<T>, result: Result): List<T> {

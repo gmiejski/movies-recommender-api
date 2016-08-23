@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod.POST
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class MovieController @Autowired constructor(val movieRepository: MovieRepository) {
+open class MovieController @Autowired constructor(val movieRepository: MovieRepository) {
 
     @RequestMapping(value = "/movies/{movieId}")
     fun getMovie(@PathVariable("movieId") movieId: Long): Movie? {
@@ -25,6 +25,6 @@ class MovieController @Autowired constructor(val movieRepository: MovieRepositor
 
     @RequestMapping(value = "/movies/ids")
     fun ids(): List<Int> {
-        return movieRepository.getAllIds()
+        return movieRepository.getAllIds().map { it.toInt() }
     }
 }

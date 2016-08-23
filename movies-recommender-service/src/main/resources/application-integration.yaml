@@ -1,7 +1,7 @@
 aaa: integration
 
 neo4j:
-  host: http://localhost
+  host: localhost
   port: 7879
   user: ""
   password: ""

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-class UsersService @Autowired constructor(val usersRepository: UsersRepository) {
+open class UsersService @Autowired constructor(val usersRepository: UsersRepository) {
     fun findUser(userId: Long): Person {
         return usersRepository.findOne(userId)
     }
@@ -16,7 +16,7 @@ class UsersService @Autowired constructor(val usersRepository: UsersRepository) 
     fun findAllIds(): List<Int> = usersRepository.getAllIds()
 
     fun rateMovie(userId: Long, movieRating: MovieRatingRequest) {
-        if ( movieRating.movieId != null && movieRating.rating != null) {
+        if (movieRating.movieId != null && movieRating.rating != null) {
             usersRepository.addMovieRating(userId, movieRating.rating, movieRating.movieId)
         }
     }
