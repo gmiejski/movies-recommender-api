@@ -25,6 +25,6 @@ open class MovieController @Autowired constructor(val movieRepository: MovieRepo
 
     @RequestMapping(value = "/movies/ids")
     fun ids(): List<Int> {
-        return movieRepository.getAllIds().map { it.toInt() }
+        return movieRepository.getAllIds()
     }
 }

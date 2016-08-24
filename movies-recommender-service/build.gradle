@@ -19,7 +19,6 @@ apply plugin: 'groovy'
 apply plugin: 'application'
 
 
-
 repositories {
     mavenCentral()
 }

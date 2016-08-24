@@ -74,3 +74,7 @@ class EC2Client:
         EC2Waiter.waitForRunningState(ids)
         self.applicationInstances = self.getInstances(ids)
         AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
+
+    def application_ips(self):
+        # return ["localhost"]
+        return self.applicationInstances.ips()

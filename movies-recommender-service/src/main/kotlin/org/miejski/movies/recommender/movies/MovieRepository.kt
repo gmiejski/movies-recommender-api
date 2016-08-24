@@ -7,6 +7,6 @@ import org.springframework.data.neo4j.repository.GraphRepository
 open interface MovieRepository : GraphRepository<Movie> {
 
     @Query("MATCH (n:Movie) return n.movie_id")
-    fun getAllIds(): List<String>;
+    fun getAllIds(): List<Int>;
 
 }

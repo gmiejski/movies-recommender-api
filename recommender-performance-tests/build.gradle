@@ -53,7 +53,6 @@ task loadTest(type: JavaExec) {
         ]
     } else {
         println "No simulation specified or no applicationUrl - quitting now!"
-//        System.exit(1)
     }
 }
 
