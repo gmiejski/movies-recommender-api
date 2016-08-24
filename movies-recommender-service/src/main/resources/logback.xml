@@ -1,15 +1,55 @@
 <configuration>
 
+
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>/tmp/logs/movies-recommender-service.log</file>
+        <append>false</append>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+
+    <!--<appender name="FILE"-->
+    <!--class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--<filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+    <!--<level>INFO</level>-->
+    <!--</filter>-->
+    <!---->
+    <!--<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">-->
+    <!--<fileNamePattern>soothsayer-worker.%d{yyyy-MM-dd}.%i.zip</fileNamePattern>-->
+    <!--<maxFileSize>50MB</maxFileSize>-->
+    <!--<maxHistory>7</maxHistory>-->
+    <!--<totalSizeCap>350MB</totalSizeCap>-->
+    <!--</rollingPolicy>-->
+    <!--</appender>-->
+
+    <springProfile name="!integration">
+        <logger name="pl.allegro.profile.main" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="integration">
+        <logger name="pl.allegro.profile.main" level="DEBUG"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
 
     <logger name="org.miejski.movies.recommender" level="debug"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
+
 </configuration>
 

@@ -74,15 +74,11 @@ class EC2Client:
         client.close()
 
     def killAllInstances(self):
-        self.killInstances(self.neo4jInstances.ids())
-        self.killInstances(self.applicationInstances.ids())
+        ids = self.neo4jInstances.ids() + self.applicationInstances.ids()
+        self.ec2client.terminate_instances(InstanceIds=ids)
+        EC2Waiter.waitForTerminatedState(ids)
         self.neo4jInstances = []
         self.applicationInstances = []
 
-    def killInstances(self, ids=[]):
-        self.ec2client.terminate_instances(InstanceIds=ids)
-        EC2Waiter.waitForTerminatedState(ids)
-
     def application_ips(self):
-        # return ["localhost"]
         return self.applicationInstances.ips()
