@@ -9,14 +9,27 @@ class EC2Client:
     def __init__(self):
         self.ec2client = boto3.client('ec2')
         self.ec2 = boto3.resource('ec2')
-        self.neo4jInstances = []
-        self.applicationInstances = []
+        self.neo4jInstances = None
+        self.neo4jInstancesIds = []
+        self.applicationInstances = None
+        self.applicationInstancesIds = []
 
     def createNeo4jInstances(self, count=1):
         ids = self.createInstances(count)
-        EC2Waiter.waitForRunningState(ids)
-        self.neo4jInstances = self.getInstances(ids)
+        self.neo4jInstancesIds = ids
+
+    def createApplicationInstances(self, count=1):
+        ids = self.createInstances(count)
+        self.applicationInstancesIds = ids
+
+    def wait_for_startup(self):
+        all_instances = self.neo4jInstancesIds + self.applicationInstancesIds
+        EC2Waiter.waitForRunningState(all_instances)
+        self.neo4jInstances = self.getInstances(self.neo4jInstancesIds)
+        self.applicationInstances = self.getInstances(self.applicationInstancesIds)
+
         self.runNeoOnInstances(self.neo4jInstances.ips())
+        AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
 
     def createInstances(self, count):
         response = self.ec2client.run_instances(
@@ -33,6 +46,7 @@ class EC2Client:
 
         instancesIds = list(map(lambda i: i['InstanceId'], response['Instances']))
         return instancesIds
+
 
     def getInstances(self, ids=[]):
         response = self.ec2client.describe_instances(
@@ -68,12 +82,6 @@ class EC2Client:
     def killInstances(self, ids=[]):
         self.ec2client.terminate_instances(InstanceIds=ids)
         EC2Waiter.waitForTerminatedState(ids)
-
-    def createApplicationInstances(self, count=1):
-        ids = self.createInstances(count)
-        EC2Waiter.waitForRunningState(ids)
-        self.applicationInstances = self.getInstances(ids)
-        AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
 
     def application_ips(self):
         # return ["localhost"]

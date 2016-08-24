@@ -13,7 +13,6 @@ class AnsibleRunner:
                                     '--extra-vars', AnsibleRunner.prepare_extra_variables(neo4j_host)],
                                    cwd=AnsibleRunner.ansible_home,
                                    stderr=subprocess.STDOUT)
-
         process.communicate()
         return
 
@@ -33,6 +32,5 @@ class AnsibleRunner:
                                     '-PapplicationUrl=' + host, ],
                                    cwd=AnsibleRunner.application_home,
                                    stderr=subprocess.STDOUT)
-
         process.communicate()
         return
