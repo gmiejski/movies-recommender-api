@@ -11,6 +11,5 @@ interface UsersRepository : GraphRepository<Person> {
     fun getAllIds(): List<Int>;
 
     @Query("MATCH (n:Person {user_id: {userId}}),(m:Movie {movie_id: {movieId}}) merge (n)-[r:Rated]-(m) SET r.rating={ratingValue} return n")
-    fun addMovieRating(@Param("userId") userId: Long, @Param("ratingValue") rating: Double, @Param("movieId") movieId: Long): Person
-
+    fun addMovieRating(@Param("userId") userId: Long, @Param("ratingValue") rating: Double, @Param("movieId") movieId: Long)
 }
