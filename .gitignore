@@ -73,3 +73,7 @@ neo4j-home
 
 deployment/scripts/runner/*
 **/.idea
+
+
+*_test_*
+*_train_*
