@@ -50,8 +50,10 @@ class AnsibleRunner:
 
     @staticmethod
     def restartLocalNeo4j(trainFile):
-        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'run-application-local.yaml',
-                                    '-vvv'],
+        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'restart-neo4j.yaml',
+                                    '-vvv',
+                                    '--extra-vars', "neo4j_import_cypher_file=" + trainFile],
                                    cwd=AnsibleRunner.ansible_home,
                                    stderr=subprocess.STDOUT)
-        pass
+        process.communicate()
+        return

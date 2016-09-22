@@ -36,6 +36,14 @@ class RecommendationsService @Autowired constructor(val neo4jOperations: Neo4jOp
             return 0.0
         }
     }
+
+    fun predictedRating(userId: String, movieId: String): Double {
+        val cypherQuery = neo4jQueriesHolder.findQuery("predictedRating")
+
+        val query = neo4jOperations.query(cypherQuery, mapOf(Pair("userId", userId.toLong()), Pair("movieId", movieId.toLong())))
+        println()
+        return query.first().get("predictedRating").toString().toDouble()
+    }
 }
 
 data class MoviesPredictionScore(val prediction: Double, val movie_id: Long, val ratings_count: Long)
