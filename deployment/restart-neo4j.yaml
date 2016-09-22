@@ -1,0 +1,6 @@
+---
+
+- hosts: localhost
+  sudo: False
+  roles:
+    - restart-neo4j

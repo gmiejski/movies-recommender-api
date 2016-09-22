@@ -8,6 +8,6 @@ client.createNeo4jInstances()
 client.createApplicationInstances()
 client.wait_for_startup()
 
-AnsibleRunner.start_tests(client.application_ips())
+AnsibleRunner.start_performance_tests(client.application_ips())
 
 client.killAllInstances()

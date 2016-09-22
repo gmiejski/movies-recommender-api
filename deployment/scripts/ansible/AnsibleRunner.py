@@ -17,6 +17,15 @@ class AnsibleRunner:
         return
 
     @staticmethod
+    def runLocalApplication():
+        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'run-application-local.yaml',
+                                    '-vvv'],
+                                   cwd=AnsibleRunner.ansible_home,
+                                   stderr=subprocess.STDOUT)
+        process.communicate()
+        return
+
+    @staticmethod
     def create_ips_argument(ips):
         return ",".join(ips) + ','
 
@@ -25,7 +34,7 @@ class AnsibleRunner:
         return "neo4j_host=" + neo4j_host
 
     @staticmethod
-    def start_tests(application_ips):
+    def start_performance_tests(application_ips):
         host = 'http://' + application_ips[0] + ':8080'
         process = subprocess.Popen(['./gradlew', 'loadTest',
                                     '-Psimulation=org.miejski.movies.recommender.performance.RatingsSimulation',
@@ -34,3 +43,15 @@ class AnsibleRunner:
                                    stderr=subprocess.STDOUT)
         process.communicate()
         return
+
+    @staticmethod
+    def killLocalApplication():
+        pass  # TODO
+
+    @staticmethod
+    def restartLocalNeo4j(trainFile):
+        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'run-application-local.yaml',
+                                    '-vvv'],
+                                   cwd=AnsibleRunner.ansible_home,
+                                   stderr=subprocess.STDOUT)
+        pass

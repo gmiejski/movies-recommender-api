@@ -24,7 +24,7 @@ open class Neo4jConfig : Neo4jConfiguration() {
         config
             .driverConfiguration()
             .setDriverClassName("org.neo4j.ogm.drivers.http.driver.HttpDriver")
-            .setURI(buildUri);
+            .setURI(buildUri)
         return config;
     }
 

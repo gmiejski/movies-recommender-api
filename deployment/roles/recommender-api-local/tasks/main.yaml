@@ -1,0 +1,9 @@
+---
+
+- name: kill previously running application
+  command: pkill -f "movies-recommender-service-0.1.0.jar"
+  ignore_errors: True
+- name: build application
+  shell: ./gradlew movies-recommender-service:build chdir={{ recommender_api.home_folder }}
+- name: run application
+  shell: nohup java -jar -Dneo4j.host=localhost movies-recommender-service-0.1.0.jar chdir={{ recommender_api.run_folder }} &

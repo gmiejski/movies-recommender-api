@@ -1,5 +1,6 @@
-import collections
 from itertools import chain
+
+import collections
 
 
 def flatten(listOfLists):
@@ -21,6 +22,8 @@ class FoldsCreator():
             usersRatings = collections.defaultdict(list)
 
             for line in ratingsFile:
+                if line.startswith("user_id"):
+                    continue
                 split = line.replace("\n", '').split(self.data_separator)
                 user_hash = split[0].__hash__() % k
                 usersRatings[user_hash].append(split)
@@ -49,7 +52,7 @@ class FoldsCreator():
 
             base_training_ratings = flatten(users_ratings_buckets[:i] + users_ratings_buckets[i + 1:])
             real_training_ratings = list(
-                    filter(lambda r: int(r[3]) < point_in_time, base_training_ratings)) + query_ratings
+                filter(lambda r: int(r[3]) < point_in_time, base_training_ratings)) + query_ratings
 
             self.assert_proper_folds(real_training_ratings, real_test_ratings)
 
@@ -67,6 +70,7 @@ class FoldsCreator():
 
     def write_data(self, output_file_name, real_training_ratings):
         with self.get_output_file(output_file_name) as ratingsFile:
+            ratingsFile.write("user_id\tmovie_id\trating\ttimestamp\n")
             for x in real_training_ratings:
                 ratingsFile.write(self.data_separator.join(x) + "\n")
 
@@ -82,4 +86,10 @@ class FoldsCreator():
 
 
 if __name__ == "__main__":
-    FoldsCreator().create("/Users/grzegorz.miejski/home/workspaces/datasets/movielens/ml-100k/u.data")
+    # prefix = "ml-100k"
+    # prefix = "ml-1m"
+    # prefix = "ml-10m"
+    prefix = "ml-20m"
+    FoldsCreator(prefix,
+                 "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/" + prefix + "/cross_validation") \
+        .create("/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/" + prefix + "/full.data")

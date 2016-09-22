@@ -1,0 +1,5 @@
+recommender_api:
+  home_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api
+  run_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/movies-recommender-service/build/libs
+
+neo4j_host: localhost
