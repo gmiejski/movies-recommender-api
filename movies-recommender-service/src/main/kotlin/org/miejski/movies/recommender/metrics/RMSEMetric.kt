@@ -1,15 +1,12 @@
 package org.miejski.movies.recommender.metrics
 
-import org.springframework.stereotype.Service
-
-@Service
 open class RMSEMetric {
-
-    fun calculate(predictedRatings: List<Pair<Double, Double>>): Double {
-        // TODO
-
-
-        return 1.0
+    companion object {
+        fun calculate(predictedRatings: List<Pair<Double, Double>>): Double {
+            val mse = predictedRatings
+                .map { (it.first - it.second) * (it.first - it.second) }
+                .sum() / predictedRatings.size.toDouble()
+            return Math.abs(mse)
+        }
     }
-
 }

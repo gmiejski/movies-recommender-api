@@ -1,0 +1,8 @@
+run_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts
+python_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner/bin/python
+
+metrics:
+  result_folder: /tmp/magisterka/metrics
+
+venv: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner
+folds_data_directory: #

@@ -15,10 +15,10 @@ open class MetricsController(@Autowired val accuracyMetricService: AccuracyMetri
         value = "/metrics/accuracy",
         method = arrayOf(RequestMethod.POST),
         consumes = arrayOf(MediaType.APPLICATION_JSON_VALUE))
-    open fun accuracyMetrics(@RequestBody runMetricsRequest: RunMetricsRequest): ResponseEntity<Void> {
-        println("jestem")
-        accuracyMetricService.run(runMetricsRequest.testFilePath)
-        return ResponseEntity.ok().build()
+    open fun accuracyMetrics(@RequestBody runMetricsRequest: RunMetricsRequest): ResponseEntity<Double> {
+//        val resultRmse = accuracyMetricService.run(runMetricsRequest.testFilePath)
+        val resultRmse = 1.0
+        return ResponseEntity.ok(resultRmse)
     }
 
 }
