@@ -3,4 +3,4 @@
 - hosts: localhost
   sudo: False
   roles:
-    - metrics-local
+    - kill-local-recommender-api

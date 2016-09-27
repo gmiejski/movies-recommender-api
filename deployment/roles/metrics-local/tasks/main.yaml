@@ -8,3 +8,6 @@
   template: src=venv_exec.j2 dest={{ venv }}/exec mode=755
 - name: run python script with acc metrics (from virtualenv)
   shell: "{{ venv }}/exec python {{ run_folder }}/metrics_local_test_main.py chdir={{ run_folder }} {{ folds_data_directory }}"
+  register: python_out
+- name: Debug
+  debug: var=python_out

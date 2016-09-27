@@ -46,7 +46,12 @@ class AnsibleRunner:
 
     @staticmethod
     def killLocalApplication():
-        pass  # TODO
+        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'kill-application-local.yaml',
+                                    '-vvv'],
+                                   cwd=AnsibleRunner.ansible_home,
+                                   stderr=subprocess.STDOUT)
+        process.communicate()
+        return
 
     @staticmethod
     def restartLocalNeo4j(trainFile):

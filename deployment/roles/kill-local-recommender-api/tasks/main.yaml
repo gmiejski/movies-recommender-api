@@ -1,0 +1,8 @@
+---
+
+#- name: kill previously running application
+#  command: pkill -f "movies-recommender-service-0.1.0.jar"
+#  ignore_errors: True
+- name: kill previously running application
+  command: ps ax | grep 'org.miejski.movies.recommender.Application' | awk -F ' ' '{print $1}' | xargs kill -9
+  ignore_errors: True

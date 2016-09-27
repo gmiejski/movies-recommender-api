@@ -3,4 +3,4 @@
 - hosts: localhost
   sudo: False
   roles:
-    - recommender-api-local
+    - start-local-recommender-api
