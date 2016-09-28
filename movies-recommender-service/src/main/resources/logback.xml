@@ -2,6 +2,19 @@
 
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="org.miejski.movies.recommender.configuration.ClassLoggingFilter"/>
+        <!--<filter class="ch.qos.logback.core.filter.EvaluatorFilter">-->
+        <!--<evaluator>-->
+        <!--<matcher>-->
+        <!--<Name>neo4j logging</Name>-->
+        <!--&lt;!&ndash; filter out odd numbered statements &ndash;&gt;-->
+        <!--<regex>http.request.HttpRequest</regex>-->
+        <!--</matcher>-->
+        <!--<expression>odd.matches(formattedMessage)</expression>-->
+        <!--</evaluator>-->
+        <!--<OnMismatch>NEUTRAL</OnMismatch>-->
+        <!--<OnMatch>DENY</OnMatch>-->
+        <!--</filter>-->
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
@@ -17,21 +30,22 @@
     </appender>
 
     <springProfile name="!integration">
-        <logger name="pl.allegro.profile.main" level="DEBUG"/>
-        <root level="INFO">
+        <logger name="org.miejski.movies.recommender" level="WARN"/>
+
+        <root level="WARN">
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="FILE"/>
         </root>
     </springProfile>
 
     <springProfile name="integration">
-        <logger name="pl.allegro.profile.main" level="DEBUG"/>
+        <logger name="org.miejski.movies.recommender" level="DEBUG"/>
         <root level="INFO">
             <appender-ref ref="STDOUT"/>
         </root>
     </springProfile>
 
-    <logger name="org.miejski.movies.recommender" level="debug"/>
+    <logger name="org.miejski.movies.recommender" level="WARN"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>

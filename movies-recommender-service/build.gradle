@@ -42,6 +42,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jackson
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jackson
 
+    compile group: 'io.dropwizard', name: 'dropwizard-core', version: '1.0.2'
+
 
     testCompile group: 'org.spockframework', name: 'spock-core', version: spock
     testCompile group: 'org.spockframework', name: 'spock-spring', version: spock
