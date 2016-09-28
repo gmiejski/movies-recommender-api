@@ -17,7 +17,8 @@ open class AccuracyMetricService @Autowired constructor(val recommendationsServi
         logger.info("Looking for predictions for {} ratings.", realRatings.size.toString())
         val start = currentTimeMillis()
 
-        val predictedRatings = runAsyncAndGather(realRatings, { joinWithPredictedRating(it) })
+        val predictedRatings = runAsyncAndGather(realRatings,
+            { Pair(it.rating, recommendationsService.predictedRating(it.person, it.movie)) })
             .filter { it.second > 0 }
 
         val result = RMSEMetric.calculate(predictedRatings)
@@ -29,10 +30,6 @@ open class AccuracyMetricService @Autowired constructor(val recommendationsServi
         logger.info("Found rating for {} movies", predictedRatings.size)
         logger.info("Resulting rmse = {} in time: {} seconds", result.toString(), timeInSeconds)
         return result
-    }
-
-    fun joinWithPredictedRating(it: RealRating): () -> Pair<Double, Double> {
-        return { Pair(it.rating, recommendationsService.predictedRating(it.person, it.movie)) }
     }
 
     fun finish(): MetricsResult<Double> {

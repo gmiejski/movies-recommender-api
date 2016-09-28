@@ -24,9 +24,9 @@ abstract class MetricsService {
     }
 
     protected fun <T, D> runAsyncAndGather(realRatings: List<RealRating>,
-                                           f: (RealRating) -> () -> (Pair<T, D>)): List<Pair<T, D>> {
+                                           f: (RealRating) -> (Pair<T, D>)): List<Pair<T, D>> {
         val tasks = realRatings.map {
-            Callable<Pair<T, D>>(f(it))
+            Callable<Pair<T, D>>({ f(it) })
         }
 
         val newFixedThreadPool = Executors.newFixedThreadPool(15)
