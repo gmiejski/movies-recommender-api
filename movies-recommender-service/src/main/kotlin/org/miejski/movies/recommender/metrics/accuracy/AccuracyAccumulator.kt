@@ -1,4 +1,4 @@
-package org.miejski.movies.recommender.metrics
+package org.miejski.movies.recommender.metrics.accuracy
 
 import java.util.*
 

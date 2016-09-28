@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 open class RecommendationsService @Autowired constructor(val neo4jOperations: Neo4jOperations,
-                                                         val neo4jQueriesHolder: Neo4jQueriesHolder) : RecommendationServiceI {
+                                                         val neo4jQueriesHolder: Neo4jQueriesHolder) : RecommendationsServiceI {
     override fun findRecommendedMovies(userId: Long): List<MovieRecommendation> {
 
         val cypherQuery = neo4jQueriesHolder.recommendationCypher()

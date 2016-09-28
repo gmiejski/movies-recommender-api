@@ -1,7 +1,8 @@
 package org.miejski.movies.recommender.metrics
 
-import com.codahale.metrics.MetricRegistry
-import org.miejski.movies.recommender.recommendations.RecommendationServiceI
+import org.miejski.movies.recommender.metrics.accuracy.AccuracyMetricService
+import org.miejski.movies.recommender.metrics.accuracy.RealRating
+import org.miejski.movies.recommender.recommendations.RecommendationsServiceI
 import spock.lang.Specification
 
 import static spock.util.matcher.HamcrestMatchers.closeTo
@@ -9,11 +10,11 @@ import static spock.util.matcher.HamcrestMatchers.closeTo
 class AccuracyMetricServiceSpec extends Specification {
 
     def AccuracyMetricService accuracyMetricService
-    def RecommendationServiceI recommendationsService
+    def RecommendationsServiceI recommendationsService
 
     void setup() {
-        recommendationsService = Mock(RecommendationServiceI)
-        accuracyMetricService = new AccuracyMetricService(recommendationsService, Mock(MetricRegistry))
+        recommendationsService = Mock(RecommendationsServiceI)
+        accuracyMetricService = new AccuracyMetricService(recommendationsService)
     }
 
     def "should join 2 results and return a result"() {
