@@ -17,17 +17,25 @@ class AccuracyMetrics():
 
     def finish(self, test_name):
         print("Finishing accuracy metrics for " + test_name)
-        rmse = sum(self.fold_results) / float(len(self.fold_results))
-        print("Total RMSE = " + str(rmse))
-        self.save_result(test_name, rmse)
+        response = requests.get('http://localhost:8080/metrics/accuracy/result')
+        response_json = response.json()
+        rmse = response_json["result"]
+        time = response_json["timeInSeconds"]
+        percentageOfRatingsFound = response_json["others"]["percentageOfFoundRatings"]
+        print("Total RMSE = {}\nRatings found for movies: {}%\nTotal time in seconds: {}".format(rmse,
+                                                                                                 percentageOfRatingsFound,
+                                                                                                 time))
+        self.save_result(test_name, rmse, time, percentageOfRatingsFound)
         return rmse
 
-    def save_result(self, test_name, rmse):
+    def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
         if not os.path.exists(self.result_folder + test_name):
             os.makedirs(self.result_folder + test_name)
         with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
             result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
-            result_file.write("Final RMSE = " + str(rmse) + "\n")
+            result_file.write("Final RMSE = {}\n".format(rmse))
+            result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
+            result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
 
 
 if __name__ == "__main__":

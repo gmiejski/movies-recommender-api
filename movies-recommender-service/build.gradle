@@ -59,6 +59,9 @@ dependencies {
     testCompile group: 'org.neo4j.test', name: 'neo4j-harness', version: "$neo4j"
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: "$spring_boot_version"
     testCompile group: 'org.springframework', name: 'spring-test', version: '4.3.2.RELEASE'
+    // https://mvnrepository.com/artifact/cglib/cglib-nodep
+    testCompile group: 'cglib', name: 'cglib-nodep', version: '2.2'
+
 }
 
 jar {

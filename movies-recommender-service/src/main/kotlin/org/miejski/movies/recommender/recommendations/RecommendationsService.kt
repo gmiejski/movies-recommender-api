@@ -7,9 +7,9 @@ import org.springframework.data.neo4j.template.Neo4jOperations
 import org.springframework.stereotype.Service
 
 @Service
-class RecommendationsService @Autowired constructor(val neo4jOperations: Neo4jOperations,
-                                                    val neo4jQueriesHolder: Neo4jQueriesHolder) {
-    fun findRecommendedMovies(userId: Long): List<MovieRecommendation> {
+open class RecommendationsService @Autowired constructor(val neo4jOperations: Neo4jOperations,
+                                                         val neo4jQueriesHolder: Neo4jQueriesHolder) : RecommendationServiceI {
+    override fun findRecommendedMovies(userId: Long): List<MovieRecommendation> {
 
         val cypherQuery = neo4jQueriesHolder.recommendationCypher()
 
@@ -37,7 +37,7 @@ class RecommendationsService @Autowired constructor(val neo4jOperations: Neo4jOp
         }
     }
 
-    fun predictedRating(userId: Long, movieId: Long): Double {
+    override fun predictedRating(userId: Long, movieId: Long): Double {
         val cypherQuery = neo4jQueriesHolder.findQuery("predictedRating")
 
         val query = neo4jOperations.query(cypherQuery, mapOf(

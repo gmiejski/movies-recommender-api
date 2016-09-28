@@ -20,4 +20,11 @@ open class MetricsController(@Autowired val accuracyMetricService: AccuracyMetri
         return ResponseEntity.ok(resultRmse)
     }
 
+    @RequestMapping(
+        value = "/metrics/accuracy/result",
+        method = arrayOf(RequestMethod.GET)
+    )
+    open fun getAccuracyMetricResult(): ResponseEntity<MetricsResult<Double>> {
+        return ResponseEntity.ok(accuracyMetricService.finish())
+    }
 }
