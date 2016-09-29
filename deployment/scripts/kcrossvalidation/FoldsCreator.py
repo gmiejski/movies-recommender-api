@@ -1,6 +1,6 @@
-from itertools import chain
-
 import collections
+from collections import defaultdict
+from itertools import chain
 
 
 def flatten(listOfLists):
@@ -36,28 +36,40 @@ class FoldsCreator():
 
             self.createFolds(usersRatings, k)
 
-    def split_test_for_query(self, test_set, query_ratio):
-
-        query_index = int(query_ratio * len(test_set))
-        sorted_by_date = list(sorted(test_set, key=lambda x: int(x[3])))
-        query_ratings = sorted_by_date[:query_index]
-        real_test_ratings = sorted_by_date[query_index:]
-        return query_ratings, real_test_ratings
-
     def createFolds(self, hashed_users_ratings, k, query_ratio=0.8):
         users_ratings_buckets = list(map(lambda x: x[1], hashed_users_ratings.items()))
         for i in range(0, k):
-            query_ratings, real_test_ratings = self.split_test_for_query(hashed_users_ratings[i], query_ratio)
-            point_in_time = int(query_ratings[-1][3])
+            query_ratings, unsorted_real_test_ratings = self.split_test_for_query(hashed_users_ratings[i], query_ratio)
+            real_test_ratings = sorted(unsorted_real_test_ratings, key=lambda x: x[3])
+            sorted_query_ratings = sorted(query_ratings, key=lambda x: x[3])
+            point_in_time = int(sorted_query_ratings[-1][3])
 
             base_training_ratings = flatten(users_ratings_buckets[:i] + users_ratings_buckets[i + 1:])
-            real_training_ratings = list(
-                filter(lambda r: int(r[3]) < point_in_time, base_training_ratings)) + query_ratings
 
-            self.assert_proper_folds(real_training_ratings, real_test_ratings)
+            self.assert_proper_split(query_ratings, real_test_ratings)
+
+            real_training_ratings = list(
+                    filter(lambda r: int(r[3]) < point_in_time, base_training_ratings)) + sorted_query_ratings
 
             self.write_training_data(real_training_ratings, i)
             self.write_test_data(real_test_ratings, i)
+
+    def split_test_for_query(self, test_set, query_ratio):
+        real_test_set = []
+        query_ratings = []
+
+        users_ratings = defaultdict(list)
+        for rating in test_set:
+            users_ratings[rating[0]].append(rating)
+
+        for user, ratings in users_ratings.items():
+            ratings_sorted_by_date = list(sorted(ratings, key=lambda x: x[3]))
+            query_index = int(query_ratio * len(ratings_sorted_by_date))
+            user_query_ratings = ratings_sorted_by_date[:query_index]
+            user_real_test_ratings = ratings_sorted_by_date[query_index:]
+            real_test_set += user_real_test_ratings
+            query_ratings += user_query_ratings
+        return query_ratings, real_test_set
 
     def get_output_file(self, output_file_name):
         if self.output_directory != "":
@@ -78,18 +90,18 @@ class FoldsCreator():
         output_file_name = self.folds_filename_prefix + "_test_" + str(i)
         self.write_data(output_file_name, real_training_ratings)
 
-    def assert_proper_folds(self, real_training_ratings, real_test_ratings):
+    def assert_proper_split(self, query_ratings, real_test_ratings):
         if self.with_asserts:
-            latest_training = max(map(lambda x: int(x[3]), real_training_ratings))
-            earliest_test = min(map(lambda x: int(x[3]), real_test_ratings))
-            assert latest_training <= earliest_test
+            latest_query = max(map(lambda x: int(x[3]), query_ratings))
+            latest_test = max(map(lambda x: int(x[3]), real_test_ratings))
+            assert latest_query <= latest_test
 
 
 if __name__ == "__main__":
-    # prefix = "ml-100k"
+    prefix = "ml-100k"
     # prefix = "ml-1m"
     # prefix = "ml-10m"
-    prefix = "ml-20m"
+    # prefix = "ml-20m"
     FoldsCreator(prefix,
                  "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/" + prefix + "/cross_validation") \
         .create("/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/" + prefix + "/full.data")

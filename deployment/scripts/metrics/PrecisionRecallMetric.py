@@ -2,14 +2,14 @@ import os
 import requests
 
 
-class AccuracyMetrics():
-    def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/"):
+class PrecisionRecallMetric():
+    def __init__(self, result_folder="/tmp/magisterka/metrics/precisionAndRecall/"):
         self.result_folder = result_folder
         self.fold_results = []
 
     def run(self, testFilePath, test_name):
-        print("Running accuracy metrics: " + test_name)
-        response = requests.post('http://localhost:8080/metrics/accuracy',
+        print("Running precision metrics: " + test_name)
+        response = requests.post('http://localhost:8080/metrics/precision',
                                  json={'testFilePath': testFilePath, 'testName': test_name}, )
         response_json = response.json()
         self.fold_results.append(response_json)
@@ -42,6 +42,6 @@ if __name__ == "__main__":
     metrics = AccuracyMetrics()
     test_name = "testNameMote"
     metrics.runAccuracyMetrics(
-        "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
+            "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
             test_name)
     metrics.finish(test_name)

@@ -20,4 +20,8 @@ open class UsersService @Autowired constructor(val usersRepository: UsersReposit
             usersRepository.addMovieRating(userId, movieRating.rating, movieRating.movieId)
         }
     }
+
+    fun getMeanRating(userId: Long): Double {
+        return usersRepository.meanRating(userId)
+    }
 }

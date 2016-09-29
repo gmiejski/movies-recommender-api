@@ -7,7 +7,7 @@ import org.miejski.movies.recommender.movies.MovieRepository
 import org.miejski.movies.recommender.users.api.MovieRatingRequest
 import org.springframework.beans.factory.annotation.Autowired
 
-class UsersServiceSpec extends IntegrationSpec {
+class UsersServiceIT extends IntegrationSpec {
 
     @Autowired
     UsersRepository usersRepository
@@ -69,5 +69,16 @@ class UsersServiceSpec extends IntegrationSpec {
             movie.movie_id == savedMovie.movie_id
             person.user_id == savedUser.user_id
         }
+    }
+
+    def "should return mean rating for given user"() {
+        def savedUser = usersRepository.save(new Person(null, 10L, []))
+        def savedMovie = movieRepository.save(new Movie(null, 100))
+        def savedMovie2 = movieRepository.save(new Movie(null, 101))
+        usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 4.0))
+        usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie2.movie_id, 5.0))
+
+        expect:
+        usersService.getMeanRating(savedUser.user_id) == 4.5.toDouble()
     }
 }

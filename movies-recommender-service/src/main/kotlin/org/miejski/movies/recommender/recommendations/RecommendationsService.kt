@@ -16,7 +16,7 @@ open class RecommendationsService @Autowired constructor(val neo4jOperations: Ne
         val result = neo4jOperations.query(cypherQuery, mapOf(Pair("userId", userId)))
             .castTo(MoviesPredictionScore::class.java)
 
-        return findBestRecommendations(result).sortedByDescending { it.score }.take(10)
+        return findBestRecommendations(result).sortedByDescending { it.score }.take(100)
     }
 
     private fun findBestRecommendations(neighboursPredictionScores: List<MoviesPredictionScore>): List<MovieRecommendation> {

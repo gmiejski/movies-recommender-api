@@ -16,17 +16,20 @@ abstract class MetricsService {
     }
 
     protected fun toRating(line: String): RealRating {
-        val splittedLine = line.split("\t")
-        return RealRating(splittedLine[0].toLong(),
-            splittedLine[1].toLong(),
-            splittedLine[2].toDouble(),
-            splittedLine[3].toLong())
+        val splitLines = line.split("\t")
+        return RealRating(splitLines[0].toLong(),
+            splitLines[1].toLong(),
+            splitLines[2].toDouble(),
+            splitLines[3].toLong())
     }
 
-    protected fun <T, D> runAsyncAndGather(realRatings: List<RealRating>,
-                                           f: (RealRating) -> (Pair<T, D>)): List<Pair<T, D>> {
-        val tasks = realRatings.map {
-            Callable<Pair<T, D>>({ f(it) })
+    /**
+     * Function that accepts list of elements S, that each will produce a resulting pair of types <T,D>
+     */
+    protected fun <S, R> runAsyncAndGather(inputList: List<S>,
+                                           f: (S) -> (R)): List<R> {
+        val tasks = inputList.map {
+            Callable<R>({ f(it) })
         }
 
         val newFixedThreadPool = Executors.newFixedThreadPool(15)

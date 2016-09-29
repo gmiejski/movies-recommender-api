@@ -9,7 +9,7 @@ import org.miejski.movies.recommender.movies.MovieRepository
 import org.miejski.movies.recommender.users.api.MovieRatingRequest
 import org.springframework.beans.factory.annotation.Autowired
 
-class RatingsIntegrationSpec extends IntegrationSpec {
+class RatingsIntegrationIT extends IntegrationSpec {
 
     @Autowired
     UsersRepository usersRepository
