@@ -6,7 +6,20 @@ import java.nio.file.Paths
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 
-abstract class MetricsService {
+abstract class MetricsService<T> {
+
+    private var start: Long? = null
+
+    fun start() {
+        start = System.currentTimeMillis()
+    }
+
+    fun timeInSeconds(): Double {
+        if (start != null) {
+            return (System.currentTimeMillis().toDouble() - start!!.toDouble()) / 1000.0
+        }
+        throw IllegalStateException("Cannot measure time, without starting it first!")
+    }
 
     fun run(testFilePath: String?): Double {
         val allLines = Files.readAllLines(Paths.get(testFilePath))
@@ -41,4 +54,6 @@ abstract class MetricsService {
     }
 
     abstract fun run(realRatings: List<RealRating>): Double
+
+    abstract fun finish(): MetricsResult<T>
 }

@@ -41,7 +41,7 @@ class AccuracyMetrics():
 if __name__ == "__main__":
     metrics = AccuracyMetrics()
     test_name = "testNameMote"
-    metrics.runAccuracyMetrics(
+    metrics.run(
         "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
             test_name)
     metrics.finish(test_name)
