@@ -42,4 +42,12 @@ open class MetricsController @Autowired constructor(val accuracyMetricService: A
         return ResponseEntity.ok(precisionAndRecallService.run(runMetricsRequest.testFilePath))
     }
 
+    @RequestMapping(
+        value = "/metrics/precision/result",
+        method = arrayOf(RequestMethod.GET)
+    )
+    open fun getDecisionSupportResult(): ResponseEntity<MetricsResult<Pair<Double, Double>>> {
+        return ResponseEntity.ok(precisionAndRecallService.finish())
+    }
+
 }

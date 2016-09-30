@@ -12,31 +12,28 @@ class PrecisionRecallMetric():
                       json={'testFilePath': testFilePath, 'testName': test_name}, )
 
     def finish(self, test_name):
-        print("Finishing accuracy metrics for " + test_name)
-        response = requests.get('http://localhost:8080/metrics/accuracy/result')
+        print("Finishing precision and recall metrics for " + test_name)
+        response = requests.get('http://localhost:8080/metrics/precision/result')
         response_json = response.json()
-        rmse = response_json["result"]
+        precision = response_json["result"]['first']
+        recall = response_json["result"]['second']
         time = response_json["timeInSeconds"]
-        percentageOfRatingsFound = response_json["others"]["percentageOfFoundRatings"]
-        print("Total RMSE = {}\nRatings found for movies: {}%\nTotal time in seconds: {}".format(rmse,
-                                                                                                 percentageOfRatingsFound,
-                                                                                                 time))
-        self.save_result(test_name, rmse, time, percentageOfRatingsFound)
-        return rmse
+        print("Precision = {}\nRecall = {}\nTotal time in seconds: {}".format(precision, recall, time))
+        self.save_result(test_name, precision, recall, time)
+        return precision
 
-    def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
+    def save_result(self, test_name, precision, recall, time):
         if not os.path.exists(self.result_folder + test_name):
             os.makedirs(self.result_folder + test_name)
-        with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
-            result_file.write("Final precision = {}\n".format(rmse))
-            result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
+        with open(self.result_folder + test_name + "/precision.log", mode="w") as result_file:
+            result_file.write("Final precision = {}\n".format(precision))
+            result_file.write("Final recall = {}\n".format(recall))
             result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
-
 
 if __name__ == "__main__":
     metrics = PrecisionRecallMetric()
     test_name = "testNameMote"
     metrics.run(
-            "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
-            test_name)
+        "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
+        test_name)
     metrics.finish(test_name)

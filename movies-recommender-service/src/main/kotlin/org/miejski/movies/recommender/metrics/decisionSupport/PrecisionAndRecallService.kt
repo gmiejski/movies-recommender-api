@@ -56,12 +56,32 @@ open class PrecisionAndRecallService @Autowired constructor(
         }.toMap()
     }
 
-    private fun calculateGoodRecommendationsCount(moviesLikedByUsers: Map<Long, List<Long>>, usersWithRatingsAndReco: List<Triple<Long, List<RealRating>, List<MovieRecommendation>>>): Map<Long, Int> {
+    private fun calculateGoodRecommendationsCount(moviesLikedByUsers: Map<Long, List<Long>>,
+                                                  usersWithRatingsAndReco: List<Triple<Long, List<RealRating>, List<MovieRecommendation>>>): Map<Long, Int> {
         return usersWithRatingsAndReco.map { userRecord ->
             Pair(
                 userRecord.first,
                 userRecord.third.map { it.movieId }.count { moviesLikedByUsers[userRecord.first]!!.contains(it) })
         }.toMap()
+    }
+
+    private fun precAndRecallAtN(moviesLikedByUsers: Map<Long, List<Long>>, usersWithRatingsAndReco: List<Triple<Long, List<RealRating>, List<MovieRecommendation>>>, n: Int): Pair<Double, Double> {
+
+        val recoMapByUser = usersWithRatingsAndReco.map { Pair(it.first, it.third.take(n)) }.toMap()
+
+        val goodRecommendationsCountPerUser = usersWithRatingsAndReco.map { userRecord ->
+            Pair(
+                userRecord.first,
+                userRecord.third.take(n).map { it.movieId }.count { moviesLikedByUsers[userRecord.first]!!.contains(it) })
+        }.toMap()
+
+
+        val precisionPerUser = recoMapByUser.map { goodRecommendationsCountPerUser.get(it.key)!!.toDouble() / recoMapByUser.get(it.key)!!.count() }
+
+        val recallPerUser = recoMapByUser
+            .map { Pair(it.key, goodRecommendationsCountPerUser.get(it.key)!!.toDouble() / moviesLikedByUsers.get(it.key)!!.count()) }
+            .map { Pair(it.first, if (it.second.equals(Double.NaN)) 0.0 else it.second) }
+        return Pair(precisionPerUser.average(), recallPerUser.map { it.second }.average())
     }
 
     override fun finish(): MetricsResult<Pair<Double, Double>> {
