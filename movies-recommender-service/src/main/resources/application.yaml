@@ -5,3 +5,7 @@ neo4j:
   port: 7474
   user: neo4j
   password: neo4j1234
+
+#spring.data.neo4j.password: neo4j1234
+#spring.data.neo4j.uri: http://neo4j:neo4j1234@${neo4j.host}:${neo4j.port}
+#spring.data.neo4j.username: neo4j

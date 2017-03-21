@@ -1,4 +1,5 @@
-LOAD CSV WITH HEADERS FROM "file:///Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-computing/src/main/resources/u.data" AS line
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM "file:///Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/full.data" AS line
 WITH line
 
 MERGE (b:Person {user_id: TOINT(line.user_id)} )
