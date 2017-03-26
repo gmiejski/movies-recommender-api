@@ -2,7 +2,7 @@ package org.miejski.movies.recommender.domain.metrics.accuracy
 
 import java.util.*
 
-class AccuracyAccumulator() {
+class AccuracyAccumulator {
 
     val times = ArrayList<Double>()
     val results = ArrayList<Double>()

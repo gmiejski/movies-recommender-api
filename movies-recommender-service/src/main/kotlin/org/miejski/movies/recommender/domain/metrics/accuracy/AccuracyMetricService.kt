@@ -1,6 +1,6 @@
 package org.miejski.movies.recommender.domain.metrics.accuracy
 
-import org.miejski.movies.recommender.domain.metrics.MetricsResult
+import org.miejski.movies.recommender.api.metrics.MetricsResult
 import org.miejski.movies.recommender.domain.metrics.MetricsService
 import org.miejski.movies.recommender.domain.recommendations.RecommendationsServiceI
 import org.slf4j.LoggerFactory
@@ -14,7 +14,7 @@ open class AccuracyMetricService @Autowired constructor(val recommendationsServi
 
     override fun run(realRatings: List<RealRating>): Double {
         start()
-        logger.info("Looking for predictions for {} ratings.", realRatings.size.toString())
+        logger.info("Looking for predictions for {} ratings.", realRatings.size)
         val predictedRatings = runAsyncAndGather(realRatings,
             { Pair(it.rating, recommendationsService.predictedRating(it.person, it.movie)) })
             .filter { it.second > 0 }
@@ -25,7 +25,7 @@ open class AccuracyMetricService @Autowired constructor(val recommendationsServi
         accuracyAccumulator.saveResult(result, timeInSeconds, predictedRatings.size, realRatings.size)
 
         logger.info("Found rating for {} movies", predictedRatings.size)
-        logger.info("Resulting rmse = {} in time: {} seconds", result.toString(), timeInSeconds)
+        logger.info("Resulting rmse = {} in time: {} seconds", result, timeInSeconds)
         return result
     }
 

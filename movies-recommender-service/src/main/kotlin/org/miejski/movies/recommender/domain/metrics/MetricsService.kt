@@ -1,5 +1,6 @@
 package org.miejski.movies.recommender.domain.metrics
 
+import org.miejski.movies.recommender.api.metrics.MetricsResult
 import org.miejski.movies.recommender.domain.metrics.accuracy.RealRating
 import java.nio.file.Files
 import java.nio.file.Paths

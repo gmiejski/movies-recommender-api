@@ -1,6 +1,6 @@
 package org.miejski.movies.recommender.domain.metrics.rank
 
-import org.miejski.movies.recommender.domain.metrics.MetricsResult
+import org.miejski.movies.recommender.api.metrics.MetricsResult
 import org.miejski.movies.recommender.domain.metrics.MetricsService
 import org.miejski.movies.recommender.domain.metrics.accuracy.RealRating
 import org.miejski.movies.recommender.domain.recommendations.RecommendationsServiceI

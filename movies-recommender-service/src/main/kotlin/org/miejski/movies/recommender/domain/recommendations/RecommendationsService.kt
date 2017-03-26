@@ -38,7 +38,12 @@ open class RecommendationsService @Autowired constructor(val session: Session,
     }
 
     override fun predictedRating(userId: Long, movieId: Long): Double {
-        val cypherQuery = neo4jQueriesHolder.findQuery("predictedRating")
+        return predictedRating(userId, movieId, "predictedRating")
+    }
+
+    override fun predictedRating(userId: Long, movieId: Long, query: String): Double {
+
+        val cypherQuery = neo4jQueriesHolder.findQuery(query)
 
         val query = session.query(cypherQuery, mapOf(
             Pair("userId", userId),
@@ -50,6 +55,7 @@ open class RecommendationsService @Autowired constructor(val session: Session,
         }
         return -1.0
     }
+
 }
 
 data class MoviesPredictionScore(val prediction: Double, val movie_id: Long, val ratings_count: Long)
@@ -59,4 +65,5 @@ data class MovieRecommendation(val movieId: Long, val prediction: Double, val sc
 interface RecommendationsServiceI {
     fun findRecommendedMovies(userId: Long): List<MovieRecommendation>
     fun predictedRating(userId: Long, movieId: Long): Double
+    fun predictedRating(userId: Long, movieId: Long, query: String): Double
 }

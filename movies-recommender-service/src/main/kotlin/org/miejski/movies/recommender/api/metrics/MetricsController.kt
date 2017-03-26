@@ -1,4 +1,4 @@
-package org.miejski.movies.recommender.domain.metrics
+package org.miejski.movies.recommender.api.metrics
 
 import org.miejski.movies.recommender.domain.metrics.accuracy.AccuracyMetricService
 import org.miejski.movies.recommender.domain.metrics.decisionSupport.PrecisionAndRecallService
