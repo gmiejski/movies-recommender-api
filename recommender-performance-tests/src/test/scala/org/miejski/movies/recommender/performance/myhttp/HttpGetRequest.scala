@@ -14,7 +14,7 @@ import scala.util.Try
 
 class HttpGetRequest[A](url: String = "http://localhost:8080")(implicit mf: Manifest[A]) {
   private implicit val formats = org.json4s.DefaultFormats
-  private val DefaultTimeout = Duration(5, SECONDS).toMillis.toInt
+  private val DefaultTimeout = Duration(1, SECONDS).toMillis.toInt
   private val logger = LoggerFactory.getLogger(classOf[HttpGetRequest[A]])
   val httpClient: HttpClient = HttpClients.createDefault()
   val parser: String => A = read[A]

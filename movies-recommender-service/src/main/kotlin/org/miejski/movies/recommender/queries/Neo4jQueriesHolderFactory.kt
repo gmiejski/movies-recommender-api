@@ -20,6 +20,7 @@ class Neo4jQueriesHolderFactory : AbstractFactoryBean<Neo4jQueriesHolder>() {
     override fun createInstance(): Neo4jQueriesHolder? {
         return Neo4jQueriesHolder(mapOf(
             Pair("recommendationCypher", loadCypherQuery("approximated_neighbours_recommendation.cypher")),
+            Pair("recommendationCypher2", loadCypherQuery("approximated_neighbours_recommendation.cypher")),
             Pair("predictedRating", loadCypherQuery("predicted_rating.cypher"))))
     }
 

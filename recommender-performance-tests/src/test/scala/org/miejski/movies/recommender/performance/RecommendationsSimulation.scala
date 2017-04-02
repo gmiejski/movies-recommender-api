@@ -18,7 +18,7 @@ class RecommendationsSimulation extends Simulation {
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
 
-  val runTime = 5 minutes
+  val runTime = 1 minutes
   val maxUsers = 30
   val waitInterval = 500 milliseconds
 

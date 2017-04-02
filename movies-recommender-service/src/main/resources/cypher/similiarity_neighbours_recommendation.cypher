@@ -1,8 +1,14 @@
-MATCH (b:Person)-[r:Rated]->(m:Movie), (b)-[s:Similarity]-(a:Person {user_id: 115})
-WHERE NOT((a)-[:Rated]->(m))
-WITH m, s.similarity AS similarity, r.rating AS rating
-ORDER BY m.movie_id, similarity DESC
-WITH m.movie_id AS movie, COLLECT(rating)[0..3] AS ratings
-WITH movie, REDUCE(s = 0, i IN ratings | s + i)*1.0 / size(ratings) AS reco
-ORDER BY reco DESC
-RETURN movie AS Movie, reco AS Recommendation
+// Recommendations finally:
+MATCH (p:Person {user_id : 298 })-[s:SIMILARITY]-(neighbour:Person)
+where s.similarity > 0.1
+with p, s, neighbour
+ORDER BY s.similarity DESC
+MATCH (neighbour)-[r:Rated]->(m:Movie)
+where not (p)-[:Rated]-(m)
+with p,s,neighbour, r, m
+with m,p,
+sum(s.similarity) as denominator,
+REDUCE(pr=0, a IN COLLECT( (r.rating - neighbour.avg_rating ) * s.similarity) | pr + a) as counter,
+count(s) as movie_neighbours_ratings
+return m.movie_id as movie,  (p.avg_rating + counter/denominator ) as prediction , movie_neighbours_ratings, counter, denominator
+order by prediction desc

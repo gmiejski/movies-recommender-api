@@ -12,7 +12,7 @@ repositories {
 }
 
 ext {
-    gatling = '2.2.0'
+    gatling = '2.2.4'
 }
 
 dependencies {
