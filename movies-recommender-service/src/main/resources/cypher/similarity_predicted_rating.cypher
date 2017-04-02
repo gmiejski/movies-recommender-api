@@ -1,5 +1,5 @@
-MATCH (p:Person {user_id : 298 })-[s:SIMILARITY]-(neighbour:Person)-[r:Rated]-(m:Movie {movie_id: 325})
-where s.similarity > 0.6 and not (p)-[:Rated]-(m)
+MATCH (p:Person )-[s:SIMILARITY]-(neighbour:Person)-[r:Rated]-(m:Movie)
+where p.user_id = {userId} and m.movie_id = {movieId} and s.similarity > 0.6 and not (p)-[:Rated]-(m)
 with p,s,neighbour, r,m
 ORDER BY s.similarity DESC
 with m,p,

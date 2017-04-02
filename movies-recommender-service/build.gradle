@@ -1,6 +1,6 @@
 buildscript {
     ext.kotlin_version = "1.0.0"
-    ext.spring_boot_version = '1.5.2.RELEASE'
+    ext.spring_boot_version = '1.4.0.RELEASE'
 
     repositories {
         mavenCentral()
@@ -26,7 +26,7 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile("org.springframework.boot:spring-boot-starter-web")
-    compile('org.springframework.data:spring-data-neo4j:4.2.1.RELEASE') {
+    compile('org.springframework.data:spring-data-neo4j:4.1.2.RELEASE') {
 //        exclude group: 'org.neo4j.app'
         exclude group: 'org.neo4j.app', module: 'neo4j-browser'
         exclude group: 'org.neo4j.app', module: 'neo4j-server'

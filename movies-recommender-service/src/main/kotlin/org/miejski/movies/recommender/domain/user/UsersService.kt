@@ -1,6 +1,7 @@
 package org.miejski.movies.recommender.domain.user
 
 import org.miejski.movies.recommender.api.user.dto.MovieRatingRequest
+import org.miejski.movies.recommender.infrastructure.repositories.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 

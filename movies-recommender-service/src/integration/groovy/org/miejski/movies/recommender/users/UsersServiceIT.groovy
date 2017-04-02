@@ -2,11 +2,11 @@ package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.api.user.dto.MovieRatingRequest
 import org.miejski.movies.recommender.domain.movie.Movie
-import org.miejski.movies.recommender.domain.movie.MovieRepository
 import org.miejski.movies.recommender.domain.user.Person
-import org.miejski.movies.recommender.domain.user.UsersRepository
 import org.miejski.movies.recommender.domain.user.UsersService
 import org.miejski.movies.recommender.infrastructure.IntegrationSpec
+import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
+import org.miejski.movies.recommender.infrastructure.repositories.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 
 class UsersServiceIT extends IntegrationSpec {

@@ -1,7 +1,7 @@
 package org.miejski.movies.recommender.api
 
 import org.miejski.movies.recommender.domain.movie.Movie
-import org.miejski.movies.recommender.domain.movie.MovieRepository
+import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.web.bind.annotation.PathVariable

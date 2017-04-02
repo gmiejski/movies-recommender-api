@@ -1,5 +1,6 @@
-package org.miejski.movies.recommender.domain.user
+package org.miejski.movies.recommender.infrastructure.repositories
 
+import org.miejski.movies.recommender.domain.user.Person
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
