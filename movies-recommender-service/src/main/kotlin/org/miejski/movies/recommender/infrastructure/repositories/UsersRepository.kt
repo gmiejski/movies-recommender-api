@@ -4,7 +4,9 @@ import org.miejski.movies.recommender.domain.user.Person
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
+@Repository
 interface UsersRepository : GraphRepository<Person> {
 
     @Query("MATCH (n:Person) return n.user_id")

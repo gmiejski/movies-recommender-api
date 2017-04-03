@@ -52,9 +52,6 @@ open class RecommendationsService @Autowired constructor(
         logger.info("Predicting rating - returning default value for user {} and movie {}", userId, movieId)
         return -1.0
     }
-
-    companion object
-
 }
 
 data class MoviesPredictionScore(val movieId: Long, val prediction: Double, val movieNeighboursRatings: Long)
@@ -62,6 +59,6 @@ data class MoviesPredictionScore(val movieId: Long, val prediction: Double, val 
 data class MovieRecommendation(val movieId: Long, val prediction: Double, val score: Double)
 
 interface RecommendationsServiceI {
-    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.1): List<MovieRecommendation>
+    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6): List<MovieRecommendation>
     fun predictedRating(userId: Long, movieId: Long): Double
 }

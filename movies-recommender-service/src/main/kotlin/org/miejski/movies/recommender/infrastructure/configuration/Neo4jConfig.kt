@@ -1,23 +1,27 @@
 package org.miejski.movies.recommender.infrastructure.configuration
 
+import org.neo4j.ogm.config.Configuration
+import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.session.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.data.neo4j.config.Neo4jConfiguration
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
+import org.springframework.data.neo4j.transaction.Neo4jTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
-@Configuration
+
 @EnableNeo4jRepositories(basePackages = arrayOf("org.miejski.movies.recommender.infrastructure.repositories"))
 @EnableTransactionManagement
+//@Profile("!integration")
+@org.springframework.context.annotation.Configuration
 open class Neo4jConfig : Neo4jConfiguration() {
 
     lateinit @Autowired var neo4JConfigProperties: Neo4jConfigProperties
 
     @Bean
-    open fun getConfiguration(): org.neo4j.ogm.config.Configuration {
-        val config: org.neo4j.ogm.config.Configuration = org.neo4j.ogm.config.Configuration();
+    open fun getConfiguration(): Configuration {
+        val config: Configuration = Configuration()
         val buildUri = getBuildUri()
         config
             .driverConfiguration()
@@ -36,5 +40,15 @@ open class Neo4jConfig : Neo4jConfiguration() {
     @Bean
     override fun getSessionFactory(): SessionFactory {
         return SessionFactory(getConfiguration(), "org.miejski.movies.recommender.domain")
+    }
+
+    @Bean
+    override fun transactionManager(): Neo4jTransactionManager {
+        return Neo4jTransactionManager(sessionFactory.openSession())
+    }
+
+    @Bean
+    override fun getSession(): Session {
+        return getSessionFactory().openSession()
     }
 }

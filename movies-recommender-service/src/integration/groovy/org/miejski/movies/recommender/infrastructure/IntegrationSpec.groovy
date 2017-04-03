@@ -2,6 +2,8 @@ package org.miejski.movies.recommender.infrastructure
 
 import com.jayway.restassured.RestAssured
 import org.miejski.movies.recommender.Application
+import org.miejski.movies.recommender.domain.user.UsersService
+import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
 import org.neo4j.ogm.session.Session
 import org.neo4j.ogm.testutil.TestServer
 import org.springframework.beans.factory.annotation.Autowired
@@ -29,6 +31,15 @@ class IntegrationSpec extends Specification {
     @Autowired
     Session session
 
+    @Autowired
+    UsersService usersRepository
+
+    @Autowired
+    MovieRepository movieRepository
+
+    @Autowired
+    DBSetup dbSetup
+
     void setupSpec() {
         testServer = new TestServer.Builder()
                 .enableAuthentication(false)
@@ -36,11 +47,16 @@ class IntegrationSpec extends Specification {
                 .transactionTimeoutSeconds(2)
                 .port(7879)
                 .build();
+
     }
 
     void setup() {
         RestAssured.port = port
         RestAssured.enableLoggingOfRequestAndResponseIfValidationFails()
+
+        if (dbSetup != null) {
+            dbSetup.graphDatabaseService = testServer.graphDatabaseService
+        }
     }
 
     void cleanup() {

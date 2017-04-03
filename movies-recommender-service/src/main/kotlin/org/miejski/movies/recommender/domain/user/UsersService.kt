@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
+//@Transactional
 open class UsersService @Autowired constructor(val usersRepository: UsersRepository) {
     fun findUser(userId: Long): Person {
         return usersRepository.findOne(userId)
@@ -27,5 +28,10 @@ open class UsersService @Autowired constructor(val usersRepository: UsersReposit
 
     fun findUserById(userId: Long): Person {
         return usersRepository.findOneByUserId(userId)
+    }
+
+    fun save(person: Person): Person {
+        val save = usersRepository.save(person)
+        return save
     }
 }

@@ -7,13 +7,9 @@ import org.miejski.movies.recommender.domain.movie.Movie
 import org.miejski.movies.recommender.domain.user.Person
 import org.miejski.movies.recommender.infrastructure.IntegrationSpec
 import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
-import org.miejski.movies.recommender.infrastructure.repositories.UsersRepository
 import org.springframework.beans.factory.annotation.Autowired
 
 class RatingsIntegrationIT extends IntegrationSpec {
-
-    @Autowired
-    UsersRepository usersRepository
 
     @Autowired
     MovieRepository movieRepository
@@ -22,7 +18,7 @@ class RatingsIntegrationIT extends IntegrationSpec {
         given:
         def userId = 123
         def movieId = 12
-        usersRepository.save(new Person(null, userId, []))
+        usersRepository.save(new Person(null, userId, [], 0))
         movieRepository.save(new Movie(null, movieId))
         def request = new MovieRatingRequest(movieId, 3.5)
 
