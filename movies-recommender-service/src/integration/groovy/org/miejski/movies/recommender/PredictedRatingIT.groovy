@@ -18,6 +18,7 @@ class PredictedRatingIT extends IntegrationSpec {
         dbSetup.usersExists(userUnderTest, 4, 0.5)
         dbSetup.usersExists(userUnderTest, 5, -0.2)
         dbSetup.averageRatings {
+            forUser(1, 3.9)
             forUser(2, 3.5)
             forUser(3, 4.5)
             forUser(4, 3.8)
@@ -29,7 +30,6 @@ class PredictedRatingIT extends IntegrationSpec {
             rating(4, movieUnderTest, 3)
             rating(5, movieUnderTest, 2)
         }
-        dbSetup.test()
 
         when:
         def rating = recommendationsService.predictedRating(userUnderTest, movieUnderTest)

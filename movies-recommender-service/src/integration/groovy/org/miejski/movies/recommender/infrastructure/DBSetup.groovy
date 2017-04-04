@@ -5,9 +5,9 @@ import org.miejski.movies.recommender.domain.movie.Movie
 import org.miejski.movies.recommender.domain.user.Person
 import org.miejski.movies.recommender.domain.user.UsersService
 import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
-import org.neo4j.graphdb.GraphDatabaseService
 import org.neo4j.ogm.session.Session
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.neo4j.template.Neo4jOperations
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 
@@ -24,21 +24,21 @@ class DBSetup {
     @Autowired
     MovieRepository movieRepository
 
-    GraphDatabaseService graphDatabaseService
+    @Autowired
+    Neo4jOperations neo4jTemplate
 
+    @Transactional
     def usersExists(long userId1, long userId2, double similarity) {
         if (usersRepository.findUserById(userId1) == null) {
-            usersRepository.save(new Person(null, userId1, [], 0))
+            usersRepository.save(new Person(null, userId1, [], 1))
         }
         if (usersRepository.findUserById(userId2) == null) {
-            usersRepository.save(new Person(null, userId2, [], 0))
+            usersRepository.save(new Person(null, userId2, [], 1))
         }
-        def tx = graphDatabaseService.beginTx()
-        graphDatabaseService.execute("MERGE (b:Person {user_id: $userId1} ) " +
+
+        neo4jTemplate.query("MERGE (b:Person {user_id: $userId1} ) " +
                 "MERGE (c:Person {user_id: $userId2} )" +
-                "MERGE (b)-[s:Similarity {similarity: $similarity}]-(c)".toString())
-        tx.success()
-        tx.close()
+                "MERGE (b)-[s:Similarity {similarity: $similarity}]-(c)".toString(), [:])
     }
 
     def averageRatings(@DelegatesTo(AverageRatingsObject) Closure closure) {
@@ -49,12 +49,13 @@ class DBSetup {
         clone()
     }
 
+    @Transactional
     private def setAvgRating(long userId, double avgRating) {
-        def tx = graphDatabaseService.beginTx()
-        graphDatabaseService.execute("MATCH (b:Person {user_id: $userId})" +
-                "set b.avg_rating = $avgRating".toString())
-        tx.success()
-        tx.close()
+        def user = usersRepository.findUserById(userId)
+        if (user != null) {
+            user.setAvg_rating(avgRating)
+            usersRepository.save(user)
+        }
     }
 
     def ratings(@DelegatesTo(MovieRatingsObject) Closure closure) {
@@ -63,16 +64,6 @@ class DBSetup {
         clone.delegate = moviesRatings
         clone.resolveStrategy = Closure.DELEGATE_ONLY
         clone()
-    }
-
-    def test() {
-
-//        def tx = graphDatabaseService.beginTx()
-//        def a = graphDatabaseService.getAllRelationships().iterator().toList()
-//        tx.success()
-//        tx.close()
-
-        println ""
     }
 
     private class MovieRatingsObject {
@@ -86,10 +77,8 @@ class DBSetup {
     }
 
     private class AverageRatingsObject {
-
         def forUser(long userId, double avgRating) {
             setAvgRating(userId, avgRating)
         }
     }
-
 }

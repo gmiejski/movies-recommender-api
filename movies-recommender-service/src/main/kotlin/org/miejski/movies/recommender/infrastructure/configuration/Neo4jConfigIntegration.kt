@@ -4,6 +4,7 @@ import org.neo4j.ogm.config.Configuration
 import org.neo4j.ogm.session.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.data.neo4j.config.Neo4jConfiguration
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -11,27 +12,19 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 
 @EnableNeo4jRepositories(basePackages = arrayOf("org.miejski.movies.recommender.infrastructure.repositories"))
 @EnableTransactionManagement
+@Profile("integration")
 @org.springframework.context.annotation.Configuration
-open class Neo4jConfig : Neo4jConfiguration() {
+open class Neo4jConfigIntegration : Neo4jConfiguration() {
 
     lateinit @Autowired var neo4JConfigProperties: Neo4jConfigProperties
 
     @Bean
     open fun getConfiguration(): Configuration {
         val config: Configuration = Configuration()
-        val buildUri = getBuildUri()
         config
             .driverConfiguration()
-            .setDriverClassName("org.neo4j.ogm.drivers.http.driver.HttpDriver")
-            .setURI(buildUri)
+            .setDriverClassName("org.neo4j.ogm.drivers.embedded.driver.EmbeddedDriver")
         return config
-    }
-
-    private fun getBuildUri(): String {
-        if (neo4JConfigProperties.user.isNullOrBlank() && neo4JConfigProperties.password.isNullOrBlank()) {
-            return "http://${neo4JConfigProperties.host}:${neo4JConfigProperties.port}"
-        }
-        return "http://${neo4JConfigProperties.user}:${neo4JConfigProperties.password}@${neo4JConfigProperties.host}:${neo4JConfigProperties.port}"
     }
 
     @Bean
