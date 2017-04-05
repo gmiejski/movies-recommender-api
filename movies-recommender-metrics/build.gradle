@@ -1,0 +1,71 @@
+buildscript {
+    ext.spring_boot_version = '1.4.0.RELEASE'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'groovy'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.neo4j.driver:neo4j-java-driver:1.0.1'
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.miejski.movies.recommender.MainClass'
+    }
+    baseName = 'movies-recommender-metrics'
+    version = '0.1.0'
+}
+
+group = 'gmiejski'
+
+mainClassName = "org.miejski.movies.recommender.MainClass"
+
+sourceSets {
+    test {
+        groovy.srcDirs = ['src/test/groovy']
+    }
+    integration {
+        groovy.srcDirs = ['src/integration/groovy']
+        resources.srcDir 'src/test/resources'
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+    integrationCompile.extendsFrom testCompile
+    integrationRuntime.extendsFrom testRuntime
+}
+
+task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
+    testClassesDir = sourceSets.integration.output.classesDir
+    classpath = sourceSets.integration.runtimeClasspath
+}
+
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'org.miejski.movies.recommender.MainClass'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
