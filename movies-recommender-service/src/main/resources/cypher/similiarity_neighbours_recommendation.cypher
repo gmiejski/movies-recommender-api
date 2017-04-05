@@ -1,4 +1,4 @@
-MATCH (p:Person {user_id : {userId} })-[s:SIMILARITY]-(neighbour:Person)
+MATCH (p:Person {user_id : {userId} })-[s:Similarity]-(neighbour:Person)
 where s.similarity > {min_similarity}
 with p, s, neighbour
 ORDER BY s.similarity DESC

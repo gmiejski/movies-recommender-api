@@ -1,4 +1,4 @@
-match (n:Person)-[s:SIMILARITY]-(m:Person)
+match (n:Person)-[s:Similarity]-(m:Person)
 where not n.user_id = m.user_id
 return avg(s.similarity)
 
@@ -27,7 +27,7 @@ SQRT(REDUCE(xDot = 0.0, a IN COLLECT(x.rating - p1.avg_rating) | xDot + a^2)) AS
 SQRT(REDUCE(yDot = 0.0, b IN COLLECT(y.rating - p2.avg_rating) | yDot + b^2)) AS yLength,
 p1, p2
 where (not xLength = 0) and (not yLength = 0)
-MERGE (p1)-[s:SIMILARITY]-(p2)
+MERGE (p1)-[s:Similarity]-(p2)
 SET s.similarity = xyDotProduct / (xLength * yLength)
 
 
@@ -41,7 +41,7 @@ where (not xLength = 0) and (not yLength = 0)
 return xyDotProduct / (xLength * yLength)
 
 // recommendations for user xxx
-MATCH (b:Person)-[r:Rated]->(m:Movie), (b)-[s:SIMILARITY]-(a:Person {user_id: 115})
+MATCH (b:Person)-[r:Rated]->(m:Movie), (b)-[s:Similarity]-(a:Person {user_id: 115})
 WHERE NOT((a)-[:Rated]->(m)) and s.similarity > 0.8
 WITH m, s.similarity AS similarity, r.rating AS rating, b
 ORDER BY m.movie_id, similarity DESC
