@@ -1,0 +1,1 @@
+create index on :Person(user_id)

@@ -16,7 +16,7 @@ open class QueriesLoader {
             .collect(Collectors.joining(" "))
     }
 
-    open fun toPath(cypherFileName: String): String {
+    private fun toPath(cypherFileName: String): String {
         return CYPHER_FILES_PATH + cypherFileName
     }
 

@@ -13,4 +13,6 @@ class RecommendationsQuery : QueriesLoader() {
     fun getPredictionQuery(): String {
         return loadCypherQuery("similarity_predicted_rating.cypher")
     }
+
+
 }

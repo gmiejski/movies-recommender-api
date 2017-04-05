@@ -1,22 +1,56 @@
 package org.miejski.movies.recommender;
 
+import org.miejski.movies.recommender.api.metrics.MetricsResult;
+import org.miejski.movies.recommender.domain.metrics.accuracy.AccuracyMetricService;
+import org.miejski.movies.recommender.infrastructure.dbstate.Neo4jStarStateAsserter;
+import org.miejski.movies.recommender.infrastructure.dbstate.assertions.MovieIndexAssertion;
+import org.miejski.movies.recommender.infrastructure.dbstate.assertions.PersonIndexAssertion;
+import org.miejski.movies.recommender.neo4j.CypherExecutor;
+import org.miejski.movies.recommender.ratings.PredictionerService;
+import org.miejski.movies.recommender.state.DataImportedStateAssertion;
+
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.stream.Stream;
+import java.util.HashMap;
 
 public class MainClass {
     public static void main(String[] args) throws IOException {
-        System.out.println("START");
-        new CypherExecutor().execute();
-        if (args.length > 0) {
-            System.out.println(Arrays.toString(args));
-            Stream<Path> list = Files.list(Paths.get(args[0]));
-            list.forEach(System.out::println);
-        }
+        args = new String[]{
+                "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_train_0",
+                "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0"};
 
+
+        System.out.println("START");
+
+        if (args.length != 0) {
+            System.out.println("no args! quit");
+        }
+        String trainDataPath = args[0];
+        String testDataPath = args[1];
+
+        final CypherExecutor cypherExecutor = new CypherExecutor();
+        System.out.println("START - state assertions");
+        new Neo4jStarStateAsserter((cypher, queryToExecuteParams) -> {
+            HashMap<String, Object> stringHashMap = new HashMap<>(queryToExecuteParams);
+            cypherExecutor.execute(cypher, stringHashMap);
+        },
+                () -> Arrays.asList(
+                        new PersonIndexAssertion(),
+                        new MovieIndexAssertion(),
+                        new DataImportedStateAssertion(trainDataPath, cypherExecutor)))
+                .run();
+
+        System.out.println("START - metric calculation");
+        AccuracyMetricService accuracyMetricService = new AccuracyMetricService(new PredictionerService(cypherExecutor));
+        accuracyMetricService.run(testDataPath);
+        MetricsResult<Double> finish = accuracyMetricService.finish();
+
+        System.out.println(Arrays.toString(args));
+//        Stream<Path> list = Files.list(Paths.get(args[0]));
+//        list.forEach(System.out::println);
+
+
+        cypherExecutor.close();
         System.out.println("END");
     }
 }
