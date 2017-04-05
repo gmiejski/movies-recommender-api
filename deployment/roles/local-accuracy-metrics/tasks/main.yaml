@@ -1,0 +1,7 @@
+---
+
+- name: run build
+  shell: "./gradlew movies-recommender-metrics:fatJar chdir={{ recommender_api.home_folder }}"
+
+- name: run metrics
+  shell: "java -jar movies-recommender-metrics-all.jar  chdir={{ recommender_api.run_folder }} >> /tmp/recommender-api/accuracy-metrics.log"
