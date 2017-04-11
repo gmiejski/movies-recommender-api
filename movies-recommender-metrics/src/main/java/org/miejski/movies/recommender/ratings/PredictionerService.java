@@ -6,9 +6,11 @@ import org.miejski.movies.recommender.domain.recommendations.MovieRecommendation
 import org.miejski.movies.recommender.domain.recommendations.RecommendationsQuery;
 import org.miejski.movies.recommender.domain.recommendations.RecommendationsServiceI;
 import org.miejski.movies.recommender.neo4j.CypherExecutor;
+import org.neo4j.driver.v1.Value;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 public class PredictionerService implements RecommendationsServiceI {
 
@@ -33,8 +35,11 @@ public class PredictionerService implements RecommendationsServiceI {
         params.put("userId", userId);
         params.put("movieId", movieId);
 
-        cypherExecutor.execute(cypherQuery, params);
-
-        return 0;
+        return Optional.of(cypherExecutor.execute(cypherQuery, params))
+                .filter(x -> !x.isEmpty())
+                .map(x -> x.get(0))
+                .map(x -> x.get("prediction"))
+                .map(Value::asDouble)
+                .orElseGet(() -> -1.0);
     }
 }

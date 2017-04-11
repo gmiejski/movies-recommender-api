@@ -26,7 +26,6 @@ public class CypherExecutor {
         StatementResult run = session.run(query, params);
 
         List<Record> resultList = run.list();
-        System.out.println(resultList);
         session.close();
 
         return resultList;

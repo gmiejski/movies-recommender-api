@@ -34,8 +34,6 @@ public class DataImportedStateAssertion implements Neo4jStateAssertion {
 
     @Override
     public boolean isOK() {
-//        String locadedQuery = new RecommendationsQuery().loadCypherQuery(queryToExecute());
-
         List<Record> list = cypherExecutor.execute("Match (p:Person) return p limit 1");
 
         return !list.isEmpty();

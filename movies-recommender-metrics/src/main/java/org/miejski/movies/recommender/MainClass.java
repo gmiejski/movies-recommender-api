@@ -7,7 +7,11 @@ import org.miejski.movies.recommender.infrastructure.dbstate.assertions.MovieInd
 import org.miejski.movies.recommender.infrastructure.dbstate.assertions.PersonIndexAssertion;
 import org.miejski.movies.recommender.neo4j.CypherExecutor;
 import org.miejski.movies.recommender.ratings.PredictionerService;
+import org.miejski.movies.recommender.state.AvgRatingStateAssertion;
 import org.miejski.movies.recommender.state.DataImportedStateAssertion;
+import org.miejski.movies.recommender.state.Similarity1StateAssertion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,17 +23,17 @@ public class MainClass {
                 "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_train_0",
                 "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0"};
 
-
-        System.out.println("START");
+        Logger logger = LoggerFactory.getLogger(MainClass.class);
+        logger.info("START");
 
         if (args.length != 0) {
-            System.out.println("no args! quit");
+            logger.info("no args! quit");
         }
         String trainDataPath = args[0];
         String testDataPath = args[1];
 
         final CypherExecutor cypherExecutor = new CypherExecutor();
-        System.out.println("START - state assertions");
+        logger.info("START - state assertions");
         new Neo4jStarStateAsserter((cypher, queryToExecuteParams) -> {
             HashMap<String, Object> stringHashMap = new HashMap<>(queryToExecuteParams);
             cypherExecutor.execute(cypher, stringHashMap);
@@ -37,20 +41,22 @@ public class MainClass {
                 () -> Arrays.asList(
                         new PersonIndexAssertion(),
                         new MovieIndexAssertion(),
-                        new DataImportedStateAssertion(trainDataPath, cypherExecutor)))
+                        new DataImportedStateAssertion(trainDataPath, cypherExecutor),
+                        new AvgRatingStateAssertion(cypherExecutor),
+                        new Similarity1StateAssertion(cypherExecutor)))
                 .run();
 
-        System.out.println("START - metric calculation");
+        logger.info("START - metric calculation");
         AccuracyMetricService accuracyMetricService = new AccuracyMetricService(new PredictionerService(cypherExecutor));
         accuracyMetricService.run(testDataPath);
         MetricsResult<Double> finish = accuracyMetricService.finish();
-
-        System.out.println(Arrays.toString(args));
+        logger.info(finish.getResult().toString());
+        logger.info(Arrays.toString(args));
 //        Stream<Path> list = Files.list(Paths.get(args[0]));
 //        list.forEach(System.out::println);
 
 
         cypherExecutor.close();
-        System.out.println("END");
+        logger.info("END");
     }
 }
