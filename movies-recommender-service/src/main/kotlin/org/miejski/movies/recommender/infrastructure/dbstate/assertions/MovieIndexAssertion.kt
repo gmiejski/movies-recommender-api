@@ -5,7 +5,6 @@ import org.miejski.movies.recommender.infrastructure.dbstate.Neo4jStateAssertion
 class MovieIndexAssertion : Neo4jStateAssertion {
 
     override fun isOK(): Boolean {
-        super.isOK()
         return false
     }
 

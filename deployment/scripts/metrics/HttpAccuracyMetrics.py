@@ -1,8 +1,8 @@
 import os
 import requests
 
-class AccuracyMetrics():
 
+class HttpAccuracyMetrics():
     def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/"):
         self.result_folder = result_folder
         self.fold_results = []
@@ -36,3 +36,12 @@ class AccuracyMetrics():
             result_file.write("Final RMSE = {}\n".format(rmse))
             result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
             result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
+
+
+if __name__ == "__main__":
+    metrics = HttpAccuracyMetrics()
+    test_name = "testNameMote"
+    metrics.run(
+        "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",
+            test_name)
+    metrics.finish(test_name)

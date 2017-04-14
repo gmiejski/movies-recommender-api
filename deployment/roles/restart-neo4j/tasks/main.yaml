@@ -1,22 +1,29 @@
 ---
 
-- name: clear and restart neo4j database
-  shell: ./clear_local_neo4j.sh {{ neo4j_home }} neo4j.db 1 chdir={{ recommender_api.scripts_home }}
+- name: stop running neo4j
+  shell: ./bin/neo4j stop chdir={{ neo4j.home }}
   ignore_errors: True
 
-- name: create temporary folder for cypher file
-  file: path={{ recommender_api.tmp_folder }} state=directory
+- name: link proper db for neo4j
+  shell: "{{ recommender_api.scripts_home }}/link_db_by_name.sh {{ neo4j_db_folder }} chdir={{ neo4j.home_db }}"
+  ignore_errors: True
 
-- name: create cypher file with proper import data path
-  template: src=fill_neo4j.cypher.j2 dest={{ recommender_api.tmp_folder }}/fill_neo4j.cypher mode=755
+- name: restart neo4j
+  shell: ./bin/neo4j start chdir={{ neo4j.home }}
 
-- name: wait until neo4j-shell is operatable
-  action: shell ./neo4j-shell chdir={{ neo4j_home }}/bin
-  register: result
-  until: result.stdout.find("Welcome") != -1
-  retries: 5
-  delay: 2
-
-- name: populate neo4j
-  shell: ./neo4j-shell -file {{ recommender_api.tmp_folder }}/fill_neo4j.cypher > {{ recommender_api.tmp_folder }}/out.log -v chdir={{ neo4j_home }}/bin
-
+#- name: create temporary folder for cypher file
+#  file: path={{ recommender_api.tmp_folder }} state=directory
+#
+#- name: create cypher file with proper import data path
+#  template: src=fill_neo4j.cypher.j2 dest={{ recommender_api.tmp_folder }}/fill_neo4j.cypher mode=755
+#
+#- name: wait until neo4j-shell is operatable
+#  action: shell ./neo4j-shell chdir={{ neo4j_home }}/bin
+#  register: result
+#  until: result.stdout.find("Welcome") != -1
+#  retries: 5
+#  delay: 2
+#
+#- name: populate neo4j
+#  shell: ./neo4j-shell -file {{ recommender_api.tmp_folder }}/fill_neo4j.cypher > {{ recommender_api.tmp_folder }}/out.log -v chdir={{ neo4j_home }}/bin
+#

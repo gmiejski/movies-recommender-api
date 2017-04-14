@@ -7,8 +7,6 @@ import java.util.*
 class StrictDataAssertion(val neo4jOperations: Neo4jOperations) : Neo4jStateAssertion {
 
     override fun isOK(): Boolean {
-        super.isOK()
-
         if (neo4jOperations.query("Match (p:Person) return p limit 1", HashMap<String, Object>()).count() == 0) {
             throw RuntimeException("StrictDataAssertion fail - no Persons in database!")
         }

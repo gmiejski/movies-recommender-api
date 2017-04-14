@@ -11,7 +11,10 @@ class Neo4jStarStateAsserter @Autowired constructor(val cypherExecutor: CypherEx
                                                     val assertions: AssertionsContainer) : InitializingBean {
 
     override fun afterPropertiesSet() {
-        assertions.assertions().filter { !it.isOK() }
+        assertions.assertions().filter {
+            println("Checking assertion: ${it.name()}")
+            !it.isOK()
+        }
             .forEach {
                 println("Executing query for assertion: ${it.name()}")
                 val cypher = QueriesLoader().loadCypherQuery(it.queryToExecute())

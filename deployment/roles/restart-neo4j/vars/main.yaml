@@ -4,6 +4,9 @@ recommender_api:
   scripts_home: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts
   tmp_folder: /tmp/magisterka
 
-neo4j_host: localhost
-neo4j_import_cypher_file: # TODO
-neo4j_home: /Users/grzegorz.miejski/programming/neo4j/neo4j-community-3.0.4
+neo4j:
+    host: localhost
+    home: /Users/grzegorz.miejski/programming/neo4j/metrics/neo4j-community-3.0.4
+    home_db: /Users/grzegorz.miejski/programming/neo4j/metrics/neo4j-community-3.0.4/data/databases
+    import_cypher_file: # TODO
+neo4j_db_folder: # TODO

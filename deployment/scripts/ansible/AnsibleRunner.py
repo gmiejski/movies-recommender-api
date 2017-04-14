@@ -18,9 +18,9 @@ class AnsibleRunner:
 
     @staticmethod
     def runLocalApplication():
-        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'run-application-local.yaml',
+        process = subprocess.Popen(['ansible-playbook', 'run-application-local.yaml',
                                     '-vvv'],
-                                   cwd=AnsibleRunner.ansible_home,
+                                   # cwd=AnsibleRunner.ansible_home,
                                    stderr=subprocess.STDOUT)
         process.communicate()
         return
@@ -46,7 +46,7 @@ class AnsibleRunner:
 
     @staticmethod
     def killLocalApplication():
-        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'kill-application-local.yaml',
+        process = subprocess.Popen(['ansible-playbook', 'kill-application-local.yaml',
                                     '-vvv'],
                                    cwd=AnsibleRunner.ansible_home,
                                    stderr=subprocess.STDOUT)
@@ -54,10 +54,10 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def restartLocalNeo4j(trainFile):
-        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'restart-neo4j.yaml',
+    def restartLocalNeo4j(db_name):
+        process = subprocess.Popen(['ansible-playbook', 'restart-neo4j.yaml',
                                     '-vvv',
-                                    '--extra-vars', "neo4j_import_cypher_file=" + trainFile],
+                                    '--extra-vars', "neo4j_db_folder=" + db_name],
                                    cwd=AnsibleRunner.ansible_home,
                                    stderr=subprocess.STDOUT)
         process.communicate()
