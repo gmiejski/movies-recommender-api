@@ -1,6 +1,8 @@
 import os
+import datetime
 
 from ansible.AnsibleRunner import AnsibleRunner
+from metrics import formatter
 from metrics.RMSEMetric import RMSEMetric
 
 
@@ -11,29 +13,24 @@ class AccuracyMetrics:
 
     def run(self, testFilePath, dataset, fold):
         print("Running accuracy metrics for dataset {} and fold {}".format(dataset, fold))
+        start = datetime.datetime.now().replace(microsecond=0)
         test_ratings_count = self.__total_ratings_to_predict(testFilePath)
         prepared_cypher = self.__prepare_metric_cypher(testFilePath)
-        # AnsibleRunner.runAccuracyMetricCypher(dataset, fold, prepared_cypher)
+        AnsibleRunner.runAccuracyMetricCypher(dataset, fold, prepared_cypher)
 
         results = self.read_results(dataset, fold)
 
-        self.fold_results.append(PartialResult(RMSEMetric.calculate(results), test_ratings_count, len(results), 0))
+        end = datetime.datetime.now().replace(microsecond=0)
+        self.fold_results.append(PartialResult(
+            RMSEMetric.calculate(results), test_ratings_count, len(results), (end-start).seconds)
+        )
         print("Finished accuracy metrics for dataset {} and fold {}".format(dataset, fold))
 
     def finish(self, dataset):
-        print("Finishing accuracy metrics for dataset {}" + dataset)
+        print("Finishing accuracy metrics for dataset {}".format(dataset))
         result = FinalResult(self.fold_results)
         self.save_result(dataset, result.rmse, result.total_time, result.ratings_found_percentage)
         return result.rmse
-
-    # def save_partial_result(self, test_name, rmse, time, percentageOfRatingsFound):
-    #     if not os.path.exists(self.result_folder + test_name):
-    #         os.makedirs(self.result_folder + test_name)
-    #     with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
-    #         result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
-    #         result_file.write("Final RMSE = {}\n".format(rmse))
-    #         result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
-    #         result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
 
     def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
         if not os.path.exists(self.result_folder + test_name):
@@ -42,7 +39,7 @@ class AccuracyMetrics:
             result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
             result_file.write("Final RMSE = {}\n".format(rmse))
             result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
-            result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
+            result_file.write("Total time in seconds: {}\n".format(formatter.strfdelta(time, inputtype="s")))
 
     def __prepare_metric_cypher(self, testFilePath):
         prediction_cypher = "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/movies-recommender-service/src/main/resources/cypher/similarity_predicted_rating_for_metric.cypher"
