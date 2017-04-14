@@ -1,10 +1,10 @@
-class Neo4jDataAssertion:
+class DataLoadedAssertion:
 
     def __init__(self, train_file):
         self.train_file = train_file
 
     def is_ok(self, Neo4jCypherExecutor):
-        result = Neo4jCypherExecutor.invoke(self.check_query())
+        result = Neo4jCypherExecutor.invoke(self.__check_query())
         return len(result) > 0
 
     def query_to_execute(self):
@@ -13,5 +13,5 @@ class Neo4jDataAssertion:
     def arguments(self):
         return {"trainingDataFile": "file://{}".format(self.train_file)}
 
-    def check_query(self):
+    def __check_query(self):
         return "MATCH (a:Person) return a limit 1"
