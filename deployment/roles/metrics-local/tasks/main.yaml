@@ -2,12 +2,16 @@
 
 - name: install required dependencies
   pip: requirements=requirements.txt virtualenv={{ venv }} chdir={{ run_folder }}
+
 - name: create required folders
   file: path={{ metrics.result_folder }} state=directory
+
 - name: create template file to call virtualenv python scripts
   template: src=venv_exec.j2 dest={{ venv }}/exec mode=755
+
 - name: run python script with acc metrics (from virtualenv)
   shell: "{{ venv }}/exec python {{ run_folder }}/metrics_local_test_main.py chdir={{ run_folder }} {{ folds_data_directory }}"
   register: python_out
+
 - name: Debug
   debug: var=python_out

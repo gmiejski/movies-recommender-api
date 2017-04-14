@@ -11,18 +11,18 @@
 - name: restart neo4j
   shell: ./bin/neo4j start chdir={{ neo4j.home }}
 
+- name: wait until neo4j-shell is operatable
+  action: shell ./neo4j-shell chdir={{ neo4j.home }}/bin
+  register: result
+  until: result.stdout.find("Welcome") != -1
+  retries: 5
+  delay: 2
+
 #- name: create temporary folder for cypher file
 #  file: path={{ recommender_api.tmp_folder }} state=directory
 #
 #- name: create cypher file with proper import data path
 #  template: src=fill_neo4j.cypher.j2 dest={{ recommender_api.tmp_folder }}/fill_neo4j.cypher mode=755
-#
-#- name: wait until neo4j-shell is operatable
-#  action: shell ./neo4j-shell chdir={{ neo4j_home }}/bin
-#  register: result
-#  until: result.stdout.find("Welcome") != -1
-#  retries: 5
-#  delay: 2
 #
 #- name: populate neo4j
 #  shell: ./neo4j-shell -file {{ recommender_api.tmp_folder }}/fill_neo4j.cypher > {{ recommender_api.tmp_folder }}/out.log -v chdir={{ neo4j_home }}/bin
