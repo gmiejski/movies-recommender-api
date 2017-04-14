@@ -1,5 +1,6 @@
 import os
 
+from ansible.AnsibleRunner import AnsibleRunner
 from metrics.RMSEMetric import RMSEMetric
 
 
@@ -16,26 +17,23 @@ class AccuracyMetrics:
 
         results = self.read_results(dataset, fold)
 
-        self.fold_results.append(PartialResult(RMSEMetric.calculate(results), test_ratings_count, len(results)))
+        self.fold_results.append(PartialResult(RMSEMetric.calculate(results), test_ratings_count, len(results), 0))
         print("Finished accuracy metrics for dataset {} and fold {}".format(dataset, fold))
 
-    def finish(self, test_name):
-        # print("Finishing accuracy metrics for " + test_name)
-        # percentageOfRatingsFound = response_json["others"]["percentageOfFoundRatings"]
-        # print("Total RMSE = {}\nRatings found for movies: {}%\nTotal time in seconds: {}".format(rmse,
-        #                                                                                          percentageOfRatingsFound,
-        # self.save_result(test_name, rmse, time, percentageOfRatingsFound)
-        # return rmse
-        return None
+    def finish(self, dataset):
+        print("Finishing accuracy metrics for dataset {}" + dataset)
+        result = FinalResult(self.fold_results)
+        self.save_result(dataset, result.rmse, result.total_time, result.ratings_found_percentage)
+        return result.rmse
 
-    def save_partial_result(self, test_name, rmse, time, percentageOfRatingsFound):
-        if not os.path.exists(self.result_folder + test_name):
-            os.makedirs(self.result_folder + test_name)
-        with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
-            result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
-            result_file.write("Final RMSE = {}\n".format(rmse))
-            result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
-            result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
+    # def save_partial_result(self, test_name, rmse, time, percentageOfRatingsFound):
+    #     if not os.path.exists(self.result_folder + test_name):
+    #         os.makedirs(self.result_folder + test_name)
+    #     with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
+    #         result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
+    #         result_file.write("Final RMSE = {}\n".format(rmse))
+    #         result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
+    #         result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
 
     def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
         if not os.path.exists(self.result_folder + test_name):
@@ -80,11 +78,23 @@ WITH TOINT(line.user_id) as user, TOINT(line.movie_id) as movie, TOFLOAT(line.ra
         return i + 1
 
 class PartialResult:
-    def __init__(self, rmse, test_ratings_count, ratings_predicted):
+    def __init__(self, rmse, test_ratings_count, ratings_predicted, time_in_seconds):
         self.rmse = rmse
         self.test_ratings_count = test_ratings_count
         self.ratings_predicted = ratings_predicted
+        self.time_in_seconds = time_in_seconds
 
+    def __str__(self):
+        return "PartialResult(RMSE={}, ratings_predicted={}, time={})".format(self.rmse, self.ratings_predicted, self.time_in_seconds)
+
+class FinalResult:
+
+    def __init__(self, partial_results):
+        self.rmse = sum(map(lambda x: x.rmse, partial_results))/ float(len(partial_results))
+        self.total_time = sum(map(lambda x: x.time_in_seconds, partial_results))
+        ratings_found = sum(map(lambda x: x.ratings_predicted, partial_results))
+        ratings_to_find = sum(map(lambda x: x.test_ratings_count, partial_results))
+        self.ratings_found_percentage = ratings_found / ratings_to_find * 100
 
 if __name__ == "__main__":
     metrics = AccuracyMetrics()
