@@ -1,22 +1,23 @@
 import os
 
-from ansible.AnsibleRunner import AnsibleRunner
+from metrics.RMSEMetric import RMSEMetric
 
 
-class AccuracyMetrics():
+class AccuracyMetrics:
     def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/"):
         self.result_folder = result_folder
         self.fold_results = []
 
     def run(self, testFilePath, dataset, fold):
-        print("Running accuracy metrics: " + dataset)
-        test_ratings_count = 100 # TODO
+        print("Running accuracy metrics for dataset {} and fold {}".format(dataset, fold))
+        test_ratings_count = self.__total_ratings_to_predict(testFilePath)
         prepared_cypher = self.__prepare_metric_cypher(testFilePath)
-        AnsibleRunner.runAccuracyMetricCypher(dataset, fold, prepared_cypher)
+        # AnsibleRunner.runAccuracyMetricCypher(dataset, fold, prepared_cypher)
 
         results = self.read_results(dataset, fold)
-        self.fold_results.append(response_json)
-        print("Fold result = " + str(response_json))
+
+        self.fold_results.append(PartialResult(RMSEMetric.calculate(results), test_ratings_count, len(results)))
+        print("Finished accuracy metrics for dataset {} and fold {}".format(dataset, fold))
 
     def finish(self, test_name):
         # print("Finishing accuracy metrics for " + test_name)
@@ -46,7 +47,7 @@ class AccuracyMetrics():
             result_file.write("Total time in seconds: {0:.2f}s\n".format(time))
 
     def __prepare_metric_cypher(self, testFilePath):
-        prediction_cypher = "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/movies-recommender-service/src/main/resources/cypher/similarity_predicted_rating.cypher"
+        prediction_cypher = "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/movies-recommender-service/src/main/resources/cypher/similarity_predicted_rating_for_metric.cypher"
         cypher_template = self.load_file(prediction_cypher)
 
         prefix = """LOAD CSV WITH HEADERS FROM 'file://{}' AS line FIELDTERMINATOR '\t'
@@ -63,13 +64,26 @@ WITH TOINT(line.user_id) as user, TOINT(line.movie_id) as movie, TOFLOAT(line.ra
 
     def read_results(self, dataset, fold):
         with open("{}{}/{}".format(self.result_folder, dataset, fold)) as results:
-            line = results.readlines()
-            splitted = line.split("\t")
+            line = results.readlines()[1:]
+            a = map(lambda x: x.replace('"', ''), line)
+            b = map(self.__parse_result_line, a)
+            return list(b)
 
+    def __parse_result_line(self, line):
+        split = line.split(',')
+        return float(split[2]), float(split[3])
 
-        pass
+    def __total_ratings_to_predict(self, testFilePath):
+        with open(testFilePath) as f:
+            for i, l in enumerate(f):
+                pass
+        return i + 1
 
-
+class PartialResult:
+    def __init__(self, rmse, test_ratings_count, ratings_predicted):
+        self.rmse = rmse
+        self.test_ratings_count = test_ratings_count
+        self.ratings_predicted = ratings_predicted
 
 
 if __name__ == "__main__":
