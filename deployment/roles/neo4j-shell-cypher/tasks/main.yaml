@@ -1,0 +1,20 @@
+---
+
+#- name: install required dependencies
+#  pip: requirements=requirements.txt virtualenv={{ venv }} chdir={{ run_folder }}
+#
+
+#- name: create template file to call virtualenv python scripts
+#  template: src=venv_exec.j2 dest={{ venv }}/exec mode=755
+#
+
+- name: create result folders for this test
+  file: path={{ result.path }}{{ dataset }} state=directory
+
+- name: run cypher
+  shell: ./neo4j-shell -c "import-cypher -o {{ result.path }}{{ dataset }}/{{ result_file }} {{ cypher }}" chdir={{ neo4j.home_bin }}
+  register: python_out
+
+- name: Debug
+  debug: var=python_out
+

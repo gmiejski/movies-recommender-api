@@ -1,0 +1,13 @@
+result:
+  path: /tmp/magisterka/metrics/accuracy/
+  file:
+
+neo4j:
+  home: /Users/grzegorz.miejski/programming/neo4j/metrics/neo4j-community-3.0.4
+  home_bin: /Users/grzegorz.miejski/programming/neo4j/metrics/neo4j-community-3.0.4/bin
+
+
+# arguments
+result_file:
+dataset:
+cypher:

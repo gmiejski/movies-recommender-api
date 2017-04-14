@@ -8,6 +8,7 @@ class Neo4jStateAssertions():
     def run_assertions(self):
         for ass in self.assertions:
             if not ass.is_ok(self.neo4j_query_executor):
+                print("Executing assertion: " + type(ass).__name__)
                 cypher_file = "{}{}".format(self.query_folder, ass.query_to_execute())
                 cypher = self.__read_cypher_from_file(cypher_file)
                 self.neo4j_query_executor.invoke(cypher, ass.arguments())

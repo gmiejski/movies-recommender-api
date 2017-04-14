@@ -1,5 +1,6 @@
 import subprocess
 
+
 class AnsibleRunner:
     ansible_home = "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment"
     application_home = "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api"
@@ -54,14 +55,37 @@ class AnsibleRunner:
 
     @staticmethod
     def restartLocalNeo4j(db_name):
-        process = subprocess.Popen(['ansible-playbook', 'restart-neo4j.yaml', '-vvv', '--extra-vars', "neo4j_db_folder=" + db_name],
-                                   cwd=AnsibleRunner.ansible_home,
-                                   stderr=subprocess.STDOUT,
-                                   env=AnsibleRunner.get_env())
+        process = subprocess.Popen(
+            ['ansible-playbook', 'restart-neo4j.yaml', '-vvv', '--extra-vars', "neo4j_db_folder=" + db_name],
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
         process.communicate()
         return
 
     @staticmethod
-    def get_env():
+    def runAccuracyMetricCypher(dataset, fold_name, cypher):
+        # cypher = "MATCH (p:Person) return p.user_id limit 10"
+        process = subprocess.Popen(
+            ['ansible-playbook', 'neo4j-shell-cypher.yaml', '-vvv', '--extra-vars',
+             AnsibleRunner._to_extra_vars({"dataset": dataset, "result_file": fold_name, "cypher": cypher})],
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
+
+    @staticmethod
+    def __get_env():
         return {
             "PATH": "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner/bin:/Library/Frameworks/Python.framework/Versions/3.4/bin:/Users/grzegorz.miejski/programming/spark/spark-1.6.0-bin-hadoop2.6/bin:/Library/Frameworks/Python.framework/Versions/3.4/bin:/usr/local/go/bin/:/Users/grzegorz.miejski/programming/apache-cassandra-2.1.7/bin:/Users/grzegorz.miejski/programming/scala-2.11.4/bin:/Users/grzegorz.miejski/home/programs/apache-storm-0.9.4/bin:/usr/local/heroku/bin:/Users/grzegorz.miejski/home/programs/apache-storm-0.9.4/bin:/Users/grzegorz.miejski/home/maven/bin:/Users/grzegorz.miejski/home/mongodb/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/grzegorz.miejski/.fzf/bin:/usr/local/sbin:/Users/grzegorz.miejski/programming/drivers"}
+
+    @staticmethod
+    def _to_extra_vars( params):
+        "returns prepared ansible extra args from dict"
+        result = ""
+        for k, v in params.items():
+            value = v if " " not  in v else "'{}'".format(v)
+            result += "{}={} ".format(k, value)
+        # return '--extra-vars="' + result +'"'
+        return result
