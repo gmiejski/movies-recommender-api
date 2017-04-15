@@ -10,7 +10,7 @@ class Similarity_1_Assertion(val neo4jOperations: Neo4jOperations) : Neo4jStateA
     }
 
     override fun queryToExecute(): String {
-        return "start_state/similarity_1.cypher"
+        return "start_state/similarity_pearson.cypher"
     }
 
     override fun isOK(): Boolean {

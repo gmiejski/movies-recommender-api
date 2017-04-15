@@ -5,10 +5,10 @@ class Similarity1Assertion:
         return len(result) > 0
 
     def query_to_execute(self):
-        return "similarity_1.cypher"
+        return "similarity_pearson.cypher"
 
     def arguments(self):
         return {}
 
     def __check_query(self):
-        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) return s limit 1"
+        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) return s limit 1"  # TODO change for exists(...)

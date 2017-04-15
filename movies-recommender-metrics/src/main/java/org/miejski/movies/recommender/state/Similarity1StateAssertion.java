@@ -26,7 +26,7 @@ public class Similarity1StateAssertion implements Neo4jStateAssertion {
     @NotNull
     @Override
     public String queryToExecute() {
-        return "start_state/similarity_1.cypher";
+        return "start_state/similarity_pearson.cypher";
     }
 
     @NotNull
