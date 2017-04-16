@@ -6,17 +6,20 @@ from metrics.RMSEMetric import RMSEMetric
 
 
 class AccuracyMetrics:
-    def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/", similarity=0.1):
-        self.result_folder = result_folder
+    def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/", similarity=0.1,
+                 similarity_method="similarity"):
         self.fold_results = []
+        self.result_folder = result_folder
         self.similarity = similarity
+        self.similarity_method = similarity_method
 
     def run(self, testFilePath, dataset, fold):
         print("Running accuracy metrics for dataset {} and fold {}".format(dataset, fold))
         start = datetime.datetime.now().replace(microsecond=0)
         test_ratings_count = self.__total_ratings_to_predict(testFilePath)
         prepared_cypher = self.__prepare_metric_cypher(testFilePath)
-        AnsibleRunner.runAccuracyMetricCypher(dataset, fold, prepared_cypher)
+        AnsibleRunner.runAccuracyMetricCypher(dataset, fold,
+                                              prepared_cypher)  # TODO inject mean common ratings instead of magic number 18 in cypher
 
         results = self.read_results(dataset, fold)
 
@@ -35,7 +38,7 @@ class AccuracyMetrics:
     def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
         if not os.path.exists(self.result_folder + test_name):
             os.makedirs(self.result_folder + test_name)
-        result_file_name = "/accuracy_similarity:{}.log".format(self.similarity)
+        result_file_name = "/accuracy_method:{}_similarity:{}.log".format(self.similarity_method, self.similarity)
         result_path = "{}{}{}".format(self.result_folder, test_name, result_file_name)
         with open(result_path, mode="w") as result_file:
             result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
@@ -53,7 +56,8 @@ WITH TOINT(line.user_id) as user, TOINT(line.movie_id) as movie, TOFLOAT(line.ra
 
         ready_cypher = prefix + cypher_template.replace("{userId}", "user") \
             .replace("{movieId}", "movie") \
-            .replace("{similarity}", str(self.similarity))
+            .replace("{similarity}", str(self.similarity)) \
+            .replace("{similarity_method}", self.similarity_method)
         return ready_cypher
 
     def load_file(self, prediction_cypher):

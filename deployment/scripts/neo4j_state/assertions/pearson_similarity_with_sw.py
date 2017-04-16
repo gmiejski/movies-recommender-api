@@ -6,7 +6,8 @@ from ratings_in_common.ratings_in_common import RatingsInCommon
 
 
 class PearsonWithSWAssertion(SimpleCypherStateAssertion):
-    def __init__(self, train_file, fold):
+    def __init__(self, train_file, fold, rerun=True):
+        self.rerun = rerun
         self.train_file = train_file
         self.fold = fold
 
@@ -19,6 +20,8 @@ class PearsonWithSWAssertion(SimpleCypherStateAssertion):
         self.__remove_common_movies_file()
 
     def is_ok(self, Neo4jCypherExecutor):
+        if self.rerun:
+            return False
         result = Neo4jCypherExecutor.invoke(self.__check_query())
         return len(result) > 0
 
@@ -53,5 +56,5 @@ if __name__ == "__main__":
         "ml-100k_train_4")
 
     executor = Neo4jCypherExecutor()
-    if  a.is_ok(executor):
+    if not a.is_ok(executor):
         a.play(executor)
