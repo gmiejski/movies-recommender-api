@@ -1,15 +1,15 @@
-import os
 import datetime
-
+import os
 from ansible.AnsibleRunner import AnsibleRunner
 from metrics import formatter
 from metrics.RMSEMetric import RMSEMetric
 
 
 class AccuracyMetrics:
-    def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/"):
+    def __init__(self, result_folder="/tmp/magisterka/metrics/accuracy/", similarity=0.1):
         self.result_folder = result_folder
         self.fold_results = []
+        self.similarity = similarity
 
     def run(self, testFilePath, dataset, fold):
         print("Running accuracy metrics for dataset {} and fold {}".format(dataset, fold))
@@ -35,7 +35,9 @@ class AccuracyMetrics:
     def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
         if not os.path.exists(self.result_folder + test_name):
             os.makedirs(self.result_folder + test_name)
-        with open(self.result_folder + test_name + "/accuracy.log", mode="w") as result_file:
+        result_file_name = "/accuracy_similarity:{}.log".format(self.similarity)
+        result_path = "{}{}{}".format(self.result_folder, test_name, result_file_name)
+        with open(result_path, mode="w") as result_file:
             result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
             result_file.write("Final RMSE = {}\n".format(rmse))
             result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
@@ -49,7 +51,9 @@ class AccuracyMetrics:
 WITH TOINT(line.user_id) as user, TOINT(line.movie_id) as movie, TOFLOAT(line.rating) as original_rating
         """.format(testFilePath)
 
-        ready_cypher = prefix + cypher_template.replace("{userId}", "user").replace("{movieId}", "movie")
+        ready_cypher = prefix + cypher_template.replace("{userId}", "user") \
+            .replace("{movieId}", "movie") \
+            .replace("{similarity}", str(self.similarity))
         return ready_cypher
 
     def load_file(self, prediction_cypher):
@@ -94,7 +98,7 @@ class FinalResult:
         self.ratings_found_percentage = ratings_found / ratings_to_find * 100
 
 if __name__ == "__main__":
-    metrics = AccuracyMetrics()
+    metrics = AccuracyMetrics(similarity=0.1)
     test_name = "ml-100k"
     metrics.run(
         "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_test_0",

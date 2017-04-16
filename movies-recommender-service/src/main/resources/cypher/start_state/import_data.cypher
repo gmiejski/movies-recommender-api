@@ -1,5 +1,5 @@
-LOAD CSV WITH HEADERS FROM {trainingDataFile} AS line FIELDTERMINATOR
-  '\t'
+USING PERIODIC COMMIT 10000
+LOAD CSV WITH HEADERS FROM {trainingDataFile} AS line FIELDTERMINATOR '\t'
 WITH line
 MERGE (b:Person {user_id: TOINT(line.user_id)} )
 MERGE (m:Movie {movie_id: TOINT(line.movie_id)} )

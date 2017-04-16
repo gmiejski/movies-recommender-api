@@ -1,5 +1,5 @@
 MATCH (p:Person )-[s:Similarity]-(neighbour:Person)-[r:Rated]-(m:Movie)
-where p.user_id = user and m.movie_id = movie and s.similarity > 0.1 and not (p)-[:Rated]-(m)
+where p.user_id = user and m.movie_id = movie and s.similarity > {similarity} and not (p)-[:Rated]-(m)
 with p,s,neighbour, r, m, original_rating
 ORDER BY s.similarity DESC
 with m,p,
