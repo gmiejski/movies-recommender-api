@@ -5,13 +5,13 @@ from neo4j_state.neo4j_cypher_executor import Neo4jCypherExecutor
 from ratings_in_common.ratings_in_common import RatingsInCommon
 
 
-class MoviesInCommonAssertion(SimpleCypherStateAssertion):
+class PearsonWithSWAssertion(SimpleCypherStateAssertion):
     def __init__(self, train_file, fold):
         self.train_file = train_file
         self.fold = fold
 
     def play(self, Neo4jCypherExecutor):
-        data = MoviesInCommonAssertion.loadRatingsData(self.train_file)
+        data = PearsonWithSWAssertion.loadRatingsData(self.train_file)
         RatingsInCommon().results(data, self.__movies_in_common_file_path())
 
         self.execute_query(Neo4jCypherExecutor, self.query_to_execute(), self.arguments())
@@ -23,13 +23,13 @@ class MoviesInCommonAssertion(SimpleCypherStateAssertion):
         return len(result) > 0
 
     def query_to_execute(self):
-        return "movies_in_common.cypher"
+        return "similarity_pearson_with_sw.cypher"
 
     def arguments(self):
         return {"moviesInCommonFile": "file://{}".format(self.__movies_in_common_file_path())}
 
     def __check_query(self):
-        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) where exists(s.movies_in_common) return s limit 1"
+        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) where exists(s.pearson_with_sw) return s limit 1"
 
     def __movies_in_common_file_path(self):
         return "{}-movies_in_common".format(self.train_file)
@@ -48,10 +48,10 @@ class MoviesInCommonAssertion(SimpleCypherStateAssertion):
 
 
 if __name__ == "__main__":
-    a = MoviesInCommonAssertion(
+    a = PearsonWithSWAssertion(
         "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_train_4",
         "ml-100k_train_4")
 
     executor = Neo4jCypherExecutor()
-    if a.is_ok(executor):
+    if  a.is_ok(executor):
         a.play(executor)

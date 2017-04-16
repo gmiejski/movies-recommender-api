@@ -1,7 +1,13 @@
-class DataLoadedAssertion:
+from neo4j_state.assertions.simple_cypher_state_assertion import SimpleCypherStateAssertion
+
+
+class DataLoadedAssertion(SimpleCypherStateAssertion):
 
     def __init__(self, train_file):
         self.train_file = train_file
+
+    def play(self, Neo4jCypherExecutor):
+        self.execute_query(Neo4jCypherExecutor, self.query_to_execute(), self.arguments())
 
     def is_ok(self, Neo4jCypherExecutor):
         result = Neo4jCypherExecutor.invoke(self.__check_query())
