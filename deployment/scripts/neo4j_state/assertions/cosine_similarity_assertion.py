@@ -1,7 +1,7 @@
 from neo4j_state.assertions.simple_cypher_state_assertion import SimpleCypherStateAssertion
 
 
-class Similarity1Assertion(SimpleCypherStateAssertion):
+class CosineSimilarityAssertion(SimpleCypherStateAssertion):
 
     def play(self, Neo4jCypherExecutor):
         self.execute_query(Neo4jCypherExecutor, self.query_to_execute(), self.arguments())
@@ -11,10 +11,10 @@ class Similarity1Assertion(SimpleCypherStateAssertion):
         return len(result) > 0
 
     def query_to_execute(self):
-        return "similarity_pearson.cypher"
+        return "similarity_cosine.cypher"
 
     def arguments(self):
         return {}
 
     def __check_query(self):
-        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) return s limit 1"  # TODO change for exists(...)
+        return "MATCH (p:Person)-[s:Similarity]->(p2:Person) where exists(s.cosine) return s limit 1"
