@@ -54,9 +54,12 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def restartLocalNeo4j(db_name):
+    def restartLocalNeo4j(db_name, verbose = False):
+        command = ['ansible-playbook', 'restart-neo4j.yaml', '--extra-vars', "neo4j_db_folder=" + db_name]
+        if verbose:
+            command.append('-vvv')
         process = subprocess.Popen(
-            ['ansible-playbook', 'restart-neo4j.yaml', '-vvv', '--extra-vars', "neo4j_db_folder=" + db_name],
+            command,
             cwd=AnsibleRunner.ansible_home,
             stderr=subprocess.STDOUT,
             env=AnsibleRunner.__get_env())
@@ -64,11 +67,14 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def runAccuracyMetricCypher(dataset, fold_name, cypher):
+    def runAccuracyMetricCypher(dataset, fold_name, cypher, verbose=False):
         # cypher = "MATCH (p:Person) return p.user_id limit 10"
+        command = ['ansible-playbook', 'neo4j-shell-cypher.yaml', '--extra-vars',
+                   AnsibleRunner._to_extra_vars({"dataset": dataset, "result_file": fold_name, "cypher": cypher})]
+        if verbose:
+            command.append('-vvv')
         process = subprocess.Popen(
-            ['ansible-playbook', 'neo4j-shell-cypher.yaml', '-vvv', '--extra-vars',
-             AnsibleRunner._to_extra_vars({"dataset": dataset, "result_file": fold_name, "cypher": cypher})],
+            command,
             cwd=AnsibleRunner.ansible_home,
             stderr=subprocess.STDOUT,
             env=AnsibleRunner.__get_env())
