@@ -2,7 +2,7 @@ import datetime
 import os
 from ansible.AnsibleRunner import AnsibleRunner
 from metrics import formatter
-from metrics.RMSEMetric import RMSEMetric
+from metrics.AccMetrics import AccMetrics
 
 
 class AccuracyMetrics:
@@ -25,7 +25,8 @@ class AccuracyMetrics:
 
         end = datetime.datetime.now().replace(microsecond=0)
         self.fold_results.append(PartialResult(
-            RMSEMetric.calculate(results), test_ratings_count, len(results), (end-start).seconds)
+            AccMetrics.calculate_rmse(results), AccMetrics.calculate_mae(results),
+            test_ratings_count, len(results), (end - start).seconds)
         )
         print("Finished accuracy metrics for dataset {} and fold {}".format(dataset, fold))
 

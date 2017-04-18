@@ -2,6 +2,7 @@ import os
 
 from ansible.AnsibleRunner import AnsibleRunner
 from metrics.AccuracyMetricsRunner import AccuracyMetricsRunner
+from metrics.acc_metrics_details.average_rating_details import AverageRatingBasedDetails
 from metrics.acc_metrics_details.n_best_neighbours_details import NeighboursCountBasedDetails
 from metrics.acc_metrics_details.similarity_based_details import SimilarityBasedDetails
 from neo4j_state.assertions.average_rating_assertion import AverageRatingAssertion
@@ -57,18 +58,21 @@ class LocalAccuracyMetricsRunner:
 
 
 def generate_metrics_to_run():
-    return [SimilarityBasedDetails(0.05, "cosine"), NeighboursCountBasedDetails(0.0, "similarity", 20)]
+    return [SimilarityBasedDetails(0.1, "similarity")]
+    # return [NeighboursCountBasedDetails(neighbours_min_similarity=0.3, similarity_method="cosine", top_n_neighbours=10)]
+    # return [SimilarityBasedDetails(0.05, "cosine"), NeighboursCountBasedDetails(0.0, "similarity", 20)]
     result_details = []
-    similarities = [-1.0, -0.5, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    # similarities = [ -1.0, -0.5, -0.3, 0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    similarities = [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
     similarity_methods = ["similarity", "pearson_with_sw", "cosine"]
-    top_n = [10,18,30,100]
+    top_n = [10, 18, 30, 100]
     for s in similarities:
         for m in similarity_methods:
-            result_details.append(SimilarityBasedDetails(s, m))
+            # result_details.append(SimilarityBasedDetails(s, m))
             for n in top_n:
-                result_details.append(NeighboursCountBasedDetails(s,m,n))
+                result_details.append(NeighboursCountBasedDetails(s, m, n))
+    result_details.append(AverageRatingBasedDetails())
     return result_details
-
 
 
 if __name__ == "__main__":

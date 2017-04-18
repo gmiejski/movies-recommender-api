@@ -2,7 +2,7 @@ import datetime
 import os
 from ansible.AnsibleRunner import AnsibleRunner
 from metrics import formatter
-from metrics.RMSEMetric import RMSEMetric
+from metrics.AccMetrics import AccMetrics
 
 
 class AccuracyMetricsRunner:
@@ -17,23 +17,24 @@ class AccuracyMetricsRunner:
         test_ratings_count = self.__total_ratings_to_predict(testFilePath)
         prepared_cypher = self.metric_details.prepare_metric_cypher(testFilePath)
         AnsibleRunner.runAccuracyMetricCypher(dataset, fold,
-                                              prepared_cypher)
+                                              prepared_cypher, verbose=False)
 
         results = self.read_results(dataset, fold)
 
         end = datetime.datetime.now().replace(microsecond=0)
         self.fold_results.append(PartialResult(
-            RMSEMetric.calculate(results), test_ratings_count, len(results), (end - start).seconds)
+            AccMetrics.calculate_rmse(results), AccMetrics.calculate_mae(results),
+            test_ratings_count, len(results), (end - start).seconds)
         )
         print("Finished accuracy metrics for dataset {} and fold {}".format(dataset, fold))
 
     def finish(self, dataset):
         print("Finishing accuracy metrics {} for dataset {}".format(self.metric_details, dataset))
         result = FinalResult(self.fold_results)
-        self.save_result(dataset, result.rmse, result.total_time, result.ratings_found_percentage)
+        self.save_result(dataset, result.rmse, result.mae, result.total_time, result.ratings_found_percentage)
         return result.rmse
 
-    def save_result(self, test_name, rmse, time, percentageOfRatingsFound):
+    def save_result(self, test_name, rmse, mae, time, percentageOfRatingsFound):
         result_folder = self.result_folder + test_name + "/"
         result_file_name = self.metric_details.get_result_file_name()
         full_result_path = "{}{}".format(result_folder, result_file_name)
@@ -43,6 +44,7 @@ class AccuracyMetricsRunner:
         with open(full_result_path, mode="w") as result_file:
             result_file.write("Folds results = " + ",".join(map(lambda x: str(x), self.fold_results)) + '\n')
             result_file.write("Final RMSE = {}\n".format(rmse))
+            result_file.write("Final MAE = {}\n".format(mae))
             result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
             result_file.write("Total time in seconds: {}\n".format(formatter.strfdelta(time, inputtype="s")))
 
@@ -65,8 +67,9 @@ class AccuracyMetricsRunner:
 
 
 class PartialResult:
-    def __init__(self, rmse, test_ratings_count, ratings_predicted, time_in_seconds):
+    def __init__(self, rmse, mae, test_ratings_count, ratings_predicted, time_in_seconds):
         self.rmse = rmse
+        self.mae = mae
         self.test_ratings_count = test_ratings_count
         self.ratings_predicted = ratings_predicted
         self.time_in_seconds = time_in_seconds
@@ -79,6 +82,7 @@ class PartialResult:
 class FinalResult:
     def __init__(self, partial_results):
         self.rmse = sum(map(lambda x: x.rmse, partial_results)) / float(len(partial_results))
+        self.mae = sum(map(lambda x: x.mae, partial_results)) / float(len(partial_results))
         self.total_time = sum(map(lambda x: x.time_in_seconds, partial_results))
         ratings_found = sum(map(lambda x: x.ratings_predicted, partial_results))
         ratings_to_find = sum(map(lambda x: x.test_ratings_count, partial_results))

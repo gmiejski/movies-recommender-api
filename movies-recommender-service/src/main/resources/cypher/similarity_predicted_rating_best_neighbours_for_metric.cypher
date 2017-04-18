@@ -7,7 +7,7 @@ m.movie_id as movie,
 original_rating,
 collect(rating)[..{n_best_neighbours}] as neighbours_ratings,
 collect(s.{similarity_method})[..{n_best_neighbours}] as neighbours_similarities,
-collect(neighbour.avg_rating)[..{n_best_neighbours}] as neighbours_avg_ratings,
+collect(neighbour.avg_rating)[..{n_best_neighbours} ] as neighbours_avg_ratings,
 range(0,{n_best_neighbours}-1,1) as indexes
 unwind indexes as i
 with p, movie, original_rating,
