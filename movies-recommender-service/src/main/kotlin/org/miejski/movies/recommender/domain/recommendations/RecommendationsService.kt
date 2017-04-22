@@ -1,31 +1,31 @@
 package org.miejski.movies.recommender.domain.recommendations
 
 import org.miejski.movies.recommender.helper.castTo
-import org.miejski.movies.recommender.queries.Neo4jQueriesHolder
 import org.neo4j.ogm.session.Session
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 
 @Service
-open class RecommendationsService @Autowired constructor(val session: Session,
-                                                         val neo4jQueriesHolder: Neo4jQueriesHolder) : RecommendationsServiceI {
-    override fun findRecommendedMovies(userId: Long): List<MovieRecommendation> {
+open class RecommendationsService @Autowired constructor(
+    val session: Session,
+    val recommendationsQuery: RecommendationsQuery)
+    : RecommendationsServiceI {
 
-        val cypherQuery = neo4jQueriesHolder.recommendationCypher()
+    private val logger = LoggerFactory.getLogger(RecommendationsService::class.java)
 
-        val result = session.query(cypherQuery, mapOf(Pair("userId", userId)))
+    override fun findRecommendedMovies(userId: Long, minSimilarity: Double): List<MovieRecommendation> {
+        val cypherQuery = recommendationsQuery.getRecommendationQuery()
+
+        val result = session.query(cypherQuery, mapOf(Pair("userId", userId), Pair("min_similarity", minSimilarity)))
             .castTo(MoviesPredictionScore::class.java)
 
         return findBestRecommendations(result).sortedByDescending { it.score }.take(100)
     }
 
     private fun findBestRecommendations(neighboursPredictionScores: List<MoviesPredictionScore>): List<MovieRecommendation> {
-        val maxSharedRatings = neighboursPredictionScores.maxBy { it.ratings_count }?.ratings_count
         return neighboursPredictionScores.map {
-            MovieRecommendation(
-                it.movie_id,
-                it.prediction,
-                calculateScore(it.prediction, it.ratings_count, maxSharedRatings))
+            MovieRecommendation(it.movieId, it.prediction, it.movieNeighboursRatings.toDouble())
         }
     }
 
@@ -38,32 +38,27 @@ open class RecommendationsService @Autowired constructor(val session: Session,
     }
 
     override fun predictedRating(userId: Long, movieId: Long): Double {
-        return predictedRating(userId, movieId, "predictedRating")
-    }
 
-    override fun predictedRating(userId: Long, movieId: Long, query: String): Double {
-
-        val cypherQuery = neo4jQueriesHolder.findQuery(query)
+        val cypherQuery = recommendationsQuery.getPredictionQuery()
 
         val query = session.query(cypherQuery, mapOf(
             Pair("userId", userId),
             Pair("movieId", movieId)))
 
-        val get = query.first().get("predictedRating")
+        val get = query.firstOrNull()?.get("prediction")?.toString()?.toDouble()
         if (get != null) {
             return get.toString().toDouble()
         }
+        logger.info("Predicting rating - returning default value for user {} and movie {}", userId, movieId)
         return -1.0
     }
-
 }
 
-data class MoviesPredictionScore(val prediction: Double, val movie_id: Long, val ratings_count: Long)
+data class MoviesPredictionScore(val movieId: Long, val prediction: Double, val movieNeighboursRatings: Long)
 
 data class MovieRecommendation(val movieId: Long, val prediction: Double, val score: Double)
 
 interface RecommendationsServiceI {
-    fun findRecommendedMovies(userId: Long): List<MovieRecommendation>
+    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6): List<MovieRecommendation>
     fun predictedRating(userId: Long, movieId: Long): Double
-    fun predictedRating(userId: Long, movieId: Long, query: String): Double
 }

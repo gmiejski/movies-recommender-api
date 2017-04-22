@@ -5,4 +5,7 @@ metrics:
   result_folder: /tmp/magisterka/metrics
 
 venv: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner
+
+# arguments
 folds_data_directory: #
+similarity:

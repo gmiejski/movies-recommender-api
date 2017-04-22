@@ -1,19 +1,13 @@
 package org.miejski.movies.recommender.domain.recommendations
 
-import org.miejski.movies.recommender.queries.Neo4jQueriesHolder
-import org.springframework.data.neo4j.template.Neo4jOperations
+import org.neo4j.ogm.session.Neo4jSession
 import spock.lang.Specification
 import spock.lang.Unroll
 
 class RecommendationsServiceSpec extends Specification {
 
-    RecommendationsService recommendationsService
-    Neo4jOperations neo4jOperations
-
-    void setup() {
-        neo4jOperations = Mock(Neo4jOperations)
-        recommendationsService = new RecommendationsService(neo4jOperations, new Neo4jQueriesHolder([:]))
-    }
+    Neo4jSession neo4jSession = Mock(Neo4jSession)
+    RecommendationsService recommendationsService = new RecommendationsService(neo4jSession, new RecommendationsQuery())
 
     @Unroll
     def "should calculate score for movie"() {

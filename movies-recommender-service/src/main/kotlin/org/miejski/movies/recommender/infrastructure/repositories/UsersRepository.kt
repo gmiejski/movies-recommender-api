@@ -1,9 +1,12 @@
-package org.miejski.movies.recommender.domain.user
+package org.miejski.movies.recommender.infrastructure.repositories
 
+import org.miejski.movies.recommender.domain.user.Person
 import org.springframework.data.neo4j.annotation.Query
 import org.springframework.data.neo4j.repository.GraphRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
+@Repository
 interface UsersRepository : GraphRepository<Person> {
 
     @Query("MATCH (n:Person) return n.user_id")
@@ -15,6 +18,6 @@ interface UsersRepository : GraphRepository<Person> {
     @Query("match (p:Person)-[r:Rated]->(m:Movie) where p.user_id = {userId} return avg(r.rating)")
     fun meanRating(@Param("userId") userId: Long): Double
 
-    @Query("MATCH (p:Person)-[r:Rated]->(m:Movie) where p.user_id = {userId} return p,r,m")
+    @Query("MATCH (p:Person) where p.user_id = {userId} optional match (p)-[r:Rated]->(m:Movie) return p,r,m")
     fun findOneByUserId(@Param("userId") userId: Long): Person
 }

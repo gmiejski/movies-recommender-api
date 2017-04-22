@@ -2,6 +2,8 @@
 
 All scripts running performance tests and metrics tests based on Ansible playbooks and python
 
+source /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner/bin/activate
+
 ### Running performance tests:
 
 

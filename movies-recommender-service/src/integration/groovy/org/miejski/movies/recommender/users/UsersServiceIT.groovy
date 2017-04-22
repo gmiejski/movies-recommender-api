@@ -2,17 +2,13 @@ package org.miejski.movies.recommender.users
 
 import org.miejski.movies.recommender.api.user.dto.MovieRatingRequest
 import org.miejski.movies.recommender.domain.movie.Movie
-import org.miejski.movies.recommender.domain.movie.MovieRepository
 import org.miejski.movies.recommender.domain.user.Person
-import org.miejski.movies.recommender.domain.user.UsersRepository
 import org.miejski.movies.recommender.domain.user.UsersService
 import org.miejski.movies.recommender.infrastructure.IntegrationSpec
+import org.miejski.movies.recommender.infrastructure.repositories.MovieRepository
 import org.springframework.beans.factory.annotation.Autowired
 
 class UsersServiceIT extends IntegrationSpec {
-
-    @Autowired
-    UsersRepository usersRepository
 
     @Autowired
     MovieRepository movieRepository
@@ -22,11 +18,11 @@ class UsersServiceIT extends IntegrationSpec {
 
     def "should save and load graph node from repository"() {
         given:
-        usersRepository.save(new Person(null, 10L, []))
-        def savedPerson2 = usersRepository.save(new Person(null, 10L, []))
+        usersRepository.save(new Person(null, 10L, [], 0))
+        def savedPerson2 = usersRepository.save(new Person(null, 10L, [], 0))
 
         when:
-        def loadedPerson = usersRepository.findOne(savedPerson2.id)
+        def loadedPerson = usersRepository.findUser(savedPerson2.id)
 
         then:
         print(usersRepository.findAll().size())
@@ -39,14 +35,14 @@ class UsersServiceIT extends IntegrationSpec {
 
     def "should create rating if doesn't exist for given movie"() {
         given:
-        def savedUser = usersRepository.save(new Person(null, 10L, []))
+        def savedUser = usersRepository.save(new Person(null, 10L, [], 0))
         def savedMovie = movieRepository.save(new Movie(null, 100))
 
         when:
-        usersRepository.addMovieRating(savedUser.user_id, 4.0, savedMovie.movie_id)
+        usersRepository.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 4.0))
 
         then:
-        def foundUser = usersRepository.findOne(savedUser.id)
+        def foundUser = usersRepository.findUser(savedUser.id)
         with(foundUser.ratedMovies.first()) {
             rating == 4.0 as Double
             movie.movie_id == savedMovie.movie_id
@@ -56,7 +52,7 @@ class UsersServiceIT extends IntegrationSpec {
 
     def "should update rating if user already rated given movie"() {
         given:
-        def savedUser = usersRepository.save(new Person(null, 10L, []))
+        def savedUser = usersRepository.save(new Person(null, 10L, [], 0))
         def savedMovie = movieRepository.save(new Movie(null, 100))
         usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 4.0))
 
@@ -64,7 +60,7 @@ class UsersServiceIT extends IntegrationSpec {
         usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 5.0))
 
         then:
-        def foundUser = usersRepository.findOne(savedUser.id)
+        def foundUser = usersRepository.findUser(savedUser.id)
         foundUser.ratedMovies.size() == 1
         with(foundUser.ratedMovies.first()) {
             rating == 5.0 as Double
@@ -74,7 +70,7 @@ class UsersServiceIT extends IntegrationSpec {
     }
 
     def "should return mean rating for given user"() {
-        def savedUser = usersRepository.save(new Person(null, 10L, []))
+        def savedUser = usersRepository.save(new Person(null, 10L, [], 0))
         def savedMovie = movieRepository.save(new Movie(null, 100))
         def savedMovie2 = movieRepository.save(new Movie(null, 101))
         usersService.rateMovie(savedUser.user_id, new MovieRatingRequest(savedMovie.movie_id, 4.0))

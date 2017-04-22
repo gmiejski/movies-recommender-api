@@ -11,6 +11,6 @@ class Person(
     var user_id: Long = -1,
 
     @Relationship(type = "Rated", direction = Relationship.OUTGOING)
-    var ratedMovies: List<Rating> = emptyList()
-
+    var ratedMovies: List<Rating> = emptyList(),
+    var avg_rating: Double = -1.0
 ) : AbstractEntity(id)

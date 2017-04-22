@@ -6,7 +6,7 @@ open class RMSEMetric {
             val mse = predictedRatings
                 .map { (it.first - it.second) * (it.first - it.second) }
                 .sum() / predictedRatings.size.toDouble()
-            return Math.abs(mse)
+            return Math.sqrt(mse)
         }
     }
 }

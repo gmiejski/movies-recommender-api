@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+# TODO check if necessary
 baseDirectory="$NEO4J_HOME/data/databases/"
 
 kill -9 `ps aux | grep neo4j | grep -v grep | grep /usr/bin/java | awk 'NR==1{print $2}'` # kill eny existing neo4j instances

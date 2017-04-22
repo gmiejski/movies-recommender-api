@@ -3,6 +3,7 @@ version '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
+        mavenCentral()
         maven {
             url "https://plugins.gradle.org/m2/"
         }
@@ -15,9 +16,10 @@ buildscript {
 apply plugin: "com.github.lkishalmi.gatling"
 
 ext {
-    spock = '1.0-groovy-2.4'
+    spock = '1.1-groovy-2.4-rc-3'
     neo4j = '3.0.4'
     jackson = '2.6.1'
+    ogm_version = '2.0.4'
 }
 
 task wrapper(type: Wrapper) {

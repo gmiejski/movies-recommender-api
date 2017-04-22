@@ -1,0 +1,6 @@
+---
+
+- hosts: localhost
+  sudo: False
+  roles:
+    - neo4j-shell-cypher
