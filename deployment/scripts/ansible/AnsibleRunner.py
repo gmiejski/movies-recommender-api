@@ -79,6 +79,9 @@ class AnsibleRunner:
             stderr=subprocess.STDOUT,
             env=AnsibleRunner.__get_env())
         process.communicate()
+        code = process.returncode
+        if code != 0:
+            raise Exception("Return code greater than 0")
         return
 
     @staticmethod

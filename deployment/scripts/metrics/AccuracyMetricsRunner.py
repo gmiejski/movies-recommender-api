@@ -20,7 +20,8 @@ class AccuracyMetricsRunner:
                                               prepared_cypher, verbose=False)
 
         results = self.read_results(dataset, fold)
-
+        if len(results) == 0:
+            print("Shit happened")
         end = datetime.datetime.now().replace(microsecond=0)
         self.fold_results.append(PartialResult(
             AccMetrics.calculate_rmse(results), AccMetrics.calculate_mae(results),

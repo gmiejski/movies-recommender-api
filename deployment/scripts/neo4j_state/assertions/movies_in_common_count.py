@@ -49,9 +49,9 @@ class MoviesInCommonAssertion(SimpleCypherStateAssertion):
 
 if __name__ == "__main__":
     a = MoviesInCommonAssertion(
-        "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_train_4",
-        "ml-100k_train_4")
+        "/Users/grzegorz.miejski/home/workspaces/datasets/movielens/prepared/ml-100k/cross_validation/ml-100k_train_0",
+        "ml-100k_train_0")
 
-    executor = Neo4jCypherExecutor()
-    if a.is_ok(executor):
+    executor = Neo4jCypherExecutor(localhost="bolt://localhost:7687")
+    if not a.is_ok(executor):
         a.play(executor)
