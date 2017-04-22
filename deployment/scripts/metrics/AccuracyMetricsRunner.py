@@ -48,6 +48,10 @@ class AccuracyMetricsRunner:
             result_file.write("Ratings found for movies: {0:.2f}%\n".format(percentageOfRatingsFound))
             result_file.write("Total time in seconds: {}\n".format(formatter.strfdelta(time, inputtype="s")))
 
+    def get_final_result_and_details(self):
+        fr = FinalResult(self.fold_results)
+        return fr, self.metric_details
+
     def read_results(self, dataset, fold):
         with open("{}{}/{}".format(self.result_folder, dataset, fold)) as results:
             line = results.readlines()[1:]

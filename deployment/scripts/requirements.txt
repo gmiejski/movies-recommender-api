@@ -2,3 +2,5 @@ boto3
 requests
 ansible
 neo4j-driver
+locustio
+pyzmq

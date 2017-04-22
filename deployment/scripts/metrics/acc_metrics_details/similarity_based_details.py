@@ -1,6 +1,6 @@
 class SimilarityBasedDetails:
-    def __init__(self, similarity, similarity_method):
-        self.similarity = similarity
+    def __init__(self, neighbours_min_similarity, similarity_method):
+        self.neighbours_min_similarity = neighbours_min_similarity
         self.similarity_method = similarity_method
 
     def prepare_metric_cypher(self, testFilePath):
@@ -11,7 +11,7 @@ class SimilarityBasedDetails:
     WITH TOINT(line.user_id) as user, TOINT(line.movie_id) as movie, TOFLOAT(line.rating) as original_rating
             """.format(testFilePath)
 
-        ready_cypher = prefix + cypher_template.replace("{similarity}", str(self.similarity)) \
+        ready_cypher = prefix + cypher_template.replace("{similarity}", str(self.neighbours_min_similarity)) \
             .replace("{similarity_method}",
                      self.similarity_method)  # TODO inject mean common ratings instead of magic number 18 in cypher
         return ready_cypher
@@ -23,8 +23,8 @@ class SimilarityBasedDetails:
 
     def get_result_file_name(self):
         return "similarity_based_prediction/accuracy_similarityMethod:{}_neighboursMinSimilarity:{}.log".format(self.similarity_method,
-                                                                                         self.similarity)
+                                                                                         self.neighbours_min_similarity)
 
     def __str__(self):
         return "SimilarityBasedDetails(neighbours_min_similarity={}, similarity_method={})".format(
-            self.similarity, self.similarity_method)
+            self.neighbours_min_similarity, self.similarity_method)

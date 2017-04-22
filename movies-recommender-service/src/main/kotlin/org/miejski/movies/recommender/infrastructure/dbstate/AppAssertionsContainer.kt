@@ -11,7 +11,7 @@ class AppAssertionsContainer @Autowired constructor(val neo4jTemplate: Neo4jOper
     override fun assertions(): List<Neo4jStateAssertion> {
         return listOf(PersonIndexAssertion(),
             MovieIndexAssertion(),
-            StrictDataAssertion(neo4jTemplate),
+//            StrictDataAssertion(neo4jTemplate),
             Similarity_1_Assertion(neo4jTemplate)
         )
     }
