@@ -6,9 +6,8 @@ from ratings_in_common.ratings_in_common import RatingsInCommon
 
 
 class MoviesInCommonAssertion(SimpleCypherStateAssertion):
-    def __init__(self, train_file, fold):
+    def __init__(self, train_file):
         self.train_file = train_file
-        self.fold = fold
 
     def play(self, Neo4jCypherExecutor):
         data = MoviesInCommonAssertion.loadRatingsData(self.train_file)

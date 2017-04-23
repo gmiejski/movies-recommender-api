@@ -21,6 +21,7 @@ class UsersController @Autowired constructor(val usersService: UsersService) {
 
     @RequestMapping(value = "/users")
     fun getAllUsers(): List<Person> {
+        return emptyList()
         return usersService.findAll()
     }
 

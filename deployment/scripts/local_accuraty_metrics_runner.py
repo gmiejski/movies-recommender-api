@@ -1,14 +1,6 @@
-import os
-
 import collections
-
+import os
 import time
-
-from ansible.AnsibleRunner import AnsibleRunner
-from metrics.AccuracyMetricsRunner import AccuracyMetricsRunner, PartialResult
-from metrics.acc_metrics_details.average_rating_details import AverageRatingBasedDetails
-from metrics.acc_metrics_details.n_best_neighbours_details import NeighboursCountBasedDetails
-from metrics.acc_metrics_details.similarity_based_details import SimilarityBasedDetails
 from neo4j_state.assertions.average_rating_assertion import AverageRatingAssertion
 from neo4j_state.assertions.cosine_similarity_assertion import CosineSimilarityAssertion
 from neo4j_state.assertions.movie_index_assertion import MovieIndexAssertion
@@ -19,6 +11,11 @@ from neo4j_state.assertions.pearson_similarity_with_sw import PearsonWithSWAsser
 from neo4j_state.assertions.person_index_assertion import PersonIndexAssertion
 from neo4j_state.neo4j_cypher_executor import Neo4jCypherExecutor
 from neo4j_state.neo4j_state import Neo4jStateAssertions
+
+from ansible.AnsibleRunner import AnsibleRunner
+from metrics.AccuracyMetricsRunner import AccuracyMetricsRunner
+from metrics.acc_metrics_details.n_best_neighbours_details import NeighboursCountBasedDetails
+from metrics.acc_metrics_details.similarity_based_details import SimilarityBasedDetails
 
 
 class LocalAccuracyMetricsRunner:
@@ -42,7 +39,7 @@ class LocalAccuracyMetricsRunner:
     def neo4j_assertions(self, fold_data):
         return [MovieIndexAssertion(), PersonIndexAssertion(), DataLoadedAssertion(fold_data["train"]),
                 AverageRatingAssertion(), PearsonSimilarityAssertion(),
-                MoviesInCommonAssertion(fold_data["train"], fold_data["fold"]),
+                MoviesInCommonAssertion(fold_data["train"]),
                 PearsonWithSWAssertion(fold_data["train"], fold_data["fold"], rerun=False),
                 CosineSimilarityAssertion()
                 ]

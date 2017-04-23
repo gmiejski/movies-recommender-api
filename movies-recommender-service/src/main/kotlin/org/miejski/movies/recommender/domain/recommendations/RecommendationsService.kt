@@ -14,13 +14,15 @@ open class RecommendationsService @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(RecommendationsService::class.java)
 
-    override fun findRecommendedMovies(userId: Long, minSimilarity: Double): List<MovieRecommendation> {
-        val cypherQuery = recommendationsQuery.getRecommendationQuery()
+    override fun findRecommendedMovies(userId: Long, minSimilarity: Double, similarityMethod: String): List<MovieRecommendation> {
+        val cypherQuery = recommendationsQuery.getRecommendationQuery().replace("{similarity_method}", similarityMethod)
 
-        val result = session.query(cypherQuery, mapOf(Pair("userId", userId), Pair("min_similarity", minSimilarity)))
+        val result = session.query(cypherQuery, mapOf(
+            Pair("userId", userId),
+            Pair("min_similarity", minSimilarity)))
             .castTo(MoviesPredictionScore::class.java)
 
-        return findBestRecommendations(result).sortedByDescending { it.score }.take(100)
+        return findBestRecommendations(result).take(100)
     }
 
     private fun findBestRecommendations(neighboursPredictionScores: List<MoviesPredictionScore>): List<MovieRecommendation> {
@@ -59,6 +61,6 @@ data class MoviesPredictionScore(val movieId: Long, val prediction: Double, val 
 data class MovieRecommendation(val movieId: Long, val prediction: Double, val score: Double)
 
 interface RecommendationsServiceI {
-    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6): List<MovieRecommendation>
+    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6, similarityMethod: String = "similarity"): List<MovieRecommendation>
     fun predictedRating(userId: Long, movieId: Long): Double
 }

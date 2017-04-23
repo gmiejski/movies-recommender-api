@@ -5,13 +5,20 @@ import org.miejski.movies.recommender.domain.recommendations.RecommendationsServ
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 class RecommendationsController @Autowired constructor(val recommendationsService: RecommendationsService) {
 
     @RequestMapping(value = "/recommendations/user/{userId}")
-    fun getRecommendedMovies(@PathVariable("userId") userId: Long): List<MovieRecommendation> {
-        return recommendationsService.findRecommendedMovies(userId)
+    fun getRecommendedMovies(@PathVariable("userId") userId: Long,
+                             @RequestParam(name = "minSimilarity", required = false) minSimilarity: Double?,
+                             @RequestParam(name = "similarityMethod", required = false) similarityMethod: String?): List<MovieRecommendation> {
+
+        val minSim = minSimilarity ?: 0.5
+        val simMethod = similarityMethod ?: "similarity"
+
+        return recommendationsService.findRecommendedMovies(userId, minSim, simMethod)
     }
 }
