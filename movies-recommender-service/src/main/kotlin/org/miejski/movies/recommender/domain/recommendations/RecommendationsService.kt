@@ -14,8 +14,14 @@ open class RecommendationsService @Autowired constructor(
 
     private val logger = LoggerFactory.getLogger(RecommendationsService::class.java)
 
-    override fun findRecommendedMovies(userId: Long, minSimilarity: Double, similarityMethod: String): List<MovieRecommendation> {
-        val cypherQuery = recommendationsQuery.getRecommendationQuery().replace("{similarity_method}", similarityMethod)
+    override fun findRecommendedMovies(userId: Long, minSimilarity: Double, similarityMethod: String, neighboursCount: Int?): List<MovieRecommendation> {
+        val queryTemplate = if (neighboursCount != null) {
+            recommendationsQuery.getRecommendationWIthNBestNeighboursQuery()
+        } else recommendationsQuery.getRecommendationQuery()
+
+        val cypherQuery = queryTemplate.replace("{similarity_method}", similarityMethod)
+            .replace("{n_best_neighbours}", neighboursCount.toString())
+
 
         val result = session.query(cypherQuery, mapOf(
             Pair("userId", userId),
@@ -28,14 +34,6 @@ open class RecommendationsService @Autowired constructor(
     private fun findBestRecommendations(neighboursPredictionScores: List<MoviesPredictionScore>): List<MovieRecommendation> {
         return neighboursPredictionScores.map {
             MovieRecommendation(it.movieId, it.prediction, it.movieNeighboursRatings.toDouble())
-        }
-    }
-
-    private fun calculateScore(prediction: Double, sharedRatings: Long, maxSharedRatings: Long?): Double {
-        if (maxSharedRatings != null) {
-            return prediction * Math.cos((maxSharedRatings.toDouble() - sharedRatings.toDouble()) / maxSharedRatings.toDouble())
-        } else {
-            return 0.0
         }
     }
 
@@ -61,6 +59,6 @@ data class MoviesPredictionScore(val movieId: Long, val prediction: Double, val 
 data class MovieRecommendation(val movieId: Long, val prediction: Double, val score: Double)
 
 interface RecommendationsServiceI {
-    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6, similarityMethod: String = "similarity"): List<MovieRecommendation>
+    fun findRecommendedMovies(userId: Long, minSimilarity: Double = 0.6, similarityMethod: String = "similarity", neighboursCount: Int? = null): List<MovieRecommendation>
     fun predictedRating(userId: Long, movieId: Long): Double
 }

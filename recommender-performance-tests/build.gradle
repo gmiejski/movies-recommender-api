@@ -54,15 +54,22 @@ task loadTest(type: JavaExec) {
             similarityMethod = "$similarity_method"
         }
 
+        def neighbours = null
+        if (project.hasProperty("neighboursCount")) {
+            neighbours = "$neighboursCount"
+        }
+
         println "TestProperty: MinSimilarity: $minSimilarity"
         println "TestProperty: SimilarityMethod: $similarityMethod"
+        println "TestProperty: neighboursCount: $neighbours"
 
         jvmArgs = [
                 // workaround for https://github.com/gatling/gatling/issues/2689
                 "-Dgatling.core.directory.binaries=${sourceSets.test.output.classesDir.toString()}",
                 "-DapplicationUrl=$applicationUrl",
                 "-DminSimilarity=$minSimilarity",
-                "-DsimilarityMethod=$similarityMethod"
+                "-DsimilarityMethod=$similarityMethod",
+                "-DneighboursCount=$neighbours"
         ]
         main = "io.gatling.app.Gatling"
         args = [

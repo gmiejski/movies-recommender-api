@@ -15,7 +15,6 @@ from neo4j_state.neo4j_state import Neo4jStateAssertions
 from ansible.AnsibleRunner import AnsibleRunner
 from metrics.AccuracyMetricsRunner import AccuracyMetricsRunner
 from metrics.acc_metrics_details.n_best_neighbours_details import NeighboursCountBasedDetails
-from metrics.acc_metrics_details.similarity_based_details import SimilarityBasedDetails
 
 
 class LocalAccuracyMetricsRunner:
@@ -83,14 +82,17 @@ class LocalAccuracyMetricsRunner:
 
 def generate_metrics_to_run():
     result_details = []
-    # similarities = [0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    # similarities = [0.0, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.14, 0.16]
     similarities = [0.0]
-    # similarity_methods = ["similarity"]
-    similarity_methods = ["similarity", "pearson_with_sw", "cosine"]
-    top_n = [10, 15, 20, 25, 30, 35, 40, 45, 50, 100]
+    similarity_methods = ["pearson_with_sw"]
+    # similarity_methods = ["similarity", "pearson_with_sw", "cosine"]
+    # top_n = [10, 15, 20, 25, 30, 35, 40, 45, 50, 100]
+    top_n = [10, 15, 20, 25, 30]
+    # top_n = [35, 40, 45, 50, 100]
+    # top_n = [40]
     for s in similarities:
         for m in similarity_methods:
-            result_details.append(SimilarityBasedDetails(s, m))
+            # result_details.append(SimilarityBasedDetails(, m))
             for n in top_n:
                 result_details.append(NeighboursCountBasedDetails(s, m, n))
     # result_details.append(AverageRatingBasedDetails())

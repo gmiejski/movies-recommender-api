@@ -21,7 +21,7 @@ open class PrecisionAndRecallService @Autowired constructor(
         val userRatings = realRatings.groupBy { it.person }
 
         val usersWithRatingsAndReco: List<Triple<Long, List<RealRating>, List<MovieRecommendation>>> = runAsyncAndGather(
-            userRatings.toList(), { Triple(it.first, it.second, recommendationsService.findRecommendedMovies(it.first)) })
+            userRatings.toList(), { Triple(it.first, it.second, recommendationsService.findRecommendedMovies(it.first, neighboursCount = null)) })
 
         val recoMapByUser = usersWithRatingsAndReco.map { Pair(it.first, it.third) }.toMap()
 

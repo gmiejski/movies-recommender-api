@@ -13,6 +13,7 @@ class RecommendationsSimulation extends Simulation {
   val applicationUrl = System.getProperty("applicationUrl")
   val similarityMethod = System.getProperty("similarityMethod")
   val minSimilarity = System.getProperty("minSimilarity")
+  val neighboursCount = System.getProperty("neighboursCount")
 
   val httpConf = http
     .baseURL(applicationUrl)
@@ -31,7 +32,8 @@ class RecommendationsSimulation extends Simulation {
   val feeder = Iterator.continually(Map(
     "userId" -> usersRepository.getNextId,
     "minSimilarity" -> minSimilarity,
-    "similarityMethod" -> similarityMethod))
+    "similarityMethod" -> similarityMethod,
+    "neighboursCount" -> neighboursCount))
 
   val recommendationScenarion = scenario("scenario")
     .feed(feeder)
@@ -39,7 +41,7 @@ class RecommendationsSimulation extends Simulation {
       pace(waitInterval)
         .exec(
           http("get_recommendations")
-            .get("/recommendations/user/${userId}?minSimilarity=${minSimilarity}&similarityMethod=${similarityMethod}")
+            .get("/recommendations/user/${userId}?minSimilarity=${minSimilarity}&similarityMethod=${similarityMethod}&neighboursCount=${neighboursCount}")
         )
     }
 
