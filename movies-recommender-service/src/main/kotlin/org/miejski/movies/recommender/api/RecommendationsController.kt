@@ -15,10 +15,10 @@ class RecommendationsController @Autowired constructor(val recommendationsServic
     fun getRecommendedMovies(@PathVariable("userId") userId: Long,
                              @RequestParam(name = "minSimilarity", required = false) minSimilarity: Double?,
                              @RequestParam(name = "similarityMethod", required = false) similarityMethod: String?): List<MovieRecommendation> {
-
         val minSim = minSimilarity ?: 0.5
         val simMethod = similarityMethod ?: "similarity"
-
-        return recommendationsService.findRecommendedMovies(userId, minSim, simMethod)
+        val recommendations = recommendationsService.findRecommendedMovies(userId, minSim, simMethod)
+        println("Movies: ${recommendations.size}, minSimilarity: $minSim, similarityMethod: ${simMethod}")
+        return recommendations
     }
 }

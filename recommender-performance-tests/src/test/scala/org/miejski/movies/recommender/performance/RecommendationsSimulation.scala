@@ -10,8 +10,12 @@ import scala.language.postfixOps
 
 class RecommendationsSimulation extends Simulation {
 
+  val applicationUrl = System.getProperty("applicationUrl")
+  val similarityMethod = System.getProperty("similarityMethod")
+  val minSimilarity = System.getProperty("minSimilarity")
+
   val httpConf = http
-    .baseURL("http://localhost:8080")
+    .baseURL(applicationUrl)
     .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
     .doNotTrackHeader("1")
     .acceptLanguageHeader("en-US,en;q=0.5")
@@ -24,7 +28,10 @@ class RecommendationsSimulation extends Simulation {
 
   def usersRepository = new IdsRepository(new HttpGetRequest("http://localhost:8080").getUsersIds)
 
-  val feeder = Iterator.continually(Map("userId" -> usersRepository.getNextId))
+  val feeder = Iterator.continually(Map(
+    "userId" -> usersRepository.getNextId,
+    "minSimilarity" -> minSimilarity,
+    "similarityMethod" -> similarityMethod))
 
   val recommendationScenarion = scenario("scenario")
     .feed(feeder)
@@ -32,7 +39,7 @@ class RecommendationsSimulation extends Simulation {
       pace(waitInterval)
         .exec(
           http("get_recommendations")
-            .get("/recommendations/user/${userId}")
+            .get("/recommendations/user/${userId}?minSimilarity=${minSimilarity}&similarityMethod=${similarityMethod}")
         )
     }
 

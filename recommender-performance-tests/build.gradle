@@ -33,16 +33,36 @@ dependencies {
 task loadTest(type: JavaExec) {
     println name
     if (project.hasProperty("simulation") && project.hasProperty("applicationUrl")) {
-        println "Simulation: $simulation"
-        println "Application url: $applicationUrl"
+        println project.properties
+        println "TestProperty: Simulation: $simulation"
+        println "TestProperty: Application url: $applicationUrl"
         dependsOn testClasses
         description = "load test with Gatling"
         group = "Load Test"
         classpath = sourceSets.test.runtimeClasspath
+
+        def minSimilarity = null
+        if (!project.hasProperty("min_similarity")) {
+            minSimilarity = "0.0"
+        } else {
+            minSimilarity = "$min_similarity"
+        }
+        def similarityMethod = null
+        if (!project.hasProperty("similarity_method")) {
+            similarityMethod = "similarity"
+        } else {
+            similarityMethod = "$similarity_method"
+        }
+
+        println "TestProperty: MinSimilarity: $minSimilarity"
+        println "TestProperty: SimilarityMethod: $similarityMethod"
+
         jvmArgs = [
                 // workaround for https://github.com/gatling/gatling/issues/2689
                 "-Dgatling.core.directory.binaries=${sourceSets.test.output.classesDir.toString()}",
-                "-DapplicationUrl=$applicationUrl"
+                "-DapplicationUrl=$applicationUrl",
+                "-DminSimilarity=$minSimilarity",
+                "-DsimilarityMethod=$similarityMethod"
         ]
         main = "io.gatling.app.Gatling"
         args = [
