@@ -26,12 +26,14 @@ class InstanceConfigurer:
         self.createApplicationInstances(config["service"])
 
     def createNeo4jInstances(self, neo4j_config):
-        ids = self.createInstances(neo4j_config["instance-type"], neo4j_config["count"], "neo4j")
-        self.neo4jInstancesIds = ids
+        if neo4j_config["count"] > 0:
+            ids = self.createInstances(neo4j_config["instance-type"], neo4j_config["count"], "neo4j")
+            self.neo4jInstancesIds = ids
 
     def createApplicationInstances(self, service_config):
-        ids = self.createInstances(service_config["instance-type"], service_config["count"], "service")
-        self.applicationInstancesIds = ids
+        if service_config["count"] > 0:
+            ids = self.createInstances(service_config["instance-type"], service_config["count"], "service")
+            self.applicationInstancesIds = ids
 
     def createInstances(self, instance_type, count, purpose):
         instances_ids = self.aws_client.createInstances(instance_type, count, purpose)
