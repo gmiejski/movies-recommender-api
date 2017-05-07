@@ -16,3 +16,5 @@ class EC2Instances():
         return EC2Instances(
                 instances=list(
                         map(lambda instance: EC2Instance.fromJson(instance), json['Reservations'][0]['Instances'])))
+
+

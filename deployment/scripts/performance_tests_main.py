@@ -10,22 +10,25 @@ config = {
         "instance-type": "t2.micro"
     },
     "service": {
-        "count": 1,
+        "count": 0,
         "instance-type": "t2.micro"
     }
 }
 
 instance_configurer = InstanceConfigurer()
+instance_configurer.load_existing_instances()
 instance_configurer.prepare_instances(config)
 instance_configurer.wait_for_instances()
 instance_configurer.run_apps()
 
-client = EC2Client()
-
 # client.createNeo4jInstances()
 # client.createApplicationInstances()
-client.wait_for_startup()
 
-AnsibleRunner.start_performance_tests(client.application_ips())
+AnsibleRunner.start_performance_tests(instance_configurer.service_ips())
 
-client.killAllInstances()
+instance_configurer.killAllInstances()
+
+
+if __name__ == "__main__":
+    instance_configurer = InstanceConfigurer()
+    instance_configurer.load_existing_instances()
