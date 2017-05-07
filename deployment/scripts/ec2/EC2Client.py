@@ -14,43 +14,28 @@ class EC2Client:
         self.applicationInstances = None
         self.applicationInstancesIds = []
 
-    def createNeo4jInstances(self, count=1):
-        ids = self.createInstances(count)
-        self.neo4jInstancesIds = ids
-
-    def createApplicationInstances(self, count=1):
-        ids = self.createInstances(count)
-        self.applicationInstancesIds = ids
-
     def wait_for_startup(self):
-        all_instances = self.neo4jInstancesIds + self.applicationInstancesIds
-        EC2Waiter.waitForRunningState(all_instances)
-        self.neo4jInstances = self.getInstances(self.neo4jInstancesIds)
-        self.applicationInstances = self.getInstances(self.applicationInstancesIds)
-
-        self.runNeoOnInstances(self.neo4jInstances.ips())
         AnsibleRunner.runApplication(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
 
-    def createInstances(self, count):
+    def createInstances(self, instance_type, count):
         response = self.ec2client.run_instances(
-                DryRun=False,
-                ImageId='ami-541bea3b',
-                MinCount=count,
-                MaxCount=count,
-                KeyName='movies-recommender-service',
-                SecurityGroups=[
-                    'movies-recommender-service-sg',
-                ],
-                InstanceType='t2.micro',
+            DryRun=False,
+            ImageId='ami-541bea3b',
+            MinCount=count,
+            MaxCount=count,
+            KeyName='movies-recommender-service',
+            SecurityGroups=[
+                'movies-recommender-service-sg',
+            ],
+            InstanceType=instance_type,
         )
 
         instancesIds = list(map(lambda i: i['InstanceId'], response['Instances']))
         return instancesIds
 
-
     def getInstances(self, ids=[]):
         response = self.ec2client.describe_instances(
-                InstanceIds=ids
+            InstanceIds=ids
         )
         return EC2Instances.fromJson(response)
 
@@ -66,7 +51,7 @@ class EC2Client:
                        key_filename='/Users/grzegorz.miejski/.ssh/movies-recommender-service.pem')
 
         stdin, stdout, stderr = client.exec_command(
-                '/home/ec2-user/programming/neo4j-community-3.0.4/data/databases/neo4j-database.sh 100k.db')
+            '/home/ec2-user/programming/neo4j-community-3.0.4/data/databases/neo4j-database.sh 100k.db')
         for line in stdout:
             print('... ' + line.strip('\n'))
         for err in stderr:
