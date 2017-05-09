@@ -1,0 +1,26 @@
+---
+
+- name: stop running neo4j
+  shell: ./bin/neo4j stop chdir={{ neo4j.home }}
+  ignore_errors: True
+
+- name: copy linker file
+  copy:
+    src: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/link_db_by_name.sh
+    dest: "{{ neo4j.home_db }}"
+    owner: ec2-user
+    mode: 0777
+
+- name: link proper db for neo4j
+  shell: "./link_db_by_name.sh {{ neo4j_db_folder }} chdir={{ neo4j.home_db }}"
+  ignore_errors: True
+
+- name: restart neo4j
+  shell: ./bin/neo4j start chdir={{ neo4j.home }}
+
+- name: wait until neo4j-shell is operatable
+  action: shell ./neo4j-shell chdir={{ neo4j.home }}/bin
+  register: result
+  until: result.stdout.find("Welcome") != -1
+  retries: 5
+  delay: 2

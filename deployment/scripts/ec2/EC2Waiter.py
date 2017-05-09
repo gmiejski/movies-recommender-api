@@ -11,15 +11,6 @@ class EC2Waiter:
             waiter.wait(
                     DryRun=False,
                     InstanceIds=ids,
-                    # Filters=[
-                    # {
-                    # 'Name': 'string',
-                    # 'Values': [
-                    # 'string',
-                    # ]
-                    # },
-                    # ],
-                    # NextToken='string',
             )
         except Exception as e:
             print("Error waiting for instances turn into state: " + state)

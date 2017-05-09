@@ -2,7 +2,7 @@
 
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="org.miejski.movies.recommender.infrastructure.configuration.ClassLoggingFilter"/>
+        <!--<filter class="org.miejski.movies.recommender.infrastructure.configuration.ClassLoggingFilter"/>-->
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
@@ -10,6 +10,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <!--<filter class="org.miejski.movies.recommender.infrastructure.configuration.ClassLoggingFilter"/>-->
         <file>/tmp/logs/movies-recommender-service.log</file>
         <append>false</append>
         <encoder>
@@ -18,22 +19,22 @@
     </appender>
 
     <springProfile name="!integration">
-        <logger name="org.miejski.movies.recommender" level="WARN"/>
-
-        <root level="WARN">
+        <logger name="org.miejski.movies.recommender" level="INFO"/>
+        <logger name="org.neo4j.ogm.drivers.http.request" level="WARN"/>
+        <root level="INFO">
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="FILE"/>
         </root>
     </springProfile>
 
     <springProfile name="integration">
-        <logger name="org.miejski.movies.recommender" level="DEBUG"/>
+        <logger name="org.miejski.movies.recommender" level="INFO"/>
         <root level="INFO">
             <appender-ref ref="STDOUT"/>
         </root>
     </springProfile>
 
-    <logger name="org.miejski.movies.recommender" level="WARN"/>
+    <logger name="org.miejski.movies.recommender" level="INFO"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
