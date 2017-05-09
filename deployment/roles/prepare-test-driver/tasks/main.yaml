@@ -1,0 +1,38 @@
+---
+
+- name: install the latest version of nginx
+  yum:
+    name: nginx
+    state: latest
+
+- name: clear previous project
+  shell: rm -rf {{ recommender_api.home_folder }}
+
+- name: clear logs from previous run
+  shell: rm -rf /tmp/logs/perf-tests.log
+
+- name: git checkout
+  git: repo=https://github.com/gmiejski/movies-recommender-api.git
+       dest={{ recommender_api.home_folder }}
+       version="MR-23-test-driver-node-witn-LB"
+
+- name: copy nginx file
+  sudo: true
+  template: src=movie_recommender_api.conf.j2 dest=/etc/nginx/conf.d/movie_recommender_api.conf.template mode=777
+
+- name: copy templater
+  sudo: true
+  template: src=templater.py dest=/etc/nginx/conf.d/templater.py mode=777
+
+- name: configure nginx
+  become: true
+  become_method: sudo
+  shell: python /etc/nginx/conf.d/templater.py {{ service_nodes_ips }}
+
+- name: stop nginx
+  shell: sudo pkill -f nginx
+
+- name: start nginx
+  become: true
+  become_method: sudo
+  shell: /usr/sbin/nginx -c {{ nginx_config }}

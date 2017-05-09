@@ -120,3 +120,35 @@ class AnsibleRunner:
             env=AnsibleRunner.__get_env())
         process.communicate()
         return
+
+    @staticmethod
+    def prepare_test_driver(testDriverIp, service_nodes_ips, verbose=True):
+        ips = ";".join(service_nodes_ips)
+        service_nodes = "'\'{}'\'".format(ips)
+
+        command = ['ansible-playbook', 'prepare-test-driver.yaml',
+                   '-i', '{},'.format(testDriverIp),
+                   '--extra-vars', AnsibleRunner._to_extra_vars({"service_nodes_ips": service_nodes})]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
+
+    @staticmethod
+    def run_tests_on_driver(testDriverIp, verbose=True):
+        command = ['ansible-playbook', 'run-test-on-test-driver.yaml',
+                   '-i', '{},'.format(testDriverIp), ]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return

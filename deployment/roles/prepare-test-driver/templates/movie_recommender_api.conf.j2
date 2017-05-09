@@ -1,0 +1,16 @@
+events {
+  worker_connections  4096;  ## Default: 1024
+}
+
+http {
+  upstream recommender_api {
+    ${servers}
+  }
+
+  server {
+    listen 9999;
+    location / {
+      proxy_pass http://recommender_api;
+    }
+  }
+}
