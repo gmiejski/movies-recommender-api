@@ -49,10 +49,10 @@ class InstanceConfigurer:
         self.neo4jInstances = self.aws_client.getInstances(self.neo4jInstancesIds)
         self.applicationInstances = self.aws_client.getInstances(self.applicationInstancesIds)
 
-    def run_apps(self):
-        pass
-        # self.runNeoOnInstances(self.neo4jInstances.ips())
-        # self.runServices(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
+    def run_apps(self, dryRun=False):
+        if not dryRun:
+            self.runNeoOnInstances(self.neo4jInstances.ips())
+            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
 
     def runServices(self, nodes_ips, neo4j_node_ip):
         print("Running service on nodes with ips: {} and neo4j_node_ip: {}".format(str(nodes_ips), str(neo4j_node_ip)))

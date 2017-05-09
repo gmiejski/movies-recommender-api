@@ -39,8 +39,11 @@ class AnsibleRunner:
     def start_performance_tests(application_ips):
         host = 'http://' + application_ips[0] + ':8080'
         process = subprocess.Popen(['./gradlew', 'loadTest',
-                                    '-Psimulation=org.miejski.movies.recommender.performance.RatingsSimulation',
-                                    '-PapplicationUrl=' + host, ],
+                                    '-Psimulation=org.miejski.movies.recommender.performance.RecommendationsSimulation',
+                                    '-PapplicationUrl=' + host,
+                                    '-Pmin_similarity=0.0',
+                                    '-Psimilarity_method=cosine',
+                                    '-PneighboursCount=30'],
                                    cwd=AnsibleRunner.application_home,
                                    stderr=subprocess.STDOUT,
                                    env=AnsibleRunner.__get_env())

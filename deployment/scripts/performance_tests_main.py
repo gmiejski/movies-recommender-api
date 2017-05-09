@@ -20,16 +20,15 @@ instance_configurer = InstanceConfigurer()
 instance_configurer.load_existing_instances()
 instance_configurer.prepare_instances(config)
 instance_configurer.wait_for_instances()
-instance_configurer.run_apps()
+instance_configurer.run_apps(dryRun=True)
+# instance_configurer.run_apps(dryRun=False)
 
 service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
-# client.createNeo4jInstances()
-# client.createApplicationInstances()
 
 AnsibleRunner.start_performance_tests(instance_configurer.service_ips())
 
-instance_configurer.killAllInstances()
+# instance_configurer.killAllInstances()
 
 
 if __name__ == "__main__":
