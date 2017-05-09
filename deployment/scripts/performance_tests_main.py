@@ -2,6 +2,7 @@ from ansible.AnsibleRunner import AnsibleRunner
 
 from ec2.EC2Client import EC2Client
 from performance.InstanceConfigurer import InstanceConfigurer
+from performance.InstanceStateChecker import InstanceStateChecker
 
 config = {
     "neo4j": {
@@ -10,7 +11,7 @@ config = {
         "instance-type": "t2.micro"
     },
     "service": {
-        "count": 0,
+        "count": 1,
         "instance-type": "t2.micro"
     }
 }
@@ -21,6 +22,8 @@ instance_configurer.prepare_instances(config)
 instance_configurer.wait_for_instances()
 instance_configurer.run_apps()
 
+service_checker = InstanceStateChecker(instance_configurer.service_ips())
+service_checker.wait_for_services()
 # client.createNeo4jInstances()
 # client.createApplicationInstances()
 

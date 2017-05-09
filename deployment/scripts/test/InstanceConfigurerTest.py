@@ -29,5 +29,31 @@ class InstanceConfigurerTest(unittest.TestCase):
         self.assertEqual(len(instances["neo4j"].instances), 1)
         self.assertEqual(len(instances["service"].instances), 2)
 
+    @mock_ec2
+    def test_retrieve_running_instances(self):
+        config = {
+            "neo4j": {
+                "count": 1,
+                "cluster": None,
+                "instance-type": "t2.micro"
+            },
+            "service": {
+                "count": 1,
+                "instance-type": "t2.micro"
+            }
+        }
+        instance_configurer = InstanceConfigurer()
+        instance_configurer.prepare_instances(config)
+        instance_configurer.wait_for_instances()
+
+        instance_configurer = InstanceConfigurer()
+        instance_configurer.load_existing_instances()
+
+        # shitty moto doesn't support tags
+        # instances = instance_configurer.instances()
+        # self.assertEqual(len(instances["neo4j"].instances), 1)
+        # self.assertEqual(len(instances["service"].instances), 1)
+
+
 if __name__ == '__main__':
     unittest.main()

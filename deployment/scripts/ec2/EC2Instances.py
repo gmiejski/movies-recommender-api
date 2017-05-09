@@ -15,8 +15,15 @@ class EC2Instances():
     def fromJson(json):
         if len(json['Reservations']) == 0:
             return EC2Instances()
-        return EC2Instances(
-                instances=list(
-                        map(lambda instance: EC2Instance.fromJson(instance), json['Reservations'][0]['Instances'])))
+        result = []
+
+        for reservation in json['Reservations']:
+            instances = reservation['Instances']
+            for instance in instances:
+                result.append(EC2Instance.fromJson(instance))
+        return EC2Instances(result)
+        # return EC2Instances(
+        #         instances=list(
+        #                 map(lambda instance: EC2Instance.fromJson(instance), json['Reservations'][0]['Instances'])))
 
 

@@ -7,12 +7,13 @@ class AnsibleRunner:
 
     @staticmethod
     def runApplication(ips, neo4j_host):
-        process = subprocess.Popen(['/usr/local/bin/ansible-playbook', 'install-application.yaml',
+        process = subprocess.Popen(['ansible-playbook', 'install-application.yaml',
                                     '-i', AnsibleRunner.create_ips_argument(ips),
                                     '-vvv',
                                     '--extra-vars', AnsibleRunner.prepare_extra_variables(neo4j_host)],
                                    cwd=AnsibleRunner.ansible_home,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.STDOUT,
+                                   env=AnsibleRunner.__get_env())
         process.communicate()
         return
 
@@ -21,7 +22,8 @@ class AnsibleRunner:
         process = subprocess.Popen(['ansible-playbook', 'run-application-local.yaml',
                                     '-vvv'],
                                    # cwd=AnsibleRunner.ansible_home,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.STDOUT,
+                                   env=AnsibleRunner.__get_env())
         process.communicate()
         return
 
@@ -40,7 +42,8 @@ class AnsibleRunner:
                                     '-Psimulation=org.miejski.movies.recommender.performance.RatingsSimulation',
                                     '-PapplicationUrl=' + host, ],
                                    cwd=AnsibleRunner.application_home,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.STDOUT,
+                                   env=AnsibleRunner.__get_env())
         process.communicate()
         return
 
@@ -49,7 +52,8 @@ class AnsibleRunner:
         process = subprocess.Popen(['ansible-playbook', 'kill-application-local.yaml',
                                     '-vvv'],
                                    cwd=AnsibleRunner.ansible_home,
-                                   stderr=subprocess.STDOUT)
+                                   stderr=subprocess.STDOUT,
+                                   env=AnsibleRunner.__get_env())
         process.communicate()
         return
 
