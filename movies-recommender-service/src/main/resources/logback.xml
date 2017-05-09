@@ -21,7 +21,7 @@
     <springProfile name="!integration">
         <logger name="org.miejski.movies.recommender" level="INFO"/>
         <logger name="org.neo4j.ogm.drivers.http.request" level="WARN"/>
-        <root level="WARN">
+        <root level="INFO">
             <appender-ref ref="STDOUT"/>
             <appender-ref ref="FILE"/>
         </root>
