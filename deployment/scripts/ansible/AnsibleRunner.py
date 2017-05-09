@@ -54,7 +54,7 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def restartLocalNeo4j(db_name, verbose = False):
+    def restartLocalNeo4j(db_name, verbose=False):
         command = ['ansible-playbook', 'restart-neo4j.yaml', '--extra-vars', "neo4j_db_folder=" + db_name]
         if verbose:
             command.append('-vvv')
@@ -90,11 +90,26 @@ class AnsibleRunner:
             "PATH": "/Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/runner/bin:/Library/Frameworks/Python.framework/Versions/3.4/bin:/Users/grzegorz.miejski/programming/spark/spark-1.6.0-bin-hadoop2.6/bin:/Library/Frameworks/Python.framework/Versions/3.4/bin:/usr/local/go/bin/:/Users/grzegorz.miejski/programming/apache-cassandra-2.1.7/bin:/Users/grzegorz.miejski/programming/scala-2.11.4/bin:/Users/grzegorz.miejski/home/programs/apache-storm-0.9.4/bin:/usr/local/heroku/bin:/Users/grzegorz.miejski/home/programs/apache-storm-0.9.4/bin:/Users/grzegorz.miejski/home/maven/bin:/Users/grzegorz.miejski/home/mongodb/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/grzegorz.miejski/.fzf/bin:/usr/local/sbin:/Users/grzegorz.miejski/programming/drivers"}
 
     @staticmethod
-    def _to_extra_vars( params):
+    def _to_extra_vars(params):
         "returns prepared ansible extra args from dict"
         result = ""
         for k, v in params.items():
-            value = v if " " not  in v else "'{}'".format(v)
+            value = v if " " not in v else "'{}'".format(v)
             result += "{}={} ".format(k, value)
         # return '--extra-vars="' + result +'"'
         return result
+
+    @staticmethod
+    def remote_restart_neo4j(instanceIp, dataset, verbose=False):
+        command = ['ansible-playbook', 'remote-restart-neo4j.yaml',
+                   '-i', '{},'.format(instanceIp),
+                   '--extra-vars', AnsibleRunner._to_extra_vars({"neo4j_db_folder": dataset})]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return

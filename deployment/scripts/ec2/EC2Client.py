@@ -13,7 +13,7 @@ class EC2Client:
     def createInstances(self, instance_type, count, purpose):
         response = self.ec2client.run_instances(
             DryRun=False,
-            ImageId='ami-541bea3b',
+            ImageId='ami-b8fe20d7',
             MinCount=count,
             MaxCount=count,
             KeyName='movies-recommender-service',
@@ -39,7 +39,15 @@ class EC2Client:
 
     def getInstances(self, ids=[]):
         response = self.ec2client.describe_instances(
-            InstanceIds=ids
+            InstanceIds=ids,
+            Filters=[
+                {
+                    'Name': 'instance-state-name',
+                    'Values': [
+                        'pending', 'running'
+                    ]
+                },
+            ],
         )
         return EC2Instances.fromJson(response)
 

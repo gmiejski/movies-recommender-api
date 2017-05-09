@@ -1,0 +1,12 @@
+recommender_api:
+  home_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api
+  run_folder: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/movies-recommender-service/build/libs
+  scripts_home: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts
+  tmp_folder: /tmp/magisterka
+
+neo4j:
+    host: localhost
+    home: /home/ec2-user/programming/neo4j-community-3.0.4/
+    home_db: /home/ec2-user/programming/neo4j-community-3.0.4/data/databases/
+    import_cypher_file: # TODO
+neo4j_db_folder: # TODO

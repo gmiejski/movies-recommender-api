@@ -16,6 +16,9 @@ class InstanceConfigurer:
 
     def load_existing_instances(self):
         instances = self.aws_client.getInstances().instances
+        if len(instances) == 0:
+            print("No running instances found")
+            return
         self.__save_neo4j_instances(instances)
         self.__save_service_instances(instances)
         print("loaded Neo4j instances: {}".format(self.neo4jInstances.instances))
@@ -26,12 +29,12 @@ class InstanceConfigurer:
         self.createApplicationInstances(config["service"])
 
     def createNeo4jInstances(self, neo4j_config):
-        if neo4j_config["count"] > 0:
+        if neo4j_config["count"] > 0 and len(self.neo4jInstancesIds) == 0:
             ids = self.createInstances(neo4j_config["instance-type"], neo4j_config["count"], "neo4j")
             self.neo4jInstancesIds = ids
 
     def createApplicationInstances(self, service_config):
-        if service_config["count"] > 0:
+        if service_config["count"] > 0 and len(self.applicationInstancesIds) == 0:
             ids = self.createInstances(service_config["instance-type"], service_config["count"], "service")
             self.applicationInstancesIds = ids
 
@@ -60,19 +63,21 @@ class InstanceConfigurer:
             self.runNeoOnSingleInstance(ip)
 
     def runNeoOnSingleInstance(self, instanceIp):
-        paramiko.util.log_to_file("ssh.log")
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(instanceIp, username='ec2-user',
-                       key_filename='/Users/grzegorz.miejski/.ssh/movies-recommender-service.pem')
-
-        stdin, stdout, stderr = client.exec_command(
-            '/home/ec2-user/programming/neo4j-community-3.0.4/data/databases/neo4j-database.sh 100k.db')
-        for line in stdout:
-            print('... ' + line.strip('\n'))
-        for err in stderr:
-            print('... ' + err.strip('\n'))
-        client.close()
+        AnsibleRunner.remote_restart_neo4j(instanceIp, "ml-100k", True)
+        # paramiko.util.log_to_file("ssh.log")
+        # client = paramiko.SSHClient()
+        # client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        # client.connect(instanceIp, username='ec2-user',
+        #                key_filename='/Users/grzegorz.miejski/.ssh/movies-recommender-service.pem')
+        #
+        # stdin, stdout, stderr = client.exec_command(
+        #     '/home/ec2-user/programming/neo4j-community-3.0.4/data/databases/neo4j-database.sh 100k.db')
+        # for line in stdout:
+        #     print('... ' + line.strip('\n'))
+        # for err in stderr:
+        #     print('... ' + err.strip('\n'))
+        # client.close()
+        pass
 
     def instances(self):
         return {"neo4j": self.neo4jInstances, "service": self.applicationInstances}
