@@ -10,7 +10,7 @@ config = {
         "instance-type": "t2.micro"
     },
     "service": {
-        "count": 1,
+        "count": 2,
         "instance-type": "t2.micro"
     },
     "test-driver": {
@@ -30,5 +30,3 @@ service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
 
 AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip())
-
-# instance_configurer.killAllInstances()

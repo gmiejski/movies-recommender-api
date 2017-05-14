@@ -1,6 +1,8 @@
 ---
 
 - name: install the latest version of nginx
+  become: true
+  become_method: sudo
   yum:
     name: nginx
     state: latest

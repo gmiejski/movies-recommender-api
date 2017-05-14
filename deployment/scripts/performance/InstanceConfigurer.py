@@ -47,7 +47,7 @@ class InstanceConfigurer:
         return instances_ids
 
     def wait_for_instances(self):
-        all_instances = self.neo4jInstancesIds + self.applicationInstancesIds + self.testDriverInstancesIds
+        all_instances = self.__get_all_ids()
         EC2Waiter.waitForRunningState(all_instances)
 
         self.neo4jInstances = self.aws_client.getInstances(self.neo4jInstancesIds)
@@ -56,9 +56,9 @@ class InstanceConfigurer:
 
     def run_apps(self, dryRun=False):
         if not dryRun:
-            # self.runNeoOnInstances(self.neo4jInstances.ips())
-            # self.runServices(self.applicationInstances.ips(), self.neo4jInstances.ips()[0])
-            self.prepareTestDriver(self.testDriverInstances.ips()[0], self.applicationInstances.ips())
+            self.runNeoOnInstances(self.neo4jInstances.ips())
+            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips()[0])
+            self.prepareTestDriver(self.testDriverInstances.ips()[0], self.applicationInstances.private_ips())
 
     def runNeoOnInstances(self, ips):
         print("Running neo4j on nodes with ips: {}".format(str(ips)))
@@ -89,12 +89,15 @@ class InstanceConfigurer:
         return self.applicationInstances.ips()
 
     def killAllInstances(self):
-        ids = self.neo4jInstancesIds + self.applicationInstancesIds
-        self.aws_client.killAllInstances(ids)
+        all_instances = self.__get_all_ids()
+        self.aws_client.killAllInstances(all_instances)
         self.neo4jInstances = EC2Instances()
         self.neo4jInstancesIds = []
         self.applicationInstances = EC2Instances()
         self.applicationInstancesIds = []
+
+    def __get_all_ids(self):
+        return self.neo4jInstancesIds + self.applicationInstancesIds + self.testDriverInstancesIds
 
     def __save_neo4j_instances(self, instances):
         neo4j_instances = list(filter(lambda i: "purpose" in i.tags.keys() and i.tags["purpose"] == "neo4j", instances))
