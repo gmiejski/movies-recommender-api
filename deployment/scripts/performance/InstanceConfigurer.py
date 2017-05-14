@@ -28,6 +28,7 @@ class InstanceConfigurer:
         print("loaded test driver instances: {}".format(self.testDriverInstances.instances))
 
     def prepare_instances(self, config):
+        print("Preparing instances...")
         self.createNeo4jInstances(config["neo4j"])
         self.createApplicationInstances(config["service"])
         self.createTestDriverInstances(config["test-driver"])
@@ -48,6 +49,7 @@ class InstanceConfigurer:
 
     def wait_for_instances(self):
         all_instances = self.__get_all_ids()
+        print("Waiting for {} instances...".format(str(all_instances)))
         EC2Waiter.waitForRunningState(all_instances)
 
         self.neo4jInstances = self.aws_client.getInstances(self.neo4jInstancesIds)
