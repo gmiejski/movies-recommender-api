@@ -43,6 +43,11 @@ class InstanceConfigurer:
             ids = self.createInstances(service_config["instance-type"], service_config["count"], "service")
             self.applicationInstancesIds = ids
 
+    def createTestDriverInstances(self, test_driver_config):
+        if test_driver_config["count"] > 0 and len(self.testDriverInstancesIds) == 0:
+            ids = self.createInstances(test_driver_config["instance-type"], test_driver_config["count"], "test-driver")
+            self.testDriverInstancesIds = ids
+
     def createInstances(self, instance_type, count, purpose):
         instances_ids = self.aws_client.createInstances(instance_type, count, purpose)
         return instances_ids
@@ -52,15 +57,15 @@ class InstanceConfigurer:
         print("Waiting for {} instances...".format(str(all_instances)))
         EC2Waiter.waitForRunningState(all_instances)
 
-        self.neo4jInstances = self.aws_client.getInstances(self.neo4jInstancesIds)
-        self.applicationInstances = self.aws_client.getInstances(self.applicationInstancesIds)
-        self.testDriverInstances = self.aws_client.getInstances(self.testDriverInstancesIds)
+        self.neo4jInstances = self.aws_client.getInstances(self.neo4jInstancesIds, explicit=True)
+        self.applicationInstances = self.aws_client.getInstances(self.applicationInstancesIds, explicit=True)
+        self.testDriverInstances = self.aws_client.getInstances(self.testDriverInstancesIds, explicit=True)
 
     def run_apps(self, dryRun=False):
         if not dryRun:
             self.runNeoOnInstances(self.neo4jInstances.ips())
             self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips()[0])
-            self.prepareTestDriver(self.testDriverInstances.ips()[0], self.applicationInstances.private_ips())
+            self.prepareTestDriver(self.testDriverInstances.ips(), self.applicationInstances.private_ips())
 
     def runNeoOnInstances(self, ips):
         print("Running neo4j on nodes with ips: {}".format(str(ips)))
@@ -68,24 +73,24 @@ class InstanceConfigurer:
             self.runNeoOnSingleInstance(ip)
 
     def runServices(self, nodes_ips, neo4j_node_ip):
+        if len(nodes_ips) == 0:
+            return
         print("Running service on nodes with ips: {} and neo4j_node_ip: {}".format(str(nodes_ips), str(neo4j_node_ip)))
         AnsibleRunner.runApplication(nodes_ips, neo4j_node_ip)
 
     def prepareTestDriver(self, testDriverIp, service_nodes_ips):
+        if len(testDriverIp) == 0:
+            return
         print("Preparing test driver node with ip: {} and service nodes ips: {}".format(str(testDriverIp),
                                                                                         str(service_nodes_ips)))
-        AnsibleRunner.prepare_test_driver(testDriverIp, service_nodes_ips)
+        AnsibleRunner.prepare_test_driver(testDriverIp[0], service_nodes_ips)
 
-    def createTestDriverInstances(self, test_driver_config):
-        if test_driver_config["count"] > 0 and len(self.testDriverInstancesIds) == 0:
-            ids = self.createInstances(test_driver_config["instance-type"], test_driver_config["count"], "test-driver")
-            self.testDriverInstancesIds = ids
 
     def runNeoOnSingleInstance(self, instanceIp):
         AnsibleRunner.remote_restart_neo4j(instanceIp, "ml-100k", True)
 
     def instances(self):
-        return {"neo4j": self.neo4jInstances, "service": self.applicationInstances}
+        return {"neo4j": self.neo4jInstances, "service": self.applicationInstances, "test-driver": self.testDriverInstances}
 
     def service_ips(self):
         return self.applicationInstances.ips()

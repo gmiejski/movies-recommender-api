@@ -10,7 +10,7 @@ config = {
         "instance-type": "t2.micro"
     },
     "service": {
-        "count": 2,
+        "count": 1,
         "instance-type": "t2.micro"
     },
     "test-driver": {

@@ -3,6 +3,12 @@
 - name: run performance tests
   shell: ./gradlew loadTest -Psimulation=org.miejski.movies.recommender.performance.RecommendationsSimulation -PapplicationUrl=http://localhost:9999 -Pmin_similarity=0.0 -Psimilarity_method=cosine -PneighboursCount=30 chdir={{ recommender_api.home_folder }}
 
+- name: perf directory exists
+  file:
+    path: /tmp/magisterka/perf
+    state: directory
+  delegate_to: 127.0.0.1
+
 - name: archive reports
   shell: tar -zcvf archive-name.tar.gz gatling-results/ chdir={{ perf_test_results_dir }}
 
