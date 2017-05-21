@@ -1,8 +1,11 @@
 import matplotlib.pyplot as plt
+from matplotlib import pyplot
+
 
 class MetricsPlotter:
 
     def __init__(self):
+        self.keys_count = 10
         self.colors = {
             "%user": "r",
             "%system": "b",
@@ -46,13 +49,24 @@ class MetricsPlotter:
         f = plt.figure()
         plt.ylabel('CPU usage %')
         plt.xlabel('time')
-
-        x = range(0,len(keys))
+        limited__x_keys = self.prepare_keys(keys)
+        x = range(0,len(limited__x_keys))
         for key, values in metrics.items():
-            plt.xticks(x, keys, rotation=90)
+            plt.xticks(x, limited__x_keys, rotation=90)
             plt.plot(x, values, self.colors[key], label=key, linewidth=2.0)
         plt.legend(metrics.keys())
         return f
+
+    def prepare_keys(self, keys):
+        result = []
+        important_keys_index_diff = int(len(keys) / 10)
+        for x in range(0, len(keys)):
+            if x % important_keys_index_diff == 0:
+                result.append(keys[x])
+            else:
+                result.append("")
+        return result
+
 
 if __name__ == "__main__":
     MetricsPlotter().plot_CPU_metric("/tmp/magisterka/perf/os_metrics")
