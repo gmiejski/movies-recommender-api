@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 
 from metrics_plot.cpu_metric import CPUMetric
 from metrics_plot.disk_metric import DiskUtilityMetric
+from metrics_plot.pagecache_metric import PageCacheMetric
 
 
 class MetricsPlotter:
@@ -76,4 +77,5 @@ class MetricsPlotter:
 if __name__ == "__main__":
     metrics_dir = "/tmp/magisterka/perf/os_metrics"
     # MetricsPlotter(metrics_dir).plot(CPUMetric().read_metrics(metrics_dir))
-    MetricsPlotter(metrics_dir).plot(DiskUtilityMetric().read_metrics(metrics_dir))
+    # MetricsPlotter(metrics_dir).plot(DiskUtilityMetric().read_metrics(metrics_dir))
+    MetricsPlotter(metrics_dir).plot(PageCacheMetric().read_metrics(metrics_dir))

@@ -3,6 +3,7 @@ import os
 
 from metrics_plot.cpu_metric import CPUMetric
 from metrics_plot.disk_metric import DiskUtilityMetric
+from metrics_plot.pagecache_metric import PageCacheMetric
 from metrics_plot.plot_metrics import MetricsPlotter
 from shutil import copyfile
 
@@ -52,7 +53,7 @@ if __name__ == "__main__":
         os_metrics_path = args[1]
 
     metrics_plotter = MetricsPlotter(os_metrics_path)
-    metrics = [CPUMetric(), DiskUtilityMetric()]
+    metrics = [CPUMetric(), DiskUtilityMetric(), PageCacheMetric()]
 
     for metric in metrics:
         metric_result = metric.read_metrics(os_metrics_path)
