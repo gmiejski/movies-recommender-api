@@ -79,3 +79,4 @@ deployment/scripts/runner/*
 *_train_*
 
 **/*.retry
+**/*.png
