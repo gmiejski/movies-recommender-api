@@ -1,0 +1,34 @@
+---
+
+- name: (local) os metrics directory exists
+  file:
+    path: "{{ os_metrics_local_path }}"
+    state: directory
+  delegate_to: 127.0.0.1
+
+- name: package results
+  shell: tar -zcvf os_metrics.tar.gz *.log chdir={{ os_metrics_remote_path }}
+
+- name: download metrics
+  fetch: src={{ os_metrics_remote_path }}/os_metrics.tar.gz dest={{ os_metrics_local_path }} flat=yes
+
+- name: untar
+  local_action: shell tar -zxvf os_metrics.tar.gz chdir={{ os_metrics_local_path }}
+
+# need to use different python env because of matplot lib and OSX - https://matplotlib.org/faq/osx_framework.html#osxframework-faq
+- name: (local) parse metrics and save plots
+  shell: /Library/Frameworks/Python.framework/Versions/3.4/bin/python3 /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/draw_metrics_ansible.py {{ os_metrics_local_path }}
+  delegate_to: 127.0.0.1
+#
+- name: delete archive
+  file:
+    path: "{{ os_metrics_local_path }}/os_metrics.tar.gz"
+    state: absent
+  delegate_to: 127.0.0.1
+
+- name: stop collecting metrics
+  shell: "pkill -f {{ item }}"
+  with_items:
+    - sar
+    - iostat
+    - nicstat

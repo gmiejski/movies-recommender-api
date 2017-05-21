@@ -152,3 +152,35 @@ class AnsibleRunner:
             env=AnsibleRunner.__get_env())
         process.communicate()
         return
+
+    @staticmethod
+    def start_collecting_metrics(ips, verbose=True):
+        if len(ips) == 0:
+            raise Exception("Cannot start collecting metrics without instance IP specified!")
+        command = ['ansible-playbook', 'collect-os-metrics.yaml',
+                   '-i', AnsibleRunner.create_ips_argument(ips), ]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        if process.returncode > 0:
+            raise Exception("Error running command: {}".format(str(command)))
+        return
+
+    @staticmethod
+    def download_os_metrics(nodeIp, verbose=True):
+        command = ['ansible-playbook', 'download-os-metrics.yaml',
+                   '-i', '{},'.format(nodeIp), ]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return

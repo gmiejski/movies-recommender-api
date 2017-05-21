@@ -77,3 +77,8 @@ deployment/scripts/runner/*
 
 *_test_*
 *_train_*
+
+**/*.retry
+**/*.png
+**/.DS_Store
+**/__pycache__
