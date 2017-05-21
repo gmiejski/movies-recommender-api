@@ -152,3 +152,17 @@ class AnsibleRunner:
             env=AnsibleRunner.__get_env())
         process.communicate()
         return
+
+    @staticmethod
+    def download_os_metrics(nodeIp, verbose=True):
+        command = ['ansible-playbook', 'download-os-metrics.yaml',
+                   '-i', '{},'.format(nodeIp), ]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
