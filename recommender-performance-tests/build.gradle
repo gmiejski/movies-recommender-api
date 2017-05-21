@@ -61,18 +61,18 @@ task loadTest(type: JavaExec) {
         }
 
         def maxUsers = null
-        if (!project.hasProperty("max_users")) {
+        if (project.hasProperty("max_users")) {
             maxUsers = "$max_users"
         }
 
         def waitInterval = null
-        if (!project.hasProperty("wait_interval")) {
+        if (project.hasProperty("wait_interval")) {
             waitInterval = "$wait_interval"
         }
 
         def runTime = null
-        if (!project.hasProperty("run_time")) {
-            waitInterval = "$run_time"
+        if (project.hasProperty("run_time")) {
+            runTime = "$run_time"
         }
 
         println "TestProperty: MinSimilarity: $minSimilarity"

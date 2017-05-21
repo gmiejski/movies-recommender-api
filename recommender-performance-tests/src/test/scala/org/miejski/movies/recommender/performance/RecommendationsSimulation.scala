@@ -8,23 +8,17 @@ import scala.collection.Iterator
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class RecommendationsSimulation extends Simulation {
+class RecommendationsSimulation extends Simulation
+  with PropertyReader{
 
   val applicationUrl = System.getProperty("applicationUrl")
   val similarityMethod = System.getProperty("similarityMethod")
   val minSimilarity = System.getProperty("minSimilarity")
   val neighboursCount = System.getProperty("neighboursCount")
-  val maxUsers =  if (System.getProperty("maxUsers") != null) {
-    System.getProperty("maxUsers").toInt
-  }  else 30
 
-  val waitInterval =  if (System.getProperty("waitInterval") != null) {
-    System.getProperty("waitInterval").toInt milliseconds
-  }  else 500 milliseconds
-
-  val runTime =  if (System.getProperty("runTime") != null) {
-    System.getProperty("runTime").toInt minutes
-  }  else 1 minutes
+  val waitInterval = readIntProperty("waitInterval", 500) milliseconds
+  val runTime = readIntProperty("runTime", 1) minutes
+  val maxUsers = readIntProperty("maxUsers", 30)
 
   val httpConf = http
     .baseURL(applicationUrl)

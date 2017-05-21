@@ -23,8 +23,8 @@ instance_configurer = InstanceConfigurer()
 instance_configurer.load_existing_instances()
 instance_configurer.prepare_instances(config)
 instance_configurer.wait_for_instances()
-instance_configurer.run_apps(dryRun=True)
-# instance_configurer.run_apps(dryRun=False)
+# instance_configurer.run_apps(dryRun=True)
+instance_configurer.run_apps(dryRun=False)
 
 service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
@@ -33,8 +33,8 @@ AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
 
 
 simulation_config = {
-    "max_users": 5,
-    "wait_interval": 500,
+    "max_users": 1,
+    "wait_interval": 100,
     "run_time": 1
 }
 

@@ -8,20 +8,14 @@ import scala.collection.Iterator
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class RatingsSimulation extends Simulation {
+class RatingsSimulation extends Simulation
+  with PropertyReader {
 
   val applicationUrl = System.getProperty("applicationUrl")
-  val maxUsers =  if (System.getProperty("maxUsers") != null) {
-    System.getProperty("maxUsers").toInt
-  }  else 10000
 
-  val waitInterval =  if (System.getProperty("waitInterval") != null) {
-    System.getProperty("waitInterval").toInt milliseconds
-  }  else 1000 milliseconds
-
-  val runTime =  if (System.getProperty("runTime") != null) {
-    System.getProperty("runTime").toInt minutes
-  }  else 1 minutes
+  val waitInterval = readIntProperty("waitInterval", 1000) milliseconds
+  val runTime = readIntProperty("runTime", 1) minutes
+  val maxUsers = readIntProperty("maxUsers", 10000)
 
   val httpConf = http
     .baseURL(applicationUrl)
@@ -31,7 +25,7 @@ class RatingsSimulation extends Simulation {
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
 
-  val warmupTime = 2 minutes
+  val warmupTime = 1 minutes
 
   def usersRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getUsersIds)
 
