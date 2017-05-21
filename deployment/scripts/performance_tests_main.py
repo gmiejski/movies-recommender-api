@@ -30,5 +30,14 @@ service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
 
 AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
-AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip())
+
+
+simulation_config = {
+    "max_users": 5,
+    "wait_interval": 500,
+    "run_time": 1
+}
+
+AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", simulation_config)
+# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation")
 AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.instances[0].publicIp)

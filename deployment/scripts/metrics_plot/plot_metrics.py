@@ -60,7 +60,7 @@ class MetricsPlotter:
             ax2.set_ylabel(labels["y_right"], color=colors[right])
             ax2.tick_params('y', color=colors[right])
         ax2.legend(loc=1)
-        fig.tight_layout()
+        # fig.tight_layout()
         return fig
 
     def prepare_keys(self, keys):

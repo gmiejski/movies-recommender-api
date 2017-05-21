@@ -14,6 +14,17 @@ class RecommendationsSimulation extends Simulation {
   val similarityMethod = System.getProperty("similarityMethod")
   val minSimilarity = System.getProperty("minSimilarity")
   val neighboursCount = System.getProperty("neighboursCount")
+  val maxUsers =  if (System.getProperty("maxUsers") != null) {
+    System.getProperty("maxUsers").toInt
+  }  else 30
+
+  val waitInterval =  if (System.getProperty("waitInterval") != null) {
+    System.getProperty("waitInterval").toInt milliseconds
+  }  else 500 milliseconds
+
+  val runTime =  if (System.getProperty("runTime") != null) {
+    System.getProperty("runTime").toInt minutes
+  }  else 1 minutes
 
   val httpConf = http
     .baseURL(applicationUrl)
@@ -22,10 +33,6 @@ class RecommendationsSimulation extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
-
-  val runTime = 1 minutes
-  val maxUsers = 30
-  val waitInterval = 500 milliseconds
 
   def usersRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getUsersIds)
 

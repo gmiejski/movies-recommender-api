@@ -47,6 +47,7 @@ task loadTest(type: JavaExec) {
         } else {
             minSimilarity = "$min_similarity"
         }
+
         def similarityMethod = null
         if (!project.hasProperty("similarity_method")) {
             similarityMethod = "similarity"
@@ -59,9 +60,27 @@ task loadTest(type: JavaExec) {
             neighbours = "$neighboursCount"
         }
 
+        def maxUsers = null
+        if (!project.hasProperty("max_users")) {
+            maxUsers = "$max_users"
+        }
+
+        def waitInterval = null
+        if (!project.hasProperty("wait_interval")) {
+            waitInterval = "$wait_interval"
+        }
+
+        def runTime = null
+        if (!project.hasProperty("run_time")) {
+            waitInterval = "$run_time"
+        }
+
         println "TestProperty: MinSimilarity: $minSimilarity"
         println "TestProperty: SimilarityMethod: $similarityMethod"
         println "TestProperty: neighboursCount: $neighbours"
+        println "TestProperty: maxUsers: $maxUsers"
+        println "TestProperty: waitInterval: $waitInterval"
+        println "TestProperty: runTime: $runTime"
 
         jvmArgs = [
                 // workaround for https://github.com/gatling/gatling/issues/2689
@@ -70,6 +89,9 @@ task loadTest(type: JavaExec) {
                 "-DminSimilarity=$minSimilarity",
                 "-DsimilarityMethod=$similarityMethod",
                 "-DneighboursCount=$neighbours",
+                "-DmaxUsers=$maxUsers",
+                "-DwaitInterval=$waitInterval",
+                "-DrunTime=$runTime",
                 '-XX:+UseG1GC',
                 '-Xmx2000m',
                 '-XX:-PrintGC',

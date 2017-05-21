@@ -101,6 +101,7 @@ class AnsibleRunner:
         "returns prepared ansible extra args from dict"
         result = ""
         for k, v in params.items():
+            v = str(v)
             value = v if " " not in v else "'{}'".format(v)
             result += "{}={} ".format(k, value)
         # return '--extra-vars="' + result +'"'
@@ -140,9 +141,12 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def run_tests_on_driver(testDriverIp, verbose=True):
+    def run_tests_on_driver(testDriverIp, simulation_name, simulation_config, verbose=True):
+        config = simulation_config.copy()
+        config.update({"simulation_name": simulation_name })
         command = ['ansible-playbook', 'run-test-on-test-driver.yaml',
-                   '-i', '{},'.format(testDriverIp), ]
+                   '-i', '{},'.format(testDriverIp),
+                   '--extra-vars', AnsibleRunner._to_extra_vars(config)]
         if verbose:
             command.append('-vvv')
         process = subprocess.Popen(

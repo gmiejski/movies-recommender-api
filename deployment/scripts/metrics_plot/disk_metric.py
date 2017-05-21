@@ -58,7 +58,7 @@ class DiskUtilityMetric:
                     raise Exception()
                 index+=1
                 metric_line = metrics[index]
-                r = list(filter(lambda x: len(x) > 0, metric_line.split('\t')))
+                r = list(filter(lambda x: len(x) > 0, metric_line.replace(" ","\t").split('\t')))
                 r = list(map(lambda x: x.strip(), r))
                 metrics_results["r/s"].append(r[3])
                 metrics_results["w/s"].append(r[4])
