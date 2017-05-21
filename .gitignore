@@ -80,3 +80,5 @@ deployment/scripts/runner/*
 
 **/*.retry
 **/*.png
+**/.DS_Store
+**/__pycache__
