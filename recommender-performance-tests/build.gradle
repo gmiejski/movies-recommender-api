@@ -69,7 +69,14 @@ task loadTest(type: JavaExec) {
                 "-DapplicationUrl=$applicationUrl",
                 "-DminSimilarity=$minSimilarity",
                 "-DsimilarityMethod=$similarityMethod",
-                "-DneighboursCount=$neighbours"
+                "-DneighboursCount=$neighbours",
+                '-XX:+UseG1GC',
+                '-Xmx2000m',
+                '-XX:-PrintGC',
+                '-XX:-PrintGCDetails',
+                '-XX:-PrintGCTimeStamps',
+//                '-Xloggc:/tmp/magisterka/perf/gc.log'
+
         ]
         main = "io.gatling.app.Gatling"
         args = [

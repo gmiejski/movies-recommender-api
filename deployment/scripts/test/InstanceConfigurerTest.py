@@ -19,6 +19,10 @@ class InstanceConfigurerTest(unittest.TestCase):
             "service": {
                 "count": 2,
                 "instance-type": "t2.micro"
+            },
+            "test-driver": {
+                "count": 1,
+                "instance-type": "t2.micro"
             }
         }
         instance_configurer = InstanceConfigurer()
@@ -38,6 +42,10 @@ class InstanceConfigurerTest(unittest.TestCase):
                 "instance-type": "t2.micro"
             },
             "service": {
+                "count": 1,
+                "instance-type": "t2.micro"
+            },
+            "test-driver": {
                 "count": 1,
                 "instance-type": "t2.micro"
             }

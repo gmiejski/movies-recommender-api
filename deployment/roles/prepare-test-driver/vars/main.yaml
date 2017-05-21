@@ -1,0 +1,9 @@
+recommender_api:
+  home_folder: /home/ec2-user/magisterka/run/movies-recommender-api
+  run_folder: /home/ec2-user/magisterka/run/movies-recommender-api/movies-recommender-service/build/libs
+
+neo4j_host: localhost
+
+nginx_config: /etc/nginx/conf.d/movie_recommender_api.conf
+
+service_nodes_ips:  # string with ips separated by ; Example -> '1;2;3;4'

@@ -13,7 +13,6 @@
 - name: git checkout
   git: repo=https://github.com/gmiejski/movies-recommender-api.git
        dest={{ recommender_api.home_folder }}
-       version="MR-22-performance-tests-aws-simple"
 
 - name: build application
   shell: ./gradlew movies-recommender-service:build -x test chdir={{ recommender_api.home_folder }}

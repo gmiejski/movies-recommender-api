@@ -20,9 +20,10 @@ class RatingsSimulation extends Simulation {
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
 
+  val warmupTime = 2 minutes
   val runTime = 1 minutes
-  val maxUsers = 15
-  val waitInterval = 100 milliseconds
+  val maxUsers = 10000
+  val waitInterval = 1000 milliseconds
 
   def usersRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getUsersIds)
 
@@ -32,7 +33,7 @@ class RatingsSimulation extends Simulation {
 
   val feeder = Iterator.continually(Map("userId" -> usersRepository.getNextId, "movieId" -> moviesRepository.getNextId))
 
-  val recommendationScenarion = scenario("scenario")
+  val recommendationScenario = scenario("recommendationScenario")
     .feed(feeder)
     .during(runTime) {
       pace(waitInterval)
@@ -44,8 +45,8 @@ class RatingsSimulation extends Simulation {
         )
     }
 
-  setUp(recommendationScenarion.inject(rampUsers(maxUsers) over (runTime / 2)))
-    .maxDuration(runTime)
+  setUp(recommendationScenario.inject(rampUsers(maxUsers) over warmupTime))
+    .maxDuration(runTime + warmupTime)
     .protocols(httpConf)
 }
 

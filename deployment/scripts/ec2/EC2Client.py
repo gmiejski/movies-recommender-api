@@ -37,7 +37,10 @@ class EC2Client:
         instancesIds = list(map(lambda i: i['InstanceId'], response['Instances']))
         return instancesIds
 
-    def getInstances(self, ids=[]):
+    def getInstances(self, ids=[], explicit=False):
+        """If explicit - return empty instances list when ids argument is an empty list"""
+        if explicit and len(ids) == 0:
+            return EC2Instances()
         response = self.ec2client.describe_instances(
             InstanceIds=ids,
             Filters=[
