@@ -1,0 +1,29 @@
+---
+
+#- name: run performance tests
+#  shell: ./gradlew loadTest -Psimulation=org.miejski.movies.recommender.performance.RecommendationsSimulation -PapplicationUrl=http://localhost:9999 -Pmin_similarity=0.0 -Psimilarity_method=cosine -PneighboursCount=30 chdir={{ recommender_api.home_folder }}
+
+- name: os metrics directory exists
+  file:
+    path: "{{ os_metrics_local_path }}"
+    state: directory
+  delegate_to: 127.0.0.1
+
+- name: parse metrics and save plots
+  shell: /Library/Frameworks/Python.framework/Versions/3.4/bin/python3 /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/draw_metrics_ansible.py
+  delegate_to: 127.0.0.1
+
+#- name: archive reports
+#  shell: tar -zcvf archive-name.tar.gz gatling-results/ chdir={{ perf_test_results_dir }}
+#
+#- name: download reports
+#  fetch: src=/home/ec2-user/magisterka/run/movies-recommender-api/recommender-performance-tests/build/archive-name.tar.gz dest={{ local_result_dir }} flat=yes
+#
+#- name: untar
+#  local_action: shell tar -zxvf {{ local_result_dir }}/archive-name.tar.gz --strip 1 chdir={{ local_result_dir }}
+#
+#- name: delete archive
+#  file:
+#    path: "{{ local_result_dir }}/archive-name.tar.gz"
+#    state: absent
+#  delegate_to: 127.0.0.1
