@@ -28,6 +28,7 @@ instance_configurer.run_apps(dryRun=True)
 
 service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
-#
+
+AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
 # AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip())
 AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.instances[0].publicIp)

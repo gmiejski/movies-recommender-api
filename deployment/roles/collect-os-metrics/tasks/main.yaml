@@ -23,4 +23,15 @@
     state: directory
 
 - name: CPU metric
-  shell: "nohup sar {{ metrics_time_diff }} >> cpu.log & chdir={{ os_metrics_remote_path }}"
+  shell: "nohup sar {{ metrics_time_diff }} > cpu.log & chdir={{ os_metrics_remote_path }}"
+
+- name: disk usage
+  shell: "nohup iostat -xmdty {{ metrics_time_diff }} > disk.log & chdir={{ os_metrics_remote_path }}"
+
+- name: page cache
+  shell: "nohup sar -B {{ metrics_time_diff }} > pagecache.log & chdir={{ os_metrics_remote_path }}"
+
+- name: network utilization
+  shell: "nohup /home/ec2-user/nicstat-1.95/nicstat.sh -n {{ metrics_time_diff }} > net.log & chdir={{ os_metrics_remote_path }}"
+
+

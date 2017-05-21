@@ -25,3 +25,10 @@
     path: "{{ os_metrics_local_path }}/os_metrics.tar.gz"
     state: absent
   delegate_to: 127.0.0.1
+
+- name: stop collecting metrics
+  shell: "pkill -f {{ item }}"
+  with_items:
+    - sar
+    - iostat
+    - nicstat
