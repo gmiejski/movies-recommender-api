@@ -1,0 +1,26 @@
+---
+
+- name: install required packages
+  become: true
+  become_method: sudo
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - perf
+    - sysstat
+    - glibc.i686
+    - net-tools
+
+#- name: install nicstat properly: TODO
+#wget http://nchc.dl.sourceforge.net/project/nicstat/nicstat-1.95.tar.gz
+#tar xvf nicstat-1.95.tar.gz
+#ln -s .nicstat.RedHat_5_i386 .nicstat.Linux_unknown_i386
+
+- name: result directory
+  file:
+    path: "{{ os_metrics_remote_path }}"
+    state: directory
+
+- name: CPU metric
+  shell: "nohup sar {{ metrics_time_diff }} >> cpu.log & chdir={{ os_metrics_remote_path }}"
