@@ -5,4 +5,3 @@
   sudo: False
   roles:
     - run-test-on-test-driver
-    - download-perf-results

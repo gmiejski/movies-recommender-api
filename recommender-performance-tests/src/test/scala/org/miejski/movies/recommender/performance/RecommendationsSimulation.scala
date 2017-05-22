@@ -36,7 +36,7 @@ class RecommendationsSimulation extends Simulation
     "similarityMethod" -> similarityMethod,
     "neighboursCount" -> neighboursCount))
 
-  val recommendationScenarion = scenario("scenario")
+  val recommendationScenarion = scenario("recommendationScenario")
     .feed(feeder)
     .during(runTime) {
       pace(waitInterval)

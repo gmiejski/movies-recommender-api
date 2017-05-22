@@ -1,0 +1,22 @@
+---
+
+- name: perf directory exists
+  file:
+    path: /tmp/magisterka/perf
+    state: directory
+  delegate_to: 127.0.0.1
+
+- name: archive reports
+  shell: tar -zcvf archive-name.tar.gz gatling-results/ chdir={{ perf_test_results_dir }}
+
+- name: download reports
+  fetch: src=/home/ec2-user/magisterka/run/movies-recommender-api/recommender-performance-tests/build/archive-name.tar.gz dest={{ local_result_dir }} flat=yes
+
+- name: untar
+  local_action: shell tar -zxvf {{ local_result_dir }}/archive-name.tar.gz --strip 1 chdir={{ local_result_dir }}
+
+- name: delete archive
+  file:
+    path: "{{ local_result_dir }}/archive-name.tar.gz"
+    state: absent
+  delegate_to: 127.0.0.1

@@ -143,7 +143,7 @@ class AnsibleRunner:
     @staticmethod
     def run_tests_on_driver(testDriverIp, simulation_name, simulation_config, verbose=True):
         config = simulation_config.copy()
-        config.update({"simulation_name": simulation_name })
+        config.update({"simulation_name": simulation_name})
         command = ['ansible-playbook', 'run-test-on-test-driver.yaml',
                    '-i', '{},'.format(testDriverIp),
                    '--extra-vars', AnsibleRunner._to_extra_vars(config)]
@@ -179,6 +179,23 @@ class AnsibleRunner:
     def download_os_metrics(nodeIp, verbose=True):
         command = ['ansible-playbook', 'download-os-metrics.yaml',
                    '-i', '{},'.format(nodeIp), ]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
+
+    @staticmethod
+    def run_warmup_on_driver(testDriverIp, simulation_name, warmup_config, verbose=True):
+        config = warmup_config.copy()
+        config.update({"simulation_name": simulation_name})
+        command = ['ansible-playbook', 'run-warmup-on-test-driver.yaml',
+                   '-i', '{},'.format(testDriverIp),
+                   '--extra-vars', AnsibleRunner._to_extra_vars(config)]
         if verbose:
             command.append('-vvv')
         process = subprocess.Popen(
