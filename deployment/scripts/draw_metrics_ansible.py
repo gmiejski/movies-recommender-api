@@ -53,7 +53,8 @@ if __name__ == "__main__":
         os_metrics_path = args[1]
 
     metrics_plotter = MetricsPlotter(os_metrics_path)
-    metrics = [CPUMetric(), DiskUtilityMetric(), PageCacheMetric()]
+    # metrics = [CPUMetric(), DiskUtilityMetric(), PageCacheMetric()]
+    metrics = [CPUMetric(), DiskUtilityMetric()]
 
     for metric in metrics:
         metric_result = metric.read_metrics(os_metrics_path)

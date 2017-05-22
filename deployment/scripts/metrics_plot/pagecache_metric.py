@@ -34,7 +34,7 @@ class PageCacheMetric:
             lambda y: y.replace('\n',''), metrics
         )))
         metrics_split = list(
-            map(lambda x: list(filter(lambda p: len(p) > 0, x.replace("    ", "\t").split("\t"))), metrics))
+            map(lambda x: list(filter(lambda p: len(p) > 0, x.replace(" ", "\t").split("\t"))), metrics))
 
         keys = list(map(lambda x: x[0].strip().replace("PM", ""), metrics_split))
         majflt = self.__to_floats(list(map(lambda x: x[4], metrics_split)))

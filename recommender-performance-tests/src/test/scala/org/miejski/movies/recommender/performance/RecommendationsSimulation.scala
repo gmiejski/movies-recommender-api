@@ -8,12 +8,17 @@ import scala.collection.Iterator
 import scala.concurrent.duration._
 import scala.language.postfixOps
 
-class RecommendationsSimulation extends Simulation {
+class RecommendationsSimulation extends Simulation
+  with PropertyReader{
 
   val applicationUrl = System.getProperty("applicationUrl")
   val similarityMethod = System.getProperty("similarityMethod")
   val minSimilarity = System.getProperty("minSimilarity")
   val neighboursCount = System.getProperty("neighboursCount")
+
+  val waitInterval = readIntProperty("waitInterval", 500) milliseconds
+  val runTime = readIntProperty("runTime", 1) minutes
+  val maxUsers = readIntProperty("maxUsers", 30)
 
   val httpConf = http
     .baseURL(applicationUrl)
@@ -22,10 +27,6 @@ class RecommendationsSimulation extends Simulation {
     .acceptLanguageHeader("en-US,en;q=0.5")
     .acceptEncodingHeader("gzip, deflate")
     .userAgentHeader("Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0")
-
-  val runTime = 1 minutes
-  val maxUsers = 30
-  val waitInterval = 500 milliseconds
 
   def usersRepository = new IdsRepository(new HttpGetRequest(applicationUrl).getUsersIds)
 

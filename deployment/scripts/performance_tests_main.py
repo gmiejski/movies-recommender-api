@@ -23,12 +23,21 @@ instance_configurer = InstanceConfigurer()
 instance_configurer.load_existing_instances()
 instance_configurer.prepare_instances(config)
 instance_configurer.wait_for_instances()
-instance_configurer.run_apps(dryRun=True)
-# instance_configurer.run_apps(dryRun=False)
+# instance_configurer.run_apps(dryRun=True)
+instance_configurer.run_apps(dryRun=False)
 
 service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
 
 AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
-AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip())
+
+
+simulation_config = {
+    "max_users": 1,
+    "wait_interval": 100,
+    "run_time": 1
+}
+
+# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", simulation_config)
+AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", simulation_config)
 AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.instances[0].publicIp)

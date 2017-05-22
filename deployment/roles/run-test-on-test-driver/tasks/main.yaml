@@ -1,7 +1,8 @@
 ---
 
 - name: run performance tests
-  shell: ./gradlew loadTest -Psimulation=org.miejski.movies.recommender.performance.RecommendationsSimulation -PapplicationUrl=http://localhost:9999 -Pmin_similarity=0.0 -Psimilarity_method=cosine -PneighboursCount=30 chdir={{ recommender_api.home_folder }}
+  shell: "./gradlew loadTest -Psimulation=org.miejski.movies.recommender.performance.{{ simulation_name }} -PapplicationUrl=http://localhost:9999 -Pmin_similarity=0.0 -Psimilarity_method=cosine -PneighboursCount=30 -Pmax_users={{max_users}} -Pwait_interval={{wait_interval}} -Prun_time={{run_time}}
+ chdir={{ recommender_api.home_folder }}"
 
 - name: perf directory exists
   file:
