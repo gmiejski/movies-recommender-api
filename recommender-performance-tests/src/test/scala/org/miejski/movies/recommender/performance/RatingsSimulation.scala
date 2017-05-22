@@ -35,7 +35,7 @@ class RatingsSimulation extends Simulation
 
   val feeder = Iterator.continually(Map("userId" -> usersRepository.getNextId, "movieId" -> moviesRepository.getNextId))
 
-  val recommendationScenario = scenario("recommendationScenario")
+  val ratingsScenario = scenario("ratingsScenario")
     .feed(feeder)
     .during(runTime) {
       pace(waitInterval)
@@ -47,7 +47,7 @@ class RatingsSimulation extends Simulation
         )
     }
 
-  setUp(recommendationScenario.inject(rampUsers(maxUsers) over warmupTime))
+  setUp(ratingsScenario.inject(rampUsers(maxUsers) over warmupTime))
     .maxDuration(runTime + warmupTime)
     .protocols(httpConf)
 }
