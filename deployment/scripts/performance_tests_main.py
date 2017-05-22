@@ -38,6 +38,6 @@ simulation_config = {
     "run_time": 1
 }
 
-AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", simulation_config)
-# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation")
+# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", simulation_config)
+AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", simulation_config)
 AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.instances[0].publicIp)
