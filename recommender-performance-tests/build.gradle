@@ -93,7 +93,7 @@ task loadTest(type: JavaExec) {
                 "-DwaitInterval=$waitInterval",
                 "-DrunTime=$runTime",
                 '-XX:+UseG1GC',
-                '-Xmx2000m',
+                '-Xmx8000m',
                 '-XX:-PrintGC',
                 '-XX:-PrintGCDetails',
                 '-XX:-PrintGCTimeStamps',
