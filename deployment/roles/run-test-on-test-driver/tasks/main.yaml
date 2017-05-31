@@ -1,5 +1,8 @@
 ---
 
+- name: clean previous reports
+  shell: rm -rf /home/ec2-user/magisterka/run/movies-recommender-api/recommender-performance-tests/build/gatling-results/*
+
 - name: run performance tests
   shell: "./gradlew loadTest -Psimulation=org.miejski.movies.recommender.performance.{{ simulation_name }} -PapplicationUrl=http://localhost:9999 -Pmin_similarity=0.0 -Psimilarity_method=cosine -PneighboursCount=30 -Pmax_users={{max_users}} -Pwait_interval={{wait_interval}} -Prun_time={{run_time}}
  chdir={{ recommender_api.home_folder }}"

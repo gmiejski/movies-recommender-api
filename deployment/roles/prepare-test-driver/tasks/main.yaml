@@ -16,7 +16,6 @@
 - name: git checkout
   git: repo=https://github.com/gmiejski/movies-recommender-api.git
        dest={{ recommender_api.home_folder }}
-       version="MR-25-simulation-params"
 
 - name: copy nginx file
   sudo: true
