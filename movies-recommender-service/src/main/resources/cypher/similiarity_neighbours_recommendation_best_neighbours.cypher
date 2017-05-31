@@ -13,3 +13,4 @@ count(s) as movie_neighbours_ratings
 where counter > 0
 return m.movie_id as movieId,  (p.avg_rating + counter/denominator ) as prediction , movie_neighbours_ratings as movieNeighboursRatings
 order by prediction desc
+limit 100
