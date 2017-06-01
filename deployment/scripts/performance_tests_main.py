@@ -5,17 +5,17 @@ from ansible.AnsibleRunner import AnsibleRunner
 
 config = {
     "neo4j": {
-        "count": 1,
+        "count": 0,
         "cluster": None,
-        "instance-type": "t2.micro"
+        "instance-type": "c4.4xlarge"
     },
     "service": {
-        "count": 0,
-        "instance-type": "t2.small"
+        "count": 1,
+        "instance-type": "t2.micro"
     },
     "test-driver": {
         "count": 0,
-        "instance-type": "t2.small"
+        "instance-type": "c4.4xlarge"
     }
 }
 
@@ -29,27 +29,33 @@ instance_configurer.run_apps(dryRun=False)
 service_checker = InstanceStateChecker(instance_configurer.service_ips())
 service_checker.wait_for_services()
 
-warmup_config = {
-    "max_users": 50,
+warmup_reco_config = {
+    "max_users": 100,
     "wait_interval": 500,
     "run_time": 2
 }
 
-# AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", warmup_config)
-# AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", warmup_config)
+warmup_ratings_config = {
+    "max_users": 500,
+    "wait_interval": 50,
+    "run_time": 2
+}
+
+AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", warmup_ratings_config)
+AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", warmup_reco_config)
 
 
 AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
 
 
 reco_config = {
-    "max_users": 30,
-    "wait_interval": 500,
+    "max_users": 200,
+    "wait_interval": 1000,
     "run_time": 1
 }
 
 ratings_config = {
-    "max_users": 150,
+    "max_users": 175,
     "wait_interval": 50,
     "run_time": 1
 }
