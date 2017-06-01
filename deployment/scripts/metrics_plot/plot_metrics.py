@@ -75,7 +75,7 @@ class MetricsPlotter:
 
 
 if __name__ == "__main__":
-    metrics_dir = "/tmp/magisterka/perf/os_metrics"
+    metrics_dir = "/Users/grzegorz.miejski/magisterka/perf/os_metrics"
     # MetricsPlotter(metrics_dir).plot(CPUMetric().read_metrics(metrics_dir))
     # MetricsPlotter(metrics_dir).plot(DiskUtilityMetric().read_metrics(metrics_dir))
     MetricsPlotter(metrics_dir).plot(PageCacheMetric().read_metrics(metrics_dir))

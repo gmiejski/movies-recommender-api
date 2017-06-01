@@ -2,7 +2,7 @@
 
 - name: perf directory exists
   file:
-    path: /tmp/magisterka/perf
+    path: /Users/grzegorz.miejski/magisterka/perf
     state: directory
   delegate_to: 127.0.0.1
 

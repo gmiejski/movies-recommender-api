@@ -47,7 +47,7 @@ def copy_plots_to_last_reco_result(simulations_dir, os_metrics_path):
 if __name__ == "__main__":
     print(sys.argv)
     args = sys.argv
-    os_metrics_path = "/tmp/magisterka/perf/os_metrics"
+    os_metrics_path = "/Users/grzegorz.miejski/magisterka/perf/os_metrics"
 
     if len(args) == 2:
         os_metrics_path = args[1]
@@ -60,4 +60,4 @@ if __name__ == "__main__":
         metric_result = metric.read_metrics(os_metrics_path)
         metrics_plotter.plot(metric_result)
 
-    copy_plots_to_last_reco_result("/tmp/magisterka/perf", os_metrics_path)
+    copy_plots_to_last_reco_result("/Users/grzegorz.miejski/magisterka/perf", os_metrics_path)

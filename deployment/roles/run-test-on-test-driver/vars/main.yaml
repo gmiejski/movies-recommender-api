@@ -5,6 +5,6 @@ neo4j_host: localhost
 
 perf_test_results_dir: /home/ec2-user/magisterka/run/movies-recommender-api/recommender-performance-tests/build/
 
-local_result_dir: /tmp/magisterka/perf
+local_result_dir: /Users/grzegorz.miejski/magisterka/perf
 
 simulation_name:
