@@ -7,18 +7,13 @@ import org.miejski.movies.recommender.infrastructure.repositories.MovieRepositor
 import org.neo4j.ogm.session.Session
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.context.embedded.LocalServerPort
-import org.springframework.boot.test.IntegrationTest
-import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.env.Environment
 import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.web.WebAppConfiguration
 import spock.lang.Specification
 
 @ActiveProfiles("integration")
-@ContextConfiguration(loader = SpringApplicationContextLoader, classes = [Application])
-@IntegrationTest(["spring.profiles.active=integration", "server.port:0"])
-@WebAppConfiguration
+@SpringBootTest(classes = [Application], webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class IntegrationSpec extends Specification {
 
     @LocalServerPort

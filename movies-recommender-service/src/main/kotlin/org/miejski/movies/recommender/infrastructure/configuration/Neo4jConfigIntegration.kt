@@ -5,8 +5,8 @@ import org.neo4j.ogm.session.SessionFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Profile
-import org.springframework.data.neo4j.config.Neo4jConfiguration
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories
+import org.springframework.data.neo4j.transaction.Neo4jTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 
@@ -14,12 +14,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableTransactionManagement
 @Profile("integration")
 @org.springframework.context.annotation.Configuration
-open class Neo4jConfigIntegration : Neo4jConfiguration() {
+open class Neo4jConfigIntegration {
 
     lateinit @Autowired var neo4JConfigProperties: Neo4jConfigProperties
 
     @Bean
-    open fun getConfiguration(): Configuration {
+    open fun configuration(): Configuration {
         val config: Configuration = Configuration()
         config
             .driverConfiguration()
@@ -28,7 +28,12 @@ open class Neo4jConfigIntegration : Neo4jConfiguration() {
     }
 
     @Bean
-    override fun getSessionFactory(): SessionFactory {
-        return SessionFactory(getConfiguration(), "org.miejski.movies.recommender.domain")
+    open fun sessionFactory(): SessionFactory {
+        return SessionFactory(configuration(), "org.miejski.movies.recommender.domain")
+    }
+
+    @Bean
+    open fun neo4jTransactionManager(): Neo4jTransactionManager {
+        return Neo4jTransactionManager(sessionFactory())
     }
 }
