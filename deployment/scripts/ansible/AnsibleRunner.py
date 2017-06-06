@@ -175,17 +175,20 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def download_os_metrics(nodeIp, verbose=True):
-        command = ['ansible-playbook', 'download-os-metrics.yaml',
-                   '-i', '{},'.format(nodeIp), ]
-        if verbose:
-            command.append('-vvv')
-        process = subprocess.Popen(
-            command,
-            cwd=AnsibleRunner.ansible_home,
-            stderr=subprocess.STDOUT,
-            env=AnsibleRunner.__get_env())
-        process.communicate()
+    def download_os_metrics(neo4j_node_ips, verbose=True):
+        for nodeIp in neo4j_node_ips:
+            command = ['ansible-playbook', 'download-os-metrics.yaml',
+                       '-i', '{},'.format(nodeIp),
+                       '--extra-vars', AnsibleRunner._to_extra_vars({'os_metrics_folder': nodeIp})
+                       ]
+            if verbose:
+                command.append('-vvv')
+            process = subprocess.Popen(
+                command,
+                cwd=AnsibleRunner.ansible_home,
+                stderr=subprocess.STDOUT,
+                env=AnsibleRunner.__get_env())
+            process.communicate()
         return
 
     @staticmethod

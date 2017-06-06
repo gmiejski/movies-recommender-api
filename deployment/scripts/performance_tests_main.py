@@ -16,8 +16,8 @@ config = {
         "instance-type": "t2.micro"
     },
     "test-driver": {
-        "count": 0,
-        "instance-type": "c4.4xlarge"
+        "count": 1,
+        "instance-type": "t2.small"
     }
 }
 
@@ -43,8 +43,8 @@ warmup_ratings_config = {
     "run_time": 2
 }
 
-AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", warmup_ratings_config)
-AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", warmup_reco_config)
+# AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", warmup_ratings_config)
+# AnsibleRunner.run_warmup_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", warmup_reco_config)
 
 
 AnsibleRunner.start_collecting_metrics(instance_configurer.neo4jInstances.ips())
@@ -65,7 +65,7 @@ ratings_config = {
 AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", reco_config)
 # AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", ratings_config)
 
-AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.instances[0].publicIp)
+AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.ips())
 
 print("Reco -> Rq/s : {}".format(1000 / reco_config['wait_interval'] * reco_config['max_users']))
 print("Ratings -> Rq/s : {}".format(1000 / ratings_config['wait_interval'] * ratings_config['max_users']))
