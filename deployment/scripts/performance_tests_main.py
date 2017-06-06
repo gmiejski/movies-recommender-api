@@ -5,9 +5,11 @@ from ansible.AnsibleRunner import AnsibleRunner
 
 config = {
     "neo4j": {
-        "count": 0,
-        "cluster": None,
-        "instance-type": "c4.4xlarge"
+        "count": 2,
+        # "cluster": None,
+        "cluster": "HA",
+        # "cluster": "Casual",
+        "instance-type": "t2.micro"
     },
     "service": {
         "count": 1,

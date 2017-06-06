@@ -104,7 +104,6 @@ class AnsibleRunner:
             v = str(v)
             value = v if " " not in v else "'{}'".format(v)
             result += "{}={} ".format(k, value)
-        # return '--extra-vars="' + result +'"'
         return result
 
     @staticmethod
@@ -196,6 +195,61 @@ class AnsibleRunner:
         command = ['ansible-playbook', 'run-warmup-on-test-driver.yaml',
                    '-i', '{},'.format(testDriverIp),
                    '--extra-vars', AnsibleRunner._to_extra_vars(config)]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
+
+    @staticmethod
+    def runApplicationWithHAproxy(master_node_ip, slave_nodes_ips):
+        slave_nodes_ips = "a".join(slave_nodes_ips)
+        slave_nodes_ips = "'\'{}'\'".format(slave_nodes_ips)
+
+        command = ['ansible-playbook', 'remote-restart-neo4j-HA.yaml',
+                   '-i', '{},'.format(master_node_ip),
+                   '--extra-vars',
+                   AnsibleRunner._to_extra_vars({'slave_ips': slave_nodes_ips})]
+
+        # TODO run HACNeo4j app
+
+    @staticmethod
+    def getNeo4jHAInitialHostsPort():
+        return "5001"
+
+    @staticmethod
+    def get_all_hosts_ips_string(all_hosts):
+        return ",".join(list(map(lambda x: "{}:{}".format(x, AnsibleRunner.getNeo4jHAInitialHostsPort()), all_hosts)))
+
+    @staticmethod
+    def runNeo4jHAMaster(master_node_ip, dataset, slave_nodes_ips, verbose=False):
+        service_id = 1
+        all_hosts = [master_node_ip] + slave_nodes_ips
+        all_nodes_ips = AnsibleRunner.get_all_hosts_ips_string(all_hosts)
+
+        return AnsibleRunner.runNeo4jHANode(master_node_ip, all_nodes_ips, dataset, service_id, False, True)
+
+    @staticmethod
+    def runNeo4jHASlave(slave_ip, service_id, master_node_ip, dataset, slave_nodes_ips, ):
+        all_hosts = [master_node_ip] + slave_nodes_ips
+        all_nodes_ips = AnsibleRunner.get_all_hosts_ips_string(all_hosts)
+
+        return AnsibleRunner.runNeo4jHANode(slave_ip, all_nodes_ips, dataset, service_id, True, True)
+
+    @staticmethod
+    def runNeo4jHANode(node_public_ip, all_nodes_ips_string, dataset, service_id, is_slave, verbose=False):
+
+        command = ['ansible-playbook', 'remote-restart-neo4j-HA.yaml',
+                   '-i', '{},'.format(node_public_ip),
+                   '--extra-vars',
+                   AnsibleRunner._to_extra_vars({'neo4j_db_folder': dataset,
+                                                 'initial_hosts': all_nodes_ips_string,
+                                                 'server_id': service_id,
+                                                 'is_slave_only': is_slave})]
         if verbose:
             command.append('-vvv')
         process = subprocess.Popen(
