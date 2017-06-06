@@ -1,0 +1,52 @@
+---
+
+# prepare LB with haproxy
+
+- name: prepare haproxy config folder
+  file:
+    path: "{{ haproxy_folder }}"
+    state: directory
+
+- name: copy haproxy file
+  sudo: true
+  template: src=haproxy.conf.j2 dest={{ haproxy_folder }}/haproxy.cfg.template mode=777
+
+- name: copy templater
+  sudo: true
+  template: src=templater.py dest={{ haproxy_folder }}/templater.py mode=777
+
+- name: configure haproxy
+  become: true
+  become_method: sudo
+  shell: python {{ haproxy_folder }}/templater.py {{ master_node_ip }} {{ slave_ips }}
+
+- name: stop haproxy
+  shell: sudo pkill -f haproxy
+
+- name: start haproxy
+  become: true
+  become_method: sudo
+  shell: haproxy -f {{haproxy_folder}}/haproxy.cfg
+
+# run application
+
+- name: kill previously running application
+  command: pkill -f "movies-recommender-service-0.1.0.jar"
+  ignore_errors: True
+
+- name: clear previous project
+  shell: rm -rf {{ recommender_api.home_folder }}
+
+- name: clear logs from previous run
+  shell: rm -rf /tmp/logs/movies-recommender-service.log
+
+- name: git checkout
+  git: repo=https://github.com/gmiejski/movies-recommender-api.git
+       dest={{ recommender_api.home_folder }}
+       version="MR-27-HA-cluster"
+
+- name: build application
+  shell: ./gradlew movies-recommender-service:build -x test chdir={{ recommender_api.home_folder }}
+
+- name: run application
+  shell: nohup java -jar movies-recommender-service-0.1.0.jar chdir={{ recommender_api.run_folder }} &

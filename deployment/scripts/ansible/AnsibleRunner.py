@@ -206,16 +206,27 @@ class AnsibleRunner:
         return
 
     @staticmethod
-    def runApplicationWithHAproxy(master_node_ip, slave_nodes_ips):
-        slave_nodes_ips = "a".join(slave_nodes_ips)
+    def runApplicationWithHAproxy(nodes_ips, neo4j_nodes_ips, verbose=False):
+        master = neo4j_nodes_ips[0]
+        slaves = neo4j_nodes_ips[1:]
+        slave_nodes_ips = "a".join(slaves)
         slave_nodes_ips = "'\'{}'\'".format(slave_nodes_ips)
 
-        command = ['ansible-playbook', 'remote-restart-neo4j-HA.yaml',
-                   '-i', '{},'.format(master_node_ip),
+        command = ['ansible-playbook', 'install-application-HA-Neo4j.yaml',
+                   '-i', AnsibleRunner.create_ips_argument(nodes_ips),
                    '--extra-vars',
-                   AnsibleRunner._to_extra_vars({'slave_ips': slave_nodes_ips})]
+                   AnsibleRunner._to_extra_vars({'master_node_ip': master,
+                                                 'slave_ips': slave_nodes_ips})]
+        if verbose:
+            command.append('-vvv')
+        process = subprocess.Popen(
+            command,
+            cwd=AnsibleRunner.ansible_home,
+            stderr=subprocess.STDOUT,
+            env=AnsibleRunner.__get_env())
+        process.communicate()
+        return
 
-        # TODO run HACNeo4j app
 
     @staticmethod
     def getNeo4jHAInitialHostsPort():

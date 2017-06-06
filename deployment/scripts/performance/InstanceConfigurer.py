@@ -67,8 +67,8 @@ class InstanceConfigurer:
 
     def run_apps(self, dryRun=False):
         if not dryRun:
-            # self.runNeoOnInstances(self.neo4jInstances.ips())
-            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips()[0])
+            self.runNeoOnInstances(self.neo4jInstances.ips())
+            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips())
             self.prepareTestDriver(self.testDriverInstances.ips(), self.applicationInstances.private_ips())
 
     def runNeoOnInstances(self, ips):
@@ -79,11 +79,16 @@ class InstanceConfigurer:
         else:
             self.runNeoOnSingleInstance(ips[0])
 
-    def runServices(self, nodes_ips, neo4j_node_ip):
+    def runServices(self, nodes_ips, neo4j_node_ips):
         if len(nodes_ips) == 0:
             return
-        print("Running service on nodes with ips: {} and neo4j_node_ip: {}".format(str(nodes_ips), str(neo4j_node_ip)))
-        AnsibleRunner.runApplication(nodes_ips, neo4j_node_ip)
+        print("Running service on nodes with ips: {} and neo4j_node_ips: {}".format(str(nodes_ips), str(neo4j_node_ips)))
+
+        if self.config['neo4j']['cluster'] == "HA":
+
+            AnsibleRunner.runApplicationWithHAproxy(nodes_ips, neo4j_node_ips)
+        else:
+            AnsibleRunner.runApplication(nodes_ips, neo4j_node_ips[0])
 
     def prepareTestDriver(self, testDriverIp, service_nodes_ips):
         if len(testDriverIp) == 0:
