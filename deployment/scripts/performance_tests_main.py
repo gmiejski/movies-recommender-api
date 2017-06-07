@@ -57,13 +57,13 @@ reco_config = {
 }
 
 ratings_config = {
-    "max_users": 175,
+    "max_users": 10,
     "wait_interval": 50,
     "run_time": 1
 }
 
-AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", reco_config)
-# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", ratings_config)
+# AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RecommendationsSimulation", reco_config)
+AnsibleRunner.run_tests_on_driver(instance_configurer.test_driver_ip(), "RatingsSimulation", ratings_config)
 
 AnsibleRunner.download_os_metrics(instance_configurer.neo4jInstances.ips())
 

@@ -21,7 +21,7 @@ ${servers}
 
 backend neo4j-master
     option httpchk GET /db/manage/server/ha/master
-${servers}
+${master}
 
 listen admin
     bind *:8088
