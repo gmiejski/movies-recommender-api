@@ -38,9 +38,11 @@ class InstanceConfigurer:
         self.createTestDriverInstances(config["test-driver"])
 
     def createNeo4jInstances(self, neo4j_config):
-        if neo4j_config["count"] > 0 and len(self.neo4jInstancesIds) == 0:
-            ids = self.createInstances(neo4j_config["instance-type"], neo4j_config["count"], "neo4j")
-            self.neo4jInstancesIds = ids
+        if neo4j_config["count"] > 0:
+            instances_to_start = neo4j_config["count"] - len(self.neo4jInstancesIds) if neo4j_config["count"] - len(self.neo4jInstancesIds) > 0 else 0
+            if instances_to_start > 0:
+                ids = self.createInstances(neo4j_config["instance-type"], instances_to_start, "neo4j")
+                self.neo4jInstancesIds = self.neo4jInstancesIds + ids
 
     def createApplicationInstances(self, service_config):
         if service_config["count"] > 0 and len(self.applicationInstancesIds) == 0:
