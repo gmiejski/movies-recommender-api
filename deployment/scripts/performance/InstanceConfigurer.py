@@ -1,6 +1,7 @@
 from ec2.EC2Client import EC2Client
 from ec2.EC2Instances import EC2Instances
 from ec2.EC2Waiter import EC2Waiter
+from performance.Neo4jHAConf import Neo4jHAConf
 from scripts.ansible.AnsibleRunner import AnsibleRunner
 
 
@@ -14,6 +15,8 @@ class InstanceConfigurer:
         self.applicationInstancesIds = []
         self.testDriverInstancesIds = []
         self.testDriverInstances = EC2Instances()
+        self.config = None
+        self.neo4jHAconfig = None
 
     def load_existing_instances(self):
         instances = self.aws_client.getInstances().instances
@@ -29,14 +32,17 @@ class InstanceConfigurer:
 
     def prepare_instances(self, config):
         print("Preparing instances...")
+        self.config = config
         self.createNeo4jInstances(config["neo4j"])
         self.createApplicationInstances(config["service"])
         self.createTestDriverInstances(config["test-driver"])
 
     def createNeo4jInstances(self, neo4j_config):
-        if neo4j_config["count"] > 0 and len(self.neo4jInstancesIds) == 0:
-            ids = self.createInstances(neo4j_config["instance-type"], neo4j_config["count"], "neo4j")
-            self.neo4jInstancesIds = ids
+        if neo4j_config["count"] > 0:
+            instances_to_start = neo4j_config["count"] - len(self.neo4jInstancesIds) if neo4j_config["count"] - len(self.neo4jInstancesIds) > 0 else 0
+            if instances_to_start > 0:
+                ids = self.createInstances(neo4j_config["instance-type"], instances_to_start, "neo4j")
+                self.neo4jInstancesIds = self.neo4jInstancesIds + ids
 
     def createApplicationInstances(self, service_config):
         if service_config["count"] > 0 and len(self.applicationInstancesIds) == 0:
@@ -64,19 +70,27 @@ class InstanceConfigurer:
     def run_apps(self, dryRun=False):
         if not dryRun:
             self.runNeoOnInstances(self.neo4jInstances.ips())
-            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips()[0])
+            self.runServices(self.applicationInstances.ips(), self.neo4jInstances.private_ips())
             self.prepareTestDriver(self.testDriverInstances.ips(), self.applicationInstances.private_ips())
 
     def runNeoOnInstances(self, ips):
         print("Running neo4j on nodes with ips: {}".format(str(ips)))
-        for ip in ips:
-            self.runNeoOnSingleInstance(ip)
+        if self.config["neo4j"]["cluster"] == "HA":
+            print("Running Neo4j in cluster state")
+            self.runNeoHAOnInstances()
+        else:
+            self.runNeoOnSingleInstance(ips[0])
 
-    def runServices(self, nodes_ips, neo4j_node_ip):
+    def runServices(self, nodes_ips, neo4j_node_ips):
         if len(nodes_ips) == 0:
             return
-        print("Running service on nodes with ips: {} and neo4j_node_ip: {}".format(str(nodes_ips), str(neo4j_node_ip)))
-        AnsibleRunner.runApplication(nodes_ips, neo4j_node_ip)
+        print("Running service on nodes with ips: {} and neo4j_node_ips: {}".format(str(nodes_ips), str(neo4j_node_ips)))
+
+        if self.config['neo4j']['cluster'] == "HA":
+
+            AnsibleRunner.runApplicationWithHAproxy(nodes_ips, neo4j_node_ips)
+        else:
+            AnsibleRunner.runApplication(nodes_ips, neo4j_node_ips[0])
 
     def prepareTestDriver(self, testDriverIp, service_nodes_ips):
         if len(testDriverIp) == 0:
@@ -85,12 +99,12 @@ class InstanceConfigurer:
                                                                                         str(service_nodes_ips)))
         AnsibleRunner.prepare_test_driver(testDriverIp[0], service_nodes_ips)
 
-
     def runNeoOnSingleInstance(self, instanceIp):
         AnsibleRunner.remote_restart_neo4j(instanceIp, "ml-100k", True)
 
     def instances(self):
-        return {"neo4j": self.neo4jInstances, "service": self.applicationInstances, "test-driver": self.testDriverInstances}
+        return {"neo4j": self.neo4jInstances, "service": self.applicationInstances,
+                "test-driver": self.testDriverInstances}
 
     def service_ips(self):
         return self.applicationInstances.ips()
@@ -125,3 +139,21 @@ class InstanceConfigurer:
 
     def test_driver_ip(self):
         return self.testDriverInstances.ips()[0]
+
+    def runNeoHAOnInstances(self):
+
+        master_node = self.neo4jInstances.instances[0]
+        slave_nodes = self.neo4jInstances.instances[1:]
+
+        print("Neo4j HA master node: {}".format(master_node))
+        print("Neo4j HA slave nodes: {}".format(str(slave_nodes)))
+
+        self.neo4jHAconfig = Neo4jHAConf(master_node, slave_nodes)
+
+        AnsibleRunner.runNeo4jHAMaster(master_node.publicIp, "ml-100k", list(map(lambda x: x.privateIp, slave_nodes)), master_node.privateIp)
+
+        for x in range(1, len(slave_nodes) + 1):
+            slave_ip = slave_nodes[x - 1].publicIp
+            id = x + 1
+            AnsibleRunner.runNeo4jHASlave(slave_ip, id, master_node.privateIp, "ml-100k",
+                                          list(map(lambda node: node.privateIp, slave_nodes)))

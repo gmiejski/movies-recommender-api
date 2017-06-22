@@ -1,0 +1,24 @@
+---
+
+- name: stop running neo4j
+  shell: export NEO4J_HOME=/home/ec2-user/programming/neo4j-enterprise-3.2.0 && ./bin/neo4j stop chdir={{ neo4j.home }}
+  ignore_errors: True
+
+- name: copy linker file
+  copy:
+    src: /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/link_db_by_name.sh
+    dest: "{{ neo4j.home_db }}"
+    owner: ec2-user
+    mode: 0777
+
+- name: link proper db for neo4j
+  shell: "./link_db_by_name.sh {{ neo4j_db_folder }} chdir={{ neo4j.home_db }}"
+  ignore_errors: True
+
+# prepare neo4j conf
+
+- name: copy neo4j config
+  template: src=neo4j.conf.j2 dest={{ neo4j.home }}conf/neo4j.conf mode=777
+
+- name: restart neo4j
+  shell: export NEO4J_HOME=/home/ec2-user/programming/neo4j-enterprise-3.2.0 && ./bin/neo4j start chdir={{ neo4j.home }}

@@ -1,0 +1,54 @@
+---
+
+# prepare LB with nginx
+
+- name: install the latest version of nginx
+  become: true
+  become_method: sudo
+  yum:
+    name: nginx
+    state: latest
+
+- name: copy nginx file
+  sudo: true
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/nginx.conf.template mode=777
+
+- name: copy templater
+  sudo: true
+  template: src=templater.py dest=/etc/nginx/conf.d/templater.py mode=777
+
+- name: configure nginx
+  become: true
+  become_method: sudo
+  shell: python /etc/nginx/conf.d/templater.py {{ master_node_ip }} {{ slave_ips }}
+
+- name: stop nginx
+  shell: sudo pkill -f nginx
+
+- name: start nginx
+  become: true
+  become_method: sudo
+  shell: /usr/sbin/nginx -c {{ nginx_config }}
+
+# run application
+
+- name: kill previously running application
+  command: pkill -f "movies-recommender-service-0.1.0.jar"
+  ignore_errors: True
+
+- name: clear previous project
+  shell: rm -rf {{ recommender_api.home_folder }}
+
+- name: clear logs from previous run
+  shell: rm -rf /tmp/logs/movies-recommender-service.log
+
+- name: git checkout
+  git: repo=https://github.com/gmiejski/movies-recommender-api.git
+       dest={{ recommender_api.home_folder }}
+       version="MR-27-HA-cluster"
+
+- name: build application
+  shell: ./gradlew movies-recommender-service:build -x test chdir={{ recommender_api.home_folder }}
+
+- name: run application
+  shell: nohup java -jar movies-recommender-service-0.1.0.jar chdir={{ recommender_api.run_folder }} &

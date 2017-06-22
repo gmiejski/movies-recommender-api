@@ -17,7 +17,7 @@
 
 # need to use different python env because of matplot lib and OSX - https://matplotlib.org/faq/osx_framework.html#osxframework-faq
 - name: (local) parse metrics and save plots
-  shell: /Library/Frameworks/Python.framework/Versions/3.4/bin/python3 /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/draw_metrics_ansible.py {{ os_metrics_local_path }}
+  shell: /Library/Frameworks/Python.framework/Versions/3.4/bin/python3 /Users/grzegorz.miejski/home/workspaces/private/magisterka/movies-recommender-api/deployment/scripts/draw_metrics_ansible.py {{ os_metrics_local_path }} {{ os_metrics_folder }}
   delegate_to: 127.0.0.1
 #
 - name: delete archive
@@ -32,3 +32,6 @@
     - sar
     - iostat
     - nicstat
+
+- name: remove old metrics
+  shell: rm -f *.log chdir={{ os_metrics_remote_path }}

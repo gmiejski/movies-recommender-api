@@ -1,0 +1,7 @@
+---
+
+- hosts: all
+  user: ec2-user
+  sudo: False
+  roles:
+    - restart-neo4j-HA-cluster

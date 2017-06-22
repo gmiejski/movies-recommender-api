@@ -13,7 +13,7 @@ class EC2Client:
     def createInstances(self, instance_type, count, purpose):
         response = self.ec2client.run_instances(
             DryRun=False,
-            ImageId='ami-5e35ed31',
+            ImageId='ami-27dd7848',
             MinCount=count,
             MaxCount=count,
             KeyName='movies-recommender-service',

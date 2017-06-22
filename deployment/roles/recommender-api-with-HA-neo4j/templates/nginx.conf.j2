@@ -1,0 +1,17 @@
+events {
+  worker_connections  4096;  ## Default: 1024
+}
+
+http {
+  upstream neo4j {
+    least_conn;
+    ${servers}
+  }
+
+  server {
+    listen 7777;
+    location / {
+      proxy_pass http://neo4j;
+    }
+  }
+}

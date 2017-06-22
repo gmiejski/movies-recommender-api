@@ -62,6 +62,37 @@ class InstanceConfigurerTest(unittest.TestCase):
         # self.assertEqual(len(instances["neo4j"].instances), 1)
         # self.assertEqual(len(instances["service"].instances), 1)
 
+    @mock_ec2
+    def test_scale_neo4j_instances(self):
+        config = {
+            "neo4j": {
+                "count": 1,
+                "cluster": None,
+                "instance-type": "t2.micro"
+            },
+            "service": {
+                "count": 0,
+                "instance-type": "t2.micro"
+            },
+            "test-driver": {
+                "count": 0,
+                "instance-type": "t2.micro"
+            }
+        }
+        instance_configurer = InstanceConfigurer()
+        instance_configurer.prepare_instances(config)
+        instance_configurer.wait_for_instances()
+
+        # then
+        config['neo4j']['count'] = 2
+        instance_configurer = InstanceConfigurer()
+        instance_configurer.load_existing_instances()
+        instance_configurer.prepare_instances(config)
+        instance_configurer.wait_for_instances()
+
+        instances = instance_configurer.instances()
+        self.assertEqual(len(instances["neo4j"].instances), 2)
+
 
 if __name__ == '__main__':
     unittest.main()
