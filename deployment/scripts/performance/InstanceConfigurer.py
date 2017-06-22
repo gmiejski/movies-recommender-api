@@ -150,10 +150,10 @@ class InstanceConfigurer:
 
         self.neo4jHAconfig = Neo4jHAConf(master_node, slave_nodes)
 
-        AnsibleRunner.runNeo4jHAMaster(master_node.publicIp, "ml-100k", list(map(lambda x: x.publicIp, slave_nodes)))
+        AnsibleRunner.runNeo4jHAMaster(master_node.publicIp, "ml-100k", list(map(lambda x: x.privateIp, slave_nodes)), master_node.privateIp)
 
         for x in range(1, len(slave_nodes) + 1):
             slave_ip = slave_nodes[x - 1].publicIp
             id = x + 1
-            AnsibleRunner.runNeo4jHASlave(slave_ip, id, master_node.publicIp, "ml-100k",
-                                          list(map(lambda node: node.publicIp, slave_nodes)))
+            AnsibleRunner.runNeo4jHASlave(slave_ip, id, master_node.privateIp, "ml-100k",
+                                          list(map(lambda node: node.privateIp, slave_nodes)))

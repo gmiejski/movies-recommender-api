@@ -1,32 +1,34 @@
 ---
 
-# prepare LB with haproxy
+# prepare LB with nginx
 
-- name: prepare haproxy config folder
-  file:
-    path: "{{ haproxy_folder }}"
-    state: directory
+- name: install the latest version of nginx
+  become: true
+  become_method: sudo
+  yum:
+    name: nginx
+    state: latest
 
-- name: copy haproxy file
+- name: copy nginx file
   sudo: true
-  template: src=haproxy.conf.j2 dest={{ haproxy_folder }}/haproxy.cfg.template mode=777
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/nginx.conf.template mode=777
 
 - name: copy templater
   sudo: true
-  template: src=templater.py dest={{ haproxy_folder }}/templater.py mode=777
+  template: src=templater.py dest=/etc/nginx/conf.d/templater.py mode=777
 
-- name: configure haproxy
+- name: configure nginx
   become: true
   become_method: sudo
-  shell: python {{ haproxy_folder }}/templater.py {{ master_node_ip }} {{ slave_ips }}
+  shell: python /etc/nginx/conf.d/templater.py {{ master_node_ip }} {{ slave_ips }}
 
-- name: stop haproxy
-  shell: sudo pkill -f haproxy
+- name: stop nginx
+  shell: sudo pkill -f nginx
 
-- name: start haproxy
+- name: start nginx
   become: true
   become_method: sudo
-  shell: haproxy -f {{haproxy_folder}}/haproxy.cfg
+  shell: /usr/sbin/nginx -c {{ nginx_config }}
 
 # run application
 

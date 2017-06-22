@@ -240,9 +240,9 @@ class AnsibleRunner:
         return ",".join(list(map(lambda x: "{}:{}".format(x, AnsibleRunner.getNeo4jHAInitialHostsPort()), all_hosts)))
 
     @staticmethod
-    def runNeo4jHAMaster(master_node_ip, dataset, slave_nodes_ips, verbose=False):
+    def runNeo4jHAMaster(master_node_ip, dataset, slave_nodes_ips, master_node_priv_ip, verbose=False):
         service_id = 1
-        all_hosts = [master_node_ip] + slave_nodes_ips
+        all_hosts = [master_node_priv_ip] + slave_nodes_ips
         all_nodes_ips = AnsibleRunner.get_all_hosts_ips_string(all_hosts)
 
         return AnsibleRunner.runNeo4jHANode(master_node_ip, all_nodes_ips, dataset, service_id, False, True)

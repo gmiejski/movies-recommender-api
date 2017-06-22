@@ -3,4 +3,4 @@ recommender_api:
   run_folder: /home/ec2-user/magisterka/run/movies-recommender-api/movies-recommender-service/build/libs
 
 neo4j_host: localhost
-haproxy_folder: /home/ec2-user/programming/haproxy/
+nginx_config: /etc/nginx/conf.d/nginx.conf

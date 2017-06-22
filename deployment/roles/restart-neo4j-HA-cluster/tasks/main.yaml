@@ -1,16 +1,7 @@
 ---
 
-- name: make sure haproxy is installed
-  become: true
-  become_method: sudo
-  yum:
-    name: "{{item}}"
-    state: latest
-  with_items:
-    - haproxy
-
 - name: stop running neo4j
-  shell: ./bin/neo4j stop chdir={{ neo4j.home }}
+  shell: export NEO4J_HOME=/home/ec2-user/programming/neo4j-enterprise-3.2.0 && ./bin/neo4j stop chdir={{ neo4j.home }}
   ignore_errors: True
 
 - name: copy linker file
@@ -30,4 +21,4 @@
   template: src=neo4j.conf.j2 dest={{ neo4j.home }}conf/neo4j.conf mode=777
 
 - name: restart neo4j
-  shell: export NEO4J_HOME={{neo4j.home}} && ./bin/neo4j start chdir={{ neo4j.home }}
+  shell: export NEO4J_HOME=/home/ec2-user/programming/neo4j-enterprise-3.2.0 && ./bin/neo4j start chdir={{ neo4j.home }}
